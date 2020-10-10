@@ -1,0 +1,77 @@
+<div>
+  <mat-toolbar color="primary">
+      <button mat-icon-button class="btn btn-primary"  [matMenuTriggerFor]="menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+    <span id="team_name">Yellow Team App</span>
+    <nav>
+      <a routerLink="/features" id="a_one">Features</a>
+      <a routerLink="/services" id="a_two">Services</a>
+    </nav>
+    <span class="team-spacer"></span>
+        <div ngbDropdown >
+          <button class="btn btn-danger" id="dropdownForm1" ngbDropdownToggle>Sign up</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownForm1">
+            <form class="px-4 py-3">
+              <div class="form-group">
+                <label for="exampleDropdownFormEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
+              </div>
+              <div class="form-group">
+                <label for="exampleDropdownFormPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="dropdownCheck">
+                <label class="form-check-label" for="dropdownCheck">
+                  Remember me
+                </label>
+              </div>
+              <button type="submit" class="btn btn-danger" (click)="signedup()">Sign up</button>
+            </form>       
+          </div>
+        </div>
+        <span class="team-spacer"></span>
+        <div ngbDropdown >
+          <button class="btn btn-info" id="dropdownForm2" ngbDropdownToggle>Sign in</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownForm2">
+            <form class="px-4 py-3">
+              <div class="form-group">
+                <label for="exampleDropdownFormEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleDropdownFormEmail2" placeholder="email@example.com">
+              </div>
+              <div class="form-group">
+                <label for="exampleDropdownFormPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleDropdownFormPassword2" placeholder="Password">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="dropdownCheck2">
+                <label class="form-check-label" for="dropdownCheck2">
+                  Remember me
+                </label>
+              </div>
+              <button type="submit" class="btn btn-info" (click)="signedin()">Sign in</button>
+            </form>
+            <div class="dropdown-divider"></div>
+            <button ngbDropdownItem>New User? Sign up</button>
+            <button ngbDropdownItem>Forgot password?</button>
+          </div>
+    </div>
+  </mat-toolbar> 
+    <mat-menu #menu="matMenu">
+      <div class="card">
+        <button routerLink="/features" mat-menu-item>
+           <mat-icon >perm_media</mat-icon>
+          <span>Features</span>
+        </button>
+      <button mat-menu-item routerLink="/services" >
+        <mat-icon>cloud_download</mat-icon>
+        <span>Services</span>
+      </button>
+      <button mat-menu-item (click)="menu_info()">
+        <mat-icon>info</mat-icon>
+        <span>Info</span>
+      </button>
+    </div>
+    </mat-menu>
+    <router-outlet></router-outlet>

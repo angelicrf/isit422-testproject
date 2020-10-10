@@ -1,0 +1,17 @@
+#team_name{
+    margin-left: 20px;
+}
+#a_one{
+    margin-left: 450px;
+    color: rgb(212, 225, 236);
+}
+#a_two{
+    margin-left: 60px;
+    color: rgb(212, 225, 236);
+}
+.team-spacer{
+    margin-left: 60px;
+}
+.card{
+    width: 250px;
+}
