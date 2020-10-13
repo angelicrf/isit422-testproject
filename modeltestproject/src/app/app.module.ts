@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,7 +11,17 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+
 //import {NgbDropdownModule, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
+export function initGapi(gapiSession: FeaturesComponent) {
+  console.log("right inside initgapi")
+  return () => {
+    console.log("inside return initgapi")
+    gapiSession.initClient();
+    console.log("after return initGapi")
+  }
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,7 +41,11 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     //NgbDropdownMenu,
     //NgbDropdownItem
   ],
-  providers: [],
+  providers: [
+    //{ provide: APP_INITIALIZER, useFactory: initGapi, deps: [FeaturesComponent], multi: true },
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+
+}

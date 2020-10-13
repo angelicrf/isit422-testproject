@@ -3,7 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": ["gapi", "gapi.auth2","gapi.client", "gapi.client.drive"],
+    "typeRoots": [
+     "node_modules/@types"
+     ]
   },
   "files": [
     "src/main.ts",
@@ -11,5 +14,9 @@
   ],
   "include": [
     "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
   ]
 }
