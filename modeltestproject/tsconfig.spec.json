@@ -4,7 +4,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": [
-      "jasmine","gapi", "gapi.auth2","gapi.client", "gapi.client.drive"
+      "jasmine","gapi", "gapi.auth2","gapi.client", "gapi.client.drive","google.picker"
     ],
     "typeRoots": [
       "node_modules/@types"

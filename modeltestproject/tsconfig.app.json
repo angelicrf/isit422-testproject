@@ -3,7 +3,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": ["gapi", "gapi.auth2","gapi.client", "gapi.client.drive"],
+    "types": ["gapi", "gapi.auth2","gapi.client", "gapi.client.drive","google.picker"],
     "typeRoots": [
      "node_modules/@types"
      ]
