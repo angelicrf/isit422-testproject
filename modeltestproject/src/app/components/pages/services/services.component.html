@@ -1,4 +1,17 @@
 <div class="my-container">
 <p>services works!</p>
-<button (click)="loadPicker()">ServicePicker</button>
+<br />
+<br />
+<h3>Get dropbox files in Server-side way</h3>
+<p>Please run the server and click on the link below</p>
+<p>Go through the proccess, come back to the services page</p>
+<p>Click on the button FromExpressServer</p>
+<br />
+<a href="https://www.dropbox.com/oauth2/authorize?response_type=code&state=&client_id=m69dopii079t806&scope=files.metadata.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Ffeatures" >dropboxlogin</a>
+<br />
+<button (click)="createDpPicker()">FromExpressServer</button>
+<br />
+<p>Google Drive file Picker</p>
+<br />
+<button (click)="loadPicker()">LoadFiles</button>
 </div>

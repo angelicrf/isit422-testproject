@@ -11,6 +11,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import { NgxChildProcessModule } from 'ngx-childprocess';
 
 //import {NgbDropdownModule, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
 export function initGapi(gapiSession: FeaturesComponent) {
@@ -37,6 +38,7 @@ export function initGapi(gapiSession: FeaturesComponent) {
     MatMenuModule,
     MatButtonModule,
     MatToolbarModule,
+    NgxChildProcessModule
     //NgbDropdownModule,
     //NgbDropdownMenu,
     //NgbDropdownItem

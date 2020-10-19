@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { DataservicesService } from 'src/app/dataservices.service';
 import {ServicesComponent} from '../services/services.component';
+import {ChildProcessService} from 'ngx-childprocess';
+ 
 
 @Component({
   selector: 'app-features',
@@ -12,17 +15,26 @@ export class FeaturesComponent implements OnInit  {
   CLIENT_ID:string = "375973183467-h5njr2s69i4q4ph3l3hup55t3irf3rnu.apps.googleusercontent.com";
   DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
   SCOPES:string = "profile email https://www.googleapis.com/auth/drive.appdata";
-  storeID = [];
+  storeID:any;
   isSignedIN = false;
+  showData:string;
+  acces_Token:any;
 
-  constructor() {  }
+  constructor(private data: DataservicesService) { 
+    this.showData = this.data.getCodefromUri()
+    console.log("showData is" + this.showData)  
+   }
 
-  ngOnInit():void { } 
+  ngOnInit():void {
+    this.data.sendMessageToNode(this.showData)
+    .then(data =>  this.acces_Token = data)
+  } 
+  
   handleClientLoad(){
     gapi.load('client:auth2', this.initClient)
   }
+ 
   initClient() {
-    //let self = this;
       gapi.client.init({
         apiKey: 'AIzaSyBbTMmvECP0SsdRErSZRf51YzWC3oDR5cM',
         discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
@@ -30,9 +42,9 @@ export class FeaturesComponent implements OnInit  {
         scope: "profile email  https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata"
       }).then(() => {
         signIn().then(value => {
-          if(value == true){
+           if(value == true){
           getFiles()
-        }});           
+        }});          
           async function getFiles() {
            await gapi.client.request({
               method: "GET",
@@ -50,19 +62,10 @@ export class FeaturesComponent implements OnInit  {
           .catch(err => console.log("Err from init " + JSON.stringify(err)))        
       }
     }
-   
-function getIsSignedIn() : boolean {
-  let fc = new FeaturesComponent()
-      return fc.isSignedIN
-    } 
-function setIsSignedIn(newValue:boolean) : boolean {
-      let fc = new FeaturesComponent()
-          return fc.isSignedIN = newValue
-    }   
+    
  function signIn() {
-   let fc = new FeaturesComponent()
-   let newSiginedIn:boolean = getIsSignedIn();
-   newSiginedIn = true;
+
+   let newSiginedIn = true;
 
   const googleAuth = gapi.auth2.getAuthInstance();
   return googleAuth.signIn({
@@ -73,14 +76,16 @@ function setIsSignedIn(newValue:boolean) : boolean {
       let appRepository = [];
       appRepository.push(googleUser.getBasicProfile());
       console.log("here is after signed in ..." + JSON.stringify(appRepository[0]))
-      return setIsSignedIn(newSiginedIn);    
+      newSiginedIn = true;
+      return newSiginedIn;    
      })
      .catch(err => console.log("error from signin", err)) 
  }
   function createGoggleDriveFiles(){
-    var fc = new FeaturesComponent();
+    return new Promise((resolve, reject) =>
+    {
     let folder = {
-      name: "testfile1",
+      name: "YellowTeamTestfile",
       mimeType: "application/octet-stream",
       parents: ["root"]
     };
@@ -90,21 +95,24 @@ function setIsSignedIn(newValue:boolean) : boolean {
       fields: "id, name, mimeType, modifiedTime, size"
   })
   .then((value) =>  {
-    //var fc = new FeaturesComponent();
     console.log("files from " + JSON.stringify(value.result.id))
-    return fc.storeID.push(value.result.id);
+    resolve(value.result.id);
+    return value.result.id;
   })
   .catch(err => console.log("Err from create " + err))
+})
    
   }
   function getGoogleDriveFiles(){
-    var fc = new FeaturesComponent();
-    console.log("storeID is" + fc.storeID[0])
-    return gapi.client.drive.files.get({fileId : fc.storeID[0]})
+  let getStoreId = createGoggleDriveFiles().then(
+     data => console.log("storID from getGoogleDriveFiles " + data)
+   )
+    console.log("storeID is" + getStoreId)
+    return gapi.client.drive.files.get({fileId : JSON.stringify(getStoreId)})
               .then((value) => console.log(JSON.stringify(value.result)))
               .catch( err =>  console.log("Error from getting files" + JSON.stringify(err)))
             
-  } 
+  }  
   function listGoogleDriveFiles() {
    console.log("inside getfile")
   return gapi.client.drive.files.list({
