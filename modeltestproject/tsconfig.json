@@ -12,13 +12,15 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "es2020",
-    "typeRoots": [
-      "node_modules/@types"
+    "typeRoots": ["node_modules/@types"],
+    "types": [
+      "node",
+      "gapi",
+      "gapi.auth2",
+      "gapi.client",
+      "gapi.client.drive",
+      "google.picker"
     ],
-    "types": ["gapi", "gapi.auth2","gapi.client", "gapi.client.drive", "google.picker"],
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "lib": ["es2018", "dom"]
   }
 }

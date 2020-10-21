@@ -7,28 +7,24 @@ import { ServicesComponent } from './components/pages/services/services.componen
 import { FeaturesComponent } from './components/pages/features/features.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatButtonModule} from '@angular/material/button';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import { NgxChildProcessModule } from 'ngx-childprocess';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 //import {NgbDropdownModule, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
 export function initGapi(gapiSession: FeaturesComponent) {
-  console.log("right inside initgapi")
+  console.log('right inside initgapi');
   return () => {
-    console.log("inside return initgapi")
+    console.log('inside return initgapi');
     gapiSession.initClient();
-    console.log("after return initGapi")
-  }
+    console.log('after return initGapi');
+  };
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ServicesComponent,
-    FeaturesComponent
-  ],
+  declarations: [AppComponent, ServicesComponent, FeaturesComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -38,7 +34,7 @@ export function initGapi(gapiSession: FeaturesComponent) {
     MatMenuModule,
     MatButtonModule,
     MatToolbarModule,
-    NgxChildProcessModule
+    FormsModule,
     //NgbDropdownModule,
     //NgbDropdownMenu,
     //NgbDropdownItem
@@ -46,8 +42,6 @@ export function initGapi(gapiSession: FeaturesComponent) {
   providers: [
     //{ provide: APP_INITIALIZER, useFactory: initGapi, deps: [FeaturesComponent], multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { 
-
-}
+export class AppModule {}

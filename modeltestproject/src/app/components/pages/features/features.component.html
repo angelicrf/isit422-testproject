@@ -1,5 +1,10 @@
 <div class="my-container">
     <p>features works!</p>
-<p>Get files from Google Drive</p>
-<button (click)="handleClientLoad()">GetGoogleDriveFiles</button>
+<p>Create - upload - Get files from Google Drive</p>
+<br />
+<p>Choose a local file to upload in Google drive</p>
+<input type="file"  (change)="onFileSelected($event)" />
+<br />
+<br />
+<button (click)="handleClientLoad()">UploadToGoogleDrive</button> 
 </div>
