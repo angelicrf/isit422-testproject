@@ -7,10 +7,12 @@ import { ServicesComponent } from '../services/services.component';
 
 let valueStored: File = null;
 let folder: object = {
-  name: 'YellowTeamFromApp',
+  name: 'FileYellowTeamFromApp3',
   mimeType: 'application/octet-stream',
   parents: ['root'],
 };
+let showData: string;
+let holdArray = [];
 
 @Component({
   selector: 'app-features',
@@ -20,19 +22,21 @@ let folder: object = {
 export class FeaturesComponent implements OnInit {
   storeID: any;
   isSignedIN = false;
-  showData: string;
+
   acces_Token: any;
   mdEvCh: any;
+  svId = '1l23BYOU4UvTCX9IrTl84cQhHZEyXBR6A'
 
   constructor(private data: DataservicesService) {
-    this.showData = this.data.getCodefromUri();
-    console.log('showData is' + this.showData);
+    showData = this.data.getCodefromUri();
+    console.log('showData is' + showData);
   }
 
   ngOnInit(): void {
     this.data
-      .sendMessageToNode(this.showData)
+      .sendMessageToNode(showData)
       .then((data) => (this.acces_Token = data));
+    //this.svId = holdArray
   }
   handleClientLoad() {
     gapi.load('client:auth2', this.initClient);
@@ -50,8 +54,8 @@ export class FeaturesComponent implements OnInit {
     return getValueStored();
   }
   initClient() {
-    let holdCurrent = getValueStored();
-    console.log('hold current is ' + holdCurrent.name);
+    //let holdCurrent = getValueStored();
+    //console.log('hold current is ' + holdCurrent.name);
     gapi.client
       .init({
         apiKey: 'AIzaSyBbTMmvECP0SsdRErSZRf51YzWC3oDR5cM',
@@ -77,10 +81,11 @@ export class FeaturesComponent implements OnInit {
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
             })
             .then(async () => {
-              uploadToGoogleDrive(holdCurrent);
-              createGoggleDriveFiles(folder);
+              //exportGoogleDriveFiles()
+              //uploadToGoogleDrive(holdCurrent);
+              //createGoggleDriveFiles(folder);
               listGoogleDriveFiles();
-              //getGoogleDriveFiles()
+              //getGoogleDriveFiles() //example
               //copyGoogleDriveFiles()
               //}
             })
@@ -97,6 +102,35 @@ function getValueStored() {
 }
 function setValueStored(valSt) {
   valueStored = valSt;
+}
+function exportGoogleDriveFiles() {
+  let myHeaders = new Headers();
+
+  myHeaders.append('Accept', '/');
+  myHeaders.append('Origin', 'x-requested-with');
+  myHeaders.append('Content-Type', 'application/json');
+  let requestOptions = {
+    method: 'GET',
+    //mode: 'no-cors'
+    headers: myHeaders,
+  };
+  listGoogleDriveFiles().then((value) => {
+    let storeShowAll = JSON.stringify(value);
+    let element = '';
+    for (let index = 0; index < storeShowAll.length; index++) {
+      element += storeShowAll[index];
+    }
+    //setTimeout( () =>
+    return fetch(
+      'https://cors-anywhere.herokuapp.com/https://drive.google.com/uc?id=' +
+        element[0] +
+        'export=download',
+      requestOptions
+    )
+      .then((response) => console.log(response)) // I'll use response.blob().then( //doing something )
+      .catch((err) => console.log('from Export ' + err));
+    //, 4000)
+  });
 }
 function signIn() {
   let newSiginedIn = true;
@@ -134,30 +168,48 @@ function createGoggleDriveFiles(fileToUpload: object) {
   });
 }
 function getGoogleDriveFiles() {
-  let getStoreId = createGoggleDriveFiles(folder).then((data) =>
-    console.log('storID from getGoogleDriveFiles ' + data)
-  );
-  console.log('storeID is' + getStoreId);
   return gapi.client.drive.files
-    .get({ fileId: JSON.stringify(getStoreId) })
-    .then((value) => console.log(JSON.stringify(value.result)))
+    .get({ fileId: '1l23BYOU4UvTCX9IrTl84cQhHZEyXBR6A' })
+    .then((value) =>
+      console.log('from Create file ' + JSON.stringify(value.result))
+    )
     .catch((err) =>
       console.log('Error from getting files' + JSON.stringify(err))
     );
 }
 function listGoogleDriveFiles() {
+  let myHeaders = new Headers();
+  myHeaders.append('Accept', '/');
+  myHeaders.append('Origin', 'x-requested-with');
+  myHeaders.append('Content-Type', 'application/json');
+
+  let requestOptions = {
+    method: 'GET',
+    //mode: 'no-cors'
+    headers: myHeaders,
+  };
   console.log('inside getfile');
   return gapi.client.drive.files
     .list({
-      fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)',
+      fields:
+        'nextPageToken, files(id, name, mimeType, modifiedTime, size, webContentLink)',
       q: "'root' in parents and trashed = false",
     })
     .then((res) => {
       console.log('try to get files ..');
-      const holdItems = [];
-      res.result.files.forEach((file) => holdItems.push(file));
-      console.log('files from features' + JSON.stringify(holdItems));
-      return holdItems;
+      res.result.files.forEach((file) => {
+        fetch(
+          'https://cors-anywhere.herokuapp.com/https://drive.google.com/uc?id=' +
+            file.id +
+            '&export=download',
+          requestOptions
+        )
+          .then((response) => console.log(response)) // I'll use response.blob().then( //doing something )
+          .catch((err) => console.log('from Export ' + err));
+        holdArray.push(file.id);
+        //console.log('files from features' + JSON.stringify(holdArray))
+      });
+      return holdArray;
     })
     .catch((err) => console.log('Err from list' + err));
 }
