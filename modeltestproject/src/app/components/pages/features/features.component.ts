@@ -1,9 +1,10 @@
+import { JsonPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { DataservicesService } from 'src/app/dataservices.service';
+import { environment } from 'src/environments/environment';
+import { nodeModuleNameResolver } from 'typescript';
 import { ServicesComponent } from '../services/services.component';
-//import * as fs from 'fs';
 
-// Working on Download from Google Drive
 
 let valueStored: File = null;
 let folder: object = {
@@ -12,7 +13,8 @@ let folder: object = {
   parents: ['root'],
 };
 let showData: string;
-let holdArray = [];
+let holdArray = []
+let holdGlAccessToken = []
 
 @Component({
   selector: 'app-features',
@@ -20,6 +22,7 @@ let holdArray = [];
   styleUrls: ['./features.component.css'],
 })
 export class FeaturesComponent implements OnInit {
+  
   storeID: any;
   isSignedIN = false;
 
@@ -35,28 +38,29 @@ export class FeaturesComponent implements OnInit {
   ngOnInit(): void {
     this.data
       .sendMessageToNode(showData)
-      .then((data) => (this.acces_Token = data));
+      .then((data) => (this.acces_Token = data))
     //this.svId = holdArray
   }
   handleClientLoad() {
-    gapi.load('client:auth2', this.initClient);
+   // gapi.load('client:auth2', makeNewAccessToken)
+    gapi.load('client:auth2', this.initClient)
   }
   onFileSelected(ev: Event) {
     try {
-      let target = ev.target as HTMLInputElement;
-      let crFile: File = (target.files as FileList)[0];
-      console.log('this currentEv ' + crFile.name);
-      valueStored = crFile;
-      setValueStored(crFile);
+      let target = ev.target as HTMLInputElement
+      let crFile: File = (target.files as FileList)[0]
+      console.log('this currentEv ' + crFile.name)
+      valueStored = crFile
+      setValueStored(crFile)
     } catch (err) {
-      console.log('err from try ', err);
+      console.log('err from try ', err)
     }
     return getValueStored();
   }
   initClient() {
     //let holdCurrent = getValueStored();
     //console.log('hold current is ' + holdCurrent.name);
-    gapi.client
+     gapi.client
       .init({
         apiKey: 'AIzaSyBbTMmvECP0SsdRErSZRf51YzWC3oDR5cM',
         discoveryDocs: [
@@ -65,26 +69,34 @@ export class FeaturesComponent implements OnInit {
         clientId:
           '375973183467-h5njr2s69i4q4ph3l3hup55t3irf3rnu.apps.googleusercontent.com',
         scope:
-          'profile email  https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata',
+          'profile email https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata',
       })
       .then(() => {
-        signIn().then((value) => {
-          if (value == true) {
-            getFiles();
-          }
-        });
-        async function getFiles() {
-          await gapi.client
+        console.log("We are in Init1")
+          signIn().then((value) => {
+            console.log("We are in Init2")
+         if (value == true) {
+            getFiles()
+            }
+          })
+         
+        function getFiles() {
+          gapi.client
             .request({
               method: 'GET',
               path:
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
             })
-            .then(async () => {
+            .then(() => {
+              //oAuthAccessToken()
               //exportGoogleDriveFiles()
-              //uploadToGoogleDrive(holdCurrent);
-              //createGoggleDriveFiles(folder);
-              listGoogleDriveFiles();
+              //uploadToGoogleDrive(holdCurrent)
+              //createGoggleDriveFiles(folder)
+              //accessTokenGoogleDrive(holdGlAccessToken[0])
+              //getImageFromNode()
+              //gDDownloadFromNode()
+              //gDUploadFromNode()
+              //listGoogleDriveFiles(holdGlAccessToken[0])
               //getGoogleDriveFiles() //example
               //copyGoogleDriveFiles()
               //}
@@ -93,64 +105,55 @@ export class FeaturesComponent implements OnInit {
               console.log('Err from client request ' + JSON.stringify(err))
             );
         }
-      })
-      .catch((err) => console.log('Err from init ' + JSON.stringify(err)));
-  }
+  }).catch((err) => console.log('Err from init ' + JSON.stringify(err)))
 }
+}
+function gDDownloadFromNode() {
+  fetch('/api/DownloadGd', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+    .then((response) => {return console.log(response)})
+    .catch((err) => console.log(err));
+} 
+function gDUploadFromNode() {
+  fetch('/api/UploadGd', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+    .then((response) => {return console.log(response)})
+    .catch((err) => console.log(err));
+} 
 function getValueStored() {
-  return valueStored;
+  return valueStored
 }
 function setValueStored(valSt) {
-  valueStored = valSt;
+  valueStored = valSt
 }
-function exportGoogleDriveFiles() {
-  let myHeaders = new Headers();
-
-  myHeaders.append('Accept', '/');
-  myHeaders.append('Origin', 'x-requested-with');
-  myHeaders.append('Content-Type', 'application/json');
-  let requestOptions = {
-    method: 'GET',
-    //mode: 'no-cors'
-    headers: myHeaders,
-  };
-  listGoogleDriveFiles().then((value) => {
-    let storeShowAll = JSON.stringify(value);
-    let element = '';
-    for (let index = 0; index < storeShowAll.length; index++) {
-      element += storeShowAll[index];
-    }
-    //setTimeout( () =>
-    return fetch(
-      'https://cors-anywhere.herokuapp.com/https://drive.google.com/uc?id=' +
-        element[0] +
-        'export=download',
-      requestOptions
-    )
-      .then((response) => console.log(response)) // I'll use response.blob().then( //doing something )
-      .catch((err) => console.log('from Export ' + err));
-    //, 4000)
-  });
-}
-function signIn() {
-  let newSiginedIn = true;
-
-  const googleAuth = gapi.auth2.getAuthInstance();
+function signIn (){
+  let googleAuth = gapi.auth2.getAuthInstance()
   return googleAuth
     .signIn({
       prompt: 'consent',
     })
     .then((googleUser: gapi.auth2.GoogleUser) => {
-      console.log('here before sign in');
-      let appRepository = [];
-      appRepository.push(googleUser.getBasicProfile());
+      holdGlAccessToken.push(googleUser.getAuthResponse().access_token)
+      //console.log('here before sign in' + JSON.stringify(googleUser.getAuthResponse().access_token))
+      let appRepository = []
+      appRepository.push(googleUser.getBasicProfile())
       console.log(
         'here is after signed in ...' + JSON.stringify(appRepository[0])
-      );
-      newSiginedIn = true;
-      return newSiginedIn;
+      )
+      let newSiginedIn = true
+      return newSiginedIn
     })
-    .catch((err) => console.log('error from signin', err));
+    .catch((err) => console.log('error from signin', err))
 }
 function createGoggleDriveFiles(fileToUpload: object) {
   return new Promise((resolve, reject) => {
@@ -169,49 +172,30 @@ function createGoggleDriveFiles(fileToUpload: object) {
 }
 function getGoogleDriveFiles() {
   return gapi.client.drive.files
-    .get({ fileId: '1l23BYOU4UvTCX9IrTl84cQhHZEyXBR6A' })
+    .get({ fileId: '1R0eDNeswZBjOMrq0l3f2qE0EdCFfNQSW' })
     .then((value) =>
       console.log('from Create file ' + JSON.stringify(value.result))
     )
     .catch((err) =>
       console.log('Error from getting files' + JSON.stringify(err))
-    );
+    )
 }
-function listGoogleDriveFiles() {
-  let myHeaders = new Headers();
-  myHeaders.append('Accept', '/');
-  myHeaders.append('Origin', 'x-requested-with');
-  myHeaders.append('Content-Type', 'application/json');
-
-  let requestOptions = {
-    method: 'GET',
-    //mode: 'no-cors'
-    headers: myHeaders,
-  };
-  console.log('inside getfile');
-  return gapi.client.drive.files
+async function listGoogleDriveFiles(holdgl:string) {
+  console.log('holdgl list' + holdgl)
+   return gapi.client.drive.files
     .list({
       fields:
         'nextPageToken, files(id, name, mimeType, modifiedTime, size, webContentLink)',
       q: "'root' in parents and trashed = false",
     })
-    .then((res) => {
-      console.log('try to get files ..');
-      res.result.files.forEach((file) => {
-        fetch(
-          'https://cors-anywhere.herokuapp.com/https://drive.google.com/uc?id=' +
-            file.id +
-            '&export=download',
-          requestOptions
-        )
-          .then((response) => console.log(response)) // I'll use response.blob().then( //doing something )
-          .catch((err) => console.log('from Export ' + err));
-        holdArray.push(file.id);
-        //console.log('files from features' + JSON.stringify(holdArray))
-      });
-      return holdArray;
-    })
-    .catch((err) => console.log('Err from list' + err));
+    .then(async (res) => { 
+            res.result.files.forEach(fl => {
+              holdArray.push(fl.id);      
+            })
+            console.log('files from features' + JSON.stringify(holdArray))
+          return holdArray;
+        })
+          .catch((err) => console.log('holdgl list' + holdgl))
 }
 function copyGoogleDriveFiles() {
   return gapi.client.drive.files
@@ -229,8 +213,8 @@ function copyGoogleDriveFiles() {
       console.log('Error from getting files' + JSON.stringify(err))
     );
 }
-
-function uploadToGoogleDrive(file: File) {
+function uploadToGoogleDrive(file:File) {
+  
   let metadata = {
     name: 'yellowTeamUpload', // Filename at Google Drive
     mimeType: 'text/plain', // mimeType at Google Drive
@@ -266,3 +250,67 @@ function uploadToGoogleDrive(file: File) {
     })
     .catch((error) => console.log('error', error));
 }
+function arrayBufferToBase64(buffer) {
+  var binary = '';
+  var bytes = [].slice.call(new Uint8Array(buffer));
+
+  bytes.forEach((b) => binary += String.fromCharCode(b));
+
+  return btoa(binary);
+}
+function makeNewAccessToken(){
+  console.log("i am here")
+  return gapi.auth2.authorize({
+    client_id: '375973183467-h5njr2s69i4q4ph3l3hup55t3irf3rnu.apps.googleusercontent.com',
+    scope: 'profile openid email  https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata',
+    response_type: 'id_token permission'
+  }, (response) => {
+    if (response.error) {
+      return console.log(response.error);
+    }
+    let accessToken = response.access_token
+    console.log("accessToken from Function  " + accessToken )
+    return accessToken
+  })
+}
+function accessTokenGoogleDrive(saveDg:string){
+  console.log('I am in features GDAccessToken Post ' + saveDg)
+  return new Promise((resolve, reject) => {
+    let myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+
+    let raw = JSON.stringify({
+      title: 'accessTokenfromAngular',
+      accessTokenDg: saveDg
+    });
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+    };
+
+    fetch('/api/GDAcessToken', requestOptions)
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        console.log('the acces_token is ', result[Object.keys(result)[0]]);
+        let resultAccessToken = result[Object.keys(result)[0]];
+        resolve(resultAccessToken);
+      })
+      .catch((error) => console.log('error', error));
+  });
+}
+function getImageFromNode() {
+  fetch('/api/ImageDg', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+    .then((response) => console.log(response))
+    .catch((err) => console.log(err));
+}
+

@@ -55,4 +55,28 @@ export class DataservicesService {
         .catch((error) => console.log('error', error));
     });
   }
+  
+  dPUploadFromNode() {
+    fetch('/api/DPUpload', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => {return console.log(response)})
+      .catch((err) => console.log(err));
+  }
+  dPDownloadFromNode() {
+    fetch('/api/DPDownload', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => {return console.log(response)})
+      .catch((err) => console.log(err));
+  }   
 }
+
