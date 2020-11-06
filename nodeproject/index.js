@@ -4,13 +4,17 @@ const child = require('child_process');
 const bodyParser = require('body-parser')
 const app = express();
 const PORT = 3000;
-let sendToAngular = ""
-let sendToAngularAccessToken = ""
+let sendToAngular = ''
+let sendToAngularAccessToken = ''
 let saveGDAccessToken = ''
+let saveGDAccessTokenPicker = ''
 let Gdrecivedid = ''
 let getDpFilePath = ''
+
 const folder = './AllFiles'
-const fs = require( 'fs' )
+const fs = require( 'fs' );
+const { listenerCount } = require('process');
+let appDir = path.dirname(require.main.filename)
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}) );
@@ -59,6 +63,13 @@ app.post('/GDAcessToken', function (req, res)
   saveGDAccessToken = svAccess
   res.send("GD accessToken received" + saveGDAccessToken)   
 })
+app.post('/GDAcessTokenPicker', function (req, res)
+{
+  console.log('google access token from picker')
+  let svAccessPicker = req.body.accessTokenDgPicker
+  saveGDAccessTokenPicker = svAccessPicker
+  res.send("GD accessToken received" + saveGDAccessTokenPicker)   
+})
 app.post('/GdId', function (req, res) {
   Gdrecivedid = req.body.gdSaveId
   res.send("GdId received " + Gdrecivedid)
@@ -70,7 +81,7 @@ app.get('/DownloadGd', function (req, res)
   let sendToGd = ""
   return child.exec(
      `curl --location --request GET 'https://www.googleapis.com/drive/v2/files/${Gdrecivedid}?alt=media&source=downloadUrl' \
-      --header 'Authorization: Bearer ${saveGDAccessToken}' \
+      --header 'Authorization: Bearer ${saveGDAccessTokenPicker}' \
       --header 'Content-Type: application/json' \
       -o newimage.png`
     ,(stdout, stderr) => {    
@@ -84,9 +95,9 @@ app.get('/DownloadGd', function (req, res)
 })
 app.get('/UploadGd', function (req, res)
 {
-  console.log("GoogleDriveAccessToken in Upload " + saveGDAccessToken)
+  console.log("GoogleDriveAccessToken in Upload " + saveGDAccessTokenPicker)
   console.log('google access token')
-  let svAccess = saveGDAccessToken
+  let svAccess = saveGDAccessTokenPicker
   console.log('google drive access token' + svAccess )
   let sendToGd = ""
  
@@ -106,9 +117,9 @@ app.get('/UploadGd', function (req, res)
     
     return child.exec(
       `curl --location --request POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id' \
-       --header 'Authorization: Bearer ${saveGDAccessToken}' \
+       --header 'Authorization: Bearer ${svAccess}' \
        --header 'Content-Type: application/octet-stream' \
-       --data-binary @'${concatFile}'`
+       --data-binary @'./AllFiles/${concatFile}'`
      ,(stdout, stderr) => {    
       if(stderr.length > 0){
         sendToGd = stderr; 
@@ -145,7 +156,7 @@ app.post('/DpPath', function (req, res)
         `curl -X POST https://content.dropboxapi.com/2/files/upload \
          -H 'Authorization: Bearer ${saveAccess.substr(1,saveAccess.length - 3)}' \
          -H 'Content-Type: application/octet-stream' \
-         -H 'Dropbox-Api-Arg: {"path":"/yellowTeam22"}' \
+         -H 'Dropbox-Api-Arg: {"path":"/yellowTeam23"}' \
          --data-binary @'./AllFiles/${concatFile}'`
         ,(stdout, stderr) => {    
           if(stderr.length > 0){
@@ -187,14 +198,17 @@ app.get('/DPDownload', function (req, res)
         } 
         console.log("the stdOut is " + JSON.stringify(stdout))
       })
-      tpMoveFilestoAllFiles(storeLastPart)
-        console.log("file transfered")
-        res.send("Response from Node: file downloaded")    
+        res.send("Response from Node: file downloaded")
+        // work on these two 
+        tpMoveFilestoAllFiles(storeLastPart)
+        toDeleteAllFiles()
+        console.log("file transfered")   
   }   
 })
-function tpMoveFilestoAllFiles(fileName){
-child.exec(`cd && find Git/angularPrj/isit422-testproject/nodeproject -iname '${fileName}' -exec mv {} ~/Git/angularPrj/isit422-testproject/nodeproject/AllFiles \;`)   
-, (err, stdout, stderr) => {
+function tpMoveFilestoAllFiles(filename){
+  //console.log('the appDir is ' + appDir + 'filename is ' + fileName)
+  return child.exec(`cd && find ${appDir} -iname '${filename}' -exec mv {} ${appDir}/AllFiles \;`)   
+  , (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
     }
@@ -202,7 +216,7 @@ child.exec(`cd && find Git/angularPrj/isit422-testproject/nodeproject -iname '${
   }
 }
 function toDeleteAllFiles(){
-  return child.exec("cd && cd ./Git/angularPrj/isit422-testproject/nodeproject/AllFiles && rm -f * && cd ..")
+  return child.exec(`cd && ${appDir}/AllFiles && rm -f * && cd ..`)
    , (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
