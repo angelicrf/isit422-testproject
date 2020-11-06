@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵbypassSanitizationTrustStyle } from '@angular/core';
 import unfetch from 'unfetch';
 import { Dropbox } from '../../../../../node_modules/dropbox';
 import { DataservicesService } from '../../../dataservices.service';
@@ -8,13 +8,24 @@ import dropboxPicker from 'dropbox-file-picker';
 let holdData = []
 let extensions = ['png', 'jpg', '.gif']
 let impAccTK = ''
+let gdtransfered = false
+let gdcheckedglobal = false
 @Component({
   selector: 'app-services',
   templateUrl: './services.component.html',
   styleUrls: ['./services.component.css'],
 })
 export class ServicesComponent implements OnInit {
-  oauthToken: any;
+  oauthToken: any
+  dpchecked = false
+  gdchecked = false
+  dptransfer = false
+  gdtransfer = false
+  dataRetreived = false
+  dpname = 'Dropbox'
+  gdname = 'GoogleDrive'
+  gdtransfered = this.gdtransfer
+  gdcheckedglobal = this.gdchecked
 
   constructor(private data: DataservicesService) {}
   showCode: string;
@@ -22,7 +33,7 @@ export class ServicesComponent implements OnInit {
   ngOnInit(): void {
     this.showCode = this.data.getCodefromUri();
   }
-
+  
   handleDropboxClientLoad() {
     gapi.load('client:auth2', this.createDpPicker);
   }
@@ -46,6 +57,7 @@ export class ServicesComponent implements OnInit {
   }
   // show files and folders from drpbox file picker
   loadPicker() {
+    gdtransfered = true
     gapi.load('auth', { callback: this.onAuthApiLoad });
     gapi.load('picker', { callback: onPickerApiLoad });
   }
@@ -81,15 +93,24 @@ export class ServicesComponent implements OnInit {
       })
         .then(result => 
           {
-            alert(JSON.stringify(result[Object.keys(result)[0]].path_display))
+            alert(JSON.stringify(result[Object.keys(result)[0]].path_display) + ' ' + this.dpchecked)
+            if(this.dpchecked){
             let dpPath = result[Object.keys(result)[0]].path_display
             //console.log("dppath of a file " + dpPath )
             dpPathFiles(dpPath)
             this.data.dPDownloadFromNode()
+            this.dpchecked = false
+            this.dataRetreived = true
+            }
+            if(this.dptransfer){
+              this.data.dPUploadFromNode()
+            }
           }) 
             // .catch (error => console.log('error from dropbox picker ' + error)       
  }
       onAuthApiLoad() {
+        console.log("gdcheckedglobal is " + gdcheckedglobal)
+        console.log("gdTransfer is " + gdtransfered)
         gapi.auth.authorize(
           {
             client_id:
@@ -108,6 +129,7 @@ function onPickerApiLoad() {
 function handleAuthResult(authResult) {
   if (authResult && !authResult.error) {
     let oauthToken = authResult.access_token;
+    accessTokenGd(oauthToken)
     createPicker(oauthToken);
   }
 }
@@ -168,9 +190,15 @@ function pickerCallback(data) {
           response.text()
               )
         .catch((err) => console.log('Error from GDId ' + err));
-    alert('The user selected: ' + JSON.stringify(fileId));
-    //gDDownloadFromNode()
-    //gDUploadFromNode()
+    alert('The user selected: ' + JSON.stringify(fileId) + 'gdcheckedglobal  ' + gdcheckedglobal + 'gdtransfered ' + gdtransfered);
+   
+    if(gdcheckedglobal){
+      gDDownloadFromNode()
+    }
+    if(gdtransfered){
+      gDUploadFromNode()
+    }
+    
   }
 }
 function arrayBufferToBase64(buffer) {
@@ -227,4 +255,33 @@ function dpPathFiles(dpPathGiven){
                 response.text()
                     )
               .catch((err) => console.log('from dpPath ' + err))
+}
+function accessTokenGd(saveDg:string){
+  console.log('I am in features GDAccessTokenPicker Post ' + saveDg)
+  return new Promise((resolve, reject) => {
+    let myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+
+    let raw = JSON.stringify({
+      title: 'accessTokenDGPickerFromAngular',
+      accessTokenDgPicker: saveDg
+    });
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+    };
+
+    fetch('/api/GDAcessTokenPicker', requestOptions)
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        console.log('the acces_token is ', result[Object.keys(result)[0]]);
+        let resultAccessToken = result[Object.keys(result)[0]];
+        resolve(resultAccessToken);
+      })
+      .catch((error) => console.log('error', error));
+  });
 }

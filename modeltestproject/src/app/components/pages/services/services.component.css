@@ -3,3 +3,12 @@
     height: 99vh;
     background-color: rgba(65, 65, 167, 0.61);
   }
+  .chckBox-margin {
+    margin: 0 10px;
+  }
+  .chckBox-section{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+  }

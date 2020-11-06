@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-
+import {MatCheckboxModule} from '@angular/material/checkbox'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServicesComponent } from './components/pages/services/services.component';
@@ -34,6 +34,7 @@ export function initGapi(gapiSession: FeaturesComponent) {
     MatMenuModule,
     MatButtonModule,
     MatToolbarModule,
+    MatCheckboxModule,
     FormsModule,
     //NgbDropdownModule,
     //NgbDropdownMenu,

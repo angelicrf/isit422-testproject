@@ -2,18 +2,35 @@
 <p>services works!</p>
 <br />
 <br />
-<h3>Get dropbox files in Server-side way</h3>
-<p>Please run the server and click on the link below</p>
-<p>Go through the proccess, come back to the services page</p>
-<p>Click on the button FromExpressServer </p>
+<h3>Run server at the same time as angular</h3>
+
+<p>Which cloud storage do you choose to transfer data from ? </p>
+<section class="chckBox-section">
+<mat-checkbox  [disabled]="gdchecked ? true : null" class="chckBox-margin"  [(ngModel)]="dpchecked">DropBox</mat-checkbox>
+<br />
+<mat-checkbox [disabled]="dpchecked ? true : null" class="chckBox-margin"  [(ngModel)]="gdchecked">Google Drive</mat-checkbox>
+</section>
+<br />
+<p *ngIf="dpchecked">Choose files to transfer from {{dpname}}</p>
+<p *ngIf="gdchecked">Choose files to transfer from {{gdname}}</p>
+<a *ngIf="dpchecked" href="https://www.dropbox.com/oauth2/authorize?client_id=m69dopii079t806&response_type=code&scope=files.metadata.read files.content.write files.content.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Ffeatures" >dropboxlogin</a>
+<br />
+<button *ngIf="dpchecked" (click)="createDpPicker()">DropBoxPicker</button>
+<br />
+<button *ngIf="gdchecked" (click)="loadPicker()">GoogleDrivePicker</button>
+
+<div [(ngModel)]="dataRetreived">
+<p *ngIf="dataRetreived">Which cloud storage do you choose to transfer data into ? </p>
+<section *ngIf="dataRetreived" class="chckBox-section">
+<div *ngIf="dataRetreived">
+<mat-checkbox [disabled]="gdtransfer ? true : null" class="chckBox-margin" [(ngModel)]="dptransfer">DropBox</mat-checkbox>
+<mat-checkbox [disabled]="dptransfer ? true : null" class="chckBox-margin" [(ngModel)]="gdtransfer">Google Drive</mat-checkbox>
+</div>
+</section>
+<button *ngIf="gdtransfer" (click)="loadPicker()">GoogleDrivePicker</button>
+<button *ngIf="dptransfer" (click)="createDpPicker()">DropBoxPicker</button>
+</div>
 
 <br />
-<a href="https://www.dropbox.com/oauth2/authorize?client_id=m69dopii079t806&response_type=code&scope=files.metadata.read files.content.write files.content.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Ffeatures" >dropboxlogin</a>
-<br />
-<button (click)="createDpPicker()">DropBoxPicker</button>
-<br />
-<p>Google Drive file Picker</p>
-<br />
-<button (click)="loadPicker()">GoogleDrivePicker</button>
 <img id="image"/>
 </div>
