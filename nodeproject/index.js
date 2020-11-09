@@ -1,24 +1,41 @@
-const express = require('express');
-let path = require('path');
-const child = require('child_process');
+const express = require('express')
+const path = require('path')
+const folder = './AllFiles'
+const fs = require( 'fs' )
+const mongoose = require('mongoose')
+const {v4 : uuidv4} = require('uuid')
+const MongoUsers = require("./MongoUsers")
+const child = require('child_process')
 const bodyParser = require('body-parser')
 const app = express();
 const PORT = 3000;
+
 let sendToAngular = ''
 let sendToAngularAccessToken = ''
 let saveGDAccessToken = ''
 let saveGDAccessTokenPicker = ''
 let Gdrecivedid = ''
 let getDpFilePath = ''
-
-const folder = './AllFiles'
-const fs = require( 'fs' );
-const { listenerCount } = require('process');
 let appDir = path.dirname(require.main.filename)
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}) );
-
+// MongoDb
+const dbURI ="mongodb+srv://yelloteam:bcuser123456@cluster0.08j1d.mongodb.net/MultiCloudDB?retryWrites=true&w=majority"
+mongoose.set('useFindAndModify', false)
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  poolSize: 10
+}
+mongoose.connect(dbURI, options).then(
+  () => {
+    console.log("YellowTeam MultiCloudDB connection established!");
+  },
+  err => {
+    console.log("Error connection failed: ", err);
+  }
+)
 app.get('/' , (req,res) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.json({
@@ -33,7 +50,37 @@ app.get('/StoreData' , (req,res) => {
         snedMessage: 'Successful from StoreData'
     })
 })
+app.post('/UserLogin', function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  console.log("req userLoginName body from node " + JSON.stringify(req.body.uName))
+  console.log("req userLoginuLastName body from node " + JSON.stringify(req.body.uLastName))
+  console.log("req userLoginuuserName body from node " + JSON.stringify(req.body.uuserName))
+  console.log("req userLoginEmail body from node " + JSON.stringify(req.body.uEmail))
+  console.log("req userLoginPassword body from node " + JSON.stringify(req.body.uPassword))
 
+  let uLoginNameInfo = req.body.uName
+  let uLoginLastNameInfo = req.body.uLastName
+  let uLoginUserNameInfo = req.body.uuserName
+  let uLoginEmailInfo = req.body.uEmail
+  let uLoginPasswordInfo = req.body.uPassword
+  
+  let oneMongoUsers = new MongoUsers({
+    name: uLoginNameInfo,
+    lastname: uLoginLastNameInfo,
+    username: uLoginUserNameInfo,
+    email: uLoginEmailInfo,
+    password: uLoginPasswordInfo
+  })  
+    oneMongoUsers.save((err, usr) => {
+      if (err) {
+        res.status(400).send(err);
+      }
+      else {
+      console.log(usr);
+      res.status(200).json(usr);
+      }
+    })
+})
 app.post('/ShowData', function (req, res) {
     res.header('Access-Control-Allow-Origin', '*');
     console.log("req body from node " + JSON.stringify(req.body.saveCode))
@@ -83,13 +130,15 @@ app.get('/DownloadGd', function (req, res)
      `curl --location --request GET 'https://www.googleapis.com/drive/v2/files/${Gdrecivedid}?alt=media&source=downloadUrl' \
       --header 'Authorization: Bearer ${saveGDAccessTokenPicker}' \
       --header 'Content-Type: application/json' \
-      -o newimage.png`
+      -o newimage2.png`
     ,(stdout, stderr) => {    
      if(stderr.length > 0){
        sendToGd = stderr; 
          console.log("the stdErr is " + stderr)            
      } 
      console.log("the stdOut is " + JSON.stringify(sendToGd)) 
+      // move file to AllFiles
+     tpMoveFilestoAllFiles('newimage2.png')
      res.send("Response from Node: File downloaded from Google drive")   
    }) 
 })
@@ -100,21 +149,14 @@ app.get('/UploadGd', function (req, res)
   let svAccess = saveGDAccessTokenPicker
   console.log('google drive access token' + svAccess )
   let sendToGd = ""
- 
+  
    fs.readdirSync( folder ).forEach( file => {
     const extname = path.extname( file );
     const filename = path.basename( file, extname );
     const absolutePath = path.resolve( folder, file );
     const storeFile = file.toString()
     const concatFile = (filename + extname)
-    console.log("storeFile " + storeFile)
-    console.log("concatFile " + concatFile)
-
-    console.log( "File : ", file );
-    console.log( "filename : ", filename );
-    console.log( "extname : ", extname );
-    console.log( "absolutePath : ", absolutePath); 
-    
+  
     return child.exec(
       `curl --location --request POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id' \
        --header 'Authorization: Bearer ${svAccess}' \
@@ -126,11 +168,12 @@ app.get('/UploadGd', function (req, res)
           console.log("the stdErr is " + stderr)            
       }  
       console.log("the stdOut is " + JSON.stringify(sendToGd)) 
-      res.send("Response from Node: File downloaded from Google drive")   
+      toDeleteAllFiles()
+      res.send("Response from Node: File downloaded from Google drive")
+       })         
     })   
  })
   //application/octet-stream 
-})
 app.post('/DpPath', function (req, res)
 {
   let saveDpFilePath = req.body.dpGetFPath
@@ -144,7 +187,9 @@ app.post('/DpPath', function (req, res)
   let modifyGth = (gth.split(" "))
   let saveAccess = (modifyGth[1])
   let sendToGd = '';
-  //tpMoveFilestoAllFiles()
+  let newId = uuidv4()
+  console.log("issued uuid " + newId )
+
   if(saveAccess.charAt(0) == '"' || saveAccess.charAt(saveAccess.length - 1) == '"'){
      fs.readdirSync( folder ).forEach( file => {
       const extname = path.extname( file );
@@ -156,7 +201,7 @@ app.post('/DpPath', function (req, res)
         `curl -X POST https://content.dropboxapi.com/2/files/upload \
          -H 'Authorization: Bearer ${saveAccess.substr(1,saveAccess.length - 3)}' \
          -H 'Content-Type: application/octet-stream' \
-         -H 'Dropbox-Api-Arg: {"path":"/yellowTeam23"}' \
+         -H 'Dropbox-Api-Arg: {"path": "/yellowTeam${newId}"}' \
          --data-binary @'./AllFiles/${concatFile}'`
         ,(stdout, stderr) => {    
           if(stderr.length > 0){
@@ -190,24 +235,23 @@ app.get('/DPDownload', function (req, res)
       `curl -X POST https://content.dropboxapi.com/2/files/download \
        -H 'Authorization: Bearer ${saveAccess.substr(1,saveAccess.length - 3)}' \
        -H 'Dropbox-Api-Arg: {"path": "${getDpFilePath}"}' \
-       -o ${storeLastPart}`
+       -o ./AllFiles/${storeLastPart}`
       ,(stdout, stderr) => {    
         if(stderr.length > 0){
           sendToGd = stderr; 
             console.log("the stdErr is " + stderr)            
         } 
         console.log("the stdOut is " + JSON.stringify(stdout))
-      })
-        res.send("Response from Node: file downloaded")
-        // work on these two 
-        tpMoveFilestoAllFiles(storeLastPart)
-        toDeleteAllFiles()
-        console.log("file transfered")   
-  }   
+      })   
+        console.log("file transfered")
+        res.send("Response from Node: file downloaded")             
+  }  
+  //tpMoveFilestoAllFiles(storeLastPart) 
 })
 function tpMoveFilestoAllFiles(filename){
   //console.log('the appDir is ' + appDir + 'filename is ' + fileName)
-  return child.exec(`cd && find ${appDir} -iname '${filename}' -exec mv {} ${appDir}/AllFiles \;`)   
+  //find . -name '${filename}' -exec mv {} /AllFiles \;
+  return child.exec(`mv ${filename} ${appDir}/AllFiles`)   
   , (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
@@ -216,7 +260,7 @@ function tpMoveFilestoAllFiles(filename){
   }
 }
 function toDeleteAllFiles(){
-  return child.exec(`cd && ${appDir}/AllFiles && rm -f * && cd ..`)
+  return child.exec(`cd ./AllFiles && rm -f * && cd ..`)
    , (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
