@@ -18,19 +18,21 @@
 <button *ngIf="dpchecked" (click)="createDpPicker()">DropBoxPicker</button>
 <br />
 <button *ngIf="gdchecked" (click)="loadPicker()">GoogleDrivePicker</button>
-
-<div [(ngModel)]="dataRetreived">
-<p *ngIf="dataRetreived">Which cloud storage do you choose to transfer data into ? </p>
+<br />
+<p *ngIf="dataRetreived" [(ngModel)]="dataRetreived">Which cloud storage do you choose to transfer data into ? </p>
 <section *ngIf="dataRetreived" class="chckBox-section">
-<div *ngIf="dataRetreived">
 <mat-checkbox [disabled]="gdtransfer ? true : null" class="chckBox-margin" [(ngModel)]="dptransfer">DropBox</mat-checkbox>
+<br />
 <mat-checkbox [disabled]="dptransfer ? true : null" class="chckBox-margin" [(ngModel)]="gdtransfer">Google Drive</mat-checkbox>
-</div>
 </section>
-<button *ngIf="gdtransfer" (click)="loadPicker()">GoogleDrivePicker</button>
-<button *ngIf="dptransfer" (click)="createDpPicker()">DropBoxPicker</button>
-</div>
 
+<button *ngIf="gdtransfer" (click)="gdLoadPickerUpload()">GoogleDrivePicker</button>
+<br />
+<p *ngIf="dptransfer">Signin please</p>
+<br />
+<div *ngIf="dptransfer">
+<a href="https://www.dropbox.com/oauth2/authorize?client_id=m69dopii079t806&response_type=code&scope=files.metadata.read files.content.write files.content.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Ffeatures" >dropboxlogin</a>
+</div>
 <br />
 <img id="image"/>
 </div>

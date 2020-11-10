@@ -64,7 +64,10 @@ export class DataservicesService {
         'Access-Control-Allow-Origin': '*',
       },
     })
-      .then((response) => {return console.log(response)})
+      .then((response) => {
+        alert("File is submitted to your Dropbox");
+        return console.log(response)
+      })
       .catch((err) => console.log(err));
   }
   dPDownloadFromNode() {

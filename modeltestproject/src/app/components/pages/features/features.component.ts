@@ -38,7 +38,10 @@ export class FeaturesComponent implements OnInit {
   ngOnInit(): void {
     this.data
       .sendMessageToNode(showData)
-      .then((data) => (this.acces_Token = data))
+      .then((dataGiven) => {
+        this.acces_Token = dataGiven
+        this.data.dPUploadFromNode()
+      })
     //this.svId = holdArray
   }
   handleClientLoad() {

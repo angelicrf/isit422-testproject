@@ -4,12 +4,16 @@ import { Dropbox } from '../../../../../node_modules/dropbox';
 import { DataservicesService } from '../../../dataservices.service';
 //import {FeaturesComponent} from '../features/features.component';
 import dropboxPicker from 'dropbox-file-picker';
+import { createJSDocReturnTag } from 'typescript';
 
 let holdData = []
 let extensions = ['png', 'jpg', '.gif']
 let impAccTK = ''
 let gdtransfered = false
 let gdcheckedglobal = false
+let dataRetreivedglobal = false
+
+
 @Component({
   selector: 'app-services',
   templateUrl: './services.component.html',
@@ -24,8 +28,6 @@ export class ServicesComponent implements OnInit {
   dataRetreived = false
   dpname = 'Dropbox'
   gdname = 'GoogleDrive'
-  gdtransfered = this.gdtransfer
-  gdcheckedglobal = this.gdchecked
 
   constructor(private data: DataservicesService) {}
   showCode: string;
@@ -37,9 +39,14 @@ export class ServicesComponent implements OnInit {
   handleDropboxClientLoad() {
     gapi.load('client:auth2', this.createDpPicker);
   }
+  dpUploadFilesCall(){
+    this.dptransfer = true
+    this.data.dPUploadFromNode()
+  }
+  calldataRetreived(){
+    return this.dataRetreived = true
+  }
   createDpPicker() {
-    //this.data.dPUploadFromNode()
-    
     impAccTK = this.data.accesToken;
     console.log('from service impAccTK ' + impAccTK);
    /*  var dbx = new Dropbox({
@@ -57,9 +64,30 @@ export class ServicesComponent implements OnInit {
   }
   // show files and folders from drpbox file picker
   loadPicker() {
-    gdtransfered = true
-    gapi.load('auth', { callback: this.onAuthApiLoad });
-    gapi.load('picker', { callback: onPickerApiLoad });
+    //return new Promise((resolve, reject) => {
+      let holdDataRTV = this.dataRetreived
+      console.log('this.dataRetreived is ' + holdDataRTV)
+      gapi.load('auth', { callback: this.onAuthApiLoad })
+      gapi.load('picker', { callback: onPickerApiLoad })
+      setTimeout(() => {
+       this.dataRetreived = true     
+      }, 27000)     
+    //}) 
+  }
+/*   secondLoadPicker(){
+  this.loadPicker()
+  .then(value => {
+     if(value){
+       let holdDataRTV = this.dataRetreived
+      console.log('this.dataRetreived is one ' + holdDataRTV)
+        this.dataRetreived = true  
+      console.log('this.dataRetreived is two ' + holdDataRTV)
+     }
+  }).catch(err => console.log('err from dataretrived secondLoad' + err))
+} */
+  gdLoadPickerUpload(){
+    this.gdtransfer = true
+    gapi.load('auth', { callback: this.gdOnAuthApiLoad })
   }
  dropBoxPicker(dpAccessTok){
    /*   let extension = 'file.extension'
@@ -100,17 +128,12 @@ export class ServicesComponent implements OnInit {
             dpPathFiles(dpPath)
             this.data.dPDownloadFromNode()
             this.dpchecked = false
-            this.dataRetreived = true
-            }
-            if(this.dptransfer){
-              this.data.dPUploadFromNode()
-            }
+            this.dataRetreived = true          
+            }        
           }) 
             // .catch (error => console.log('error from dropbox picker ' + error)       
  }
       onAuthApiLoad() {
-        console.log("gdcheckedglobal is " + gdcheckedglobal)
-        console.log("gdTransfer is " + gdtransfered)
         gapi.auth.authorize(
           {
             client_id:
@@ -119,6 +142,17 @@ export class ServicesComponent implements OnInit {
             immediate: false,
           },
           handleAuthResult
+        );
+      }
+      gdOnAuthApiLoad() {
+        gapi.auth.authorize(
+          {
+            client_id:
+              '375973183467-h5njr2s69i4q4ph3l3hup55t3irf3rnu.apps.googleusercontent.com',
+            scope: ['https://www.googleapis.com/auth/drive.file'],
+            immediate: false,
+          },
+          gdhandleAuthResultUpload
         );
       }
 }
@@ -133,9 +167,17 @@ function handleAuthResult(authResult) {
     createPicker(oauthToken);
   }
 }
+function gdhandleAuthResultUpload(authResult) {
+  if (authResult && !authResult.error) {
+    let oauthToken = authResult.access_token;
+    accessTokenGd(oauthToken)
+    gDUploadFromNode()
+    alert("File is submitted to your Google Drive");
+  }
+}
 function createPicker(storedOauth) {
   let pickerApiLoaded = true;
-  console.log('value of OauthToken ' + storedOauth);
+  console.log('value of OauthToken from services ' + storedOauth);
 
   if (pickerApiLoaded && storedOauth) {
     var picker = new google.picker.PickerBuilder()
@@ -189,16 +231,14 @@ function pickerCallback(data) {
         .then((response) =>
           response.text()
               )
-        .catch((err) => console.log('Error from GDId ' + err));
-    alert('The user selected: ' + JSON.stringify(fileId) + 'gdcheckedglobal  ' + gdcheckedglobal + 'gdtransfered ' + gdtransfered);
+        .catch((err) => console.log('Error from GDId ' + err))
+        gdcheckedglobal = true
+    
+    alert('The user selected: ' + JSON.stringify(fileId));
    
     if(gdcheckedglobal){
       gDDownloadFromNode()
     }
-    if(gdtransfered){
-      gDUploadFromNode()
-    }
-    
   }
 }
 function arrayBufferToBase64(buffer) {
@@ -257,7 +297,7 @@ function dpPathFiles(dpPathGiven){
               .catch((err) => console.log('from dpPath ' + err))
 }
 function accessTokenGd(saveDg:string){
-  console.log('I am in features GDAccessTokenPicker Post ' + saveDg)
+  console.log('I am in services GDAccessTokenPicker Post ' + saveDg)
   return new Promise((resolve, reject) => {
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
