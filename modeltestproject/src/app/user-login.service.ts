@@ -28,4 +28,30 @@ export class UserLoginService {
     .then(data => console.log(data))
     .catch(err => console.log(err))
   }
+  userSignIn(){
+    return new Promise((resolve, reject) => {
+    fetch('/api/UserMongoCR', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then(response => {return response.json()})
+      .then(getdata => {
+        //console.log("getdata from Service " + JSON.stringify(getdata))
+        let findAllMongoData = []
+        
+        getdata.forEach(element => {  
+          let newUserMongoData = {}
+          newUserMongoData['clientEmail'] = element.email
+          newUserMongoData['clientPassword'] = element.password
+          findAllMongoData.push(newUserMongoData) 
+        })
+        //console.log("elementEmail from Service " + JSON.stringify(findAllMongoData))
+          resolve(findAllMongoData)
+      })
+      .catch((err) => console.log("Error getdata from Service " + err))
+  })
+}
 }

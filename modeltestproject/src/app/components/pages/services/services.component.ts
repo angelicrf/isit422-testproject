@@ -12,7 +12,7 @@ let impAccTK = ''
 let gdtransfered = false
 let gdcheckedglobal = false
 let dataRetreivedglobal = false
-
+let showCode:string
 
 @Component({
   selector: 'app-services',
@@ -26,14 +26,23 @@ export class ServicesComponent implements OnInit {
   dptransfer = false
   gdtransfer = false
   dataRetreived = false
+  chekedRemember = false
+  service_acces_Token: any;
+  
   dpname = 'Dropbox'
   gdname = 'GoogleDrive'
 
-  constructor(private data: DataservicesService) {}
-  showCode: string;
-
+  constructor(private data: DataservicesService) {
+    //showCode = this.data.getCodefromUri()
+  }
+  
   ngOnInit(): void {
-    this.showCode = this.data.getCodefromUri();
+    /* this.data
+      .sendMessageToNode(showCode)
+      .then((dataGiven) => {
+        this.service_acces_Token = dataGiven
+        this.data.dPUploadFromNode()
+      }) */
   }
   
   handleDropboxClientLoad() {
