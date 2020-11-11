@@ -21,7 +21,7 @@ let appDir = path.dirname(require.main.filename)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}) );
 // MongoDb
-const dbURI ="mongodb+srv://yelloteam:bcuser123456@cluster0.08j1d.mongodb.net/MultiCloudDB?retryWrites=true&w=majority"
+const dbURI ="mongodb+srv://admin:password123456@heros.dvoaa.mongodb.net/MultiCloudDB?retryWrites=true&w=majority"
 mongoose.set('useFindAndModify', false)
 const options = {
   useNewUrlParser: true,
@@ -49,6 +49,17 @@ app.get('/StoreData' , (req,res) => {
         title: "new Message from Node Store Data",
         snedMessage: 'Successful from StoreData'
     })
+})
+app.get('/UserMongoCR', function (req, res) {
+  console.log('userMongoCR called')
+  MongoUsers.find({}, (err, AllClients) => {
+    console.log('userMongoCR called2' + AllClients)
+    if (err) {
+      console.log("Error from userMongoCR" + err);
+      res.status(500).send(err);
+    }
+    res.status(200).json(AllClients);
+  })
 })
 app.post('/UserLogin', function (req, res) {
   res.header('Access-Control-Allow-Origin', '*')
