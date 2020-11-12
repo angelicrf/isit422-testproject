@@ -8,6 +8,7 @@ import {UserLoginService} from './user-login.service';
 export class AppComponent implements OnInit {
   title = 'modeltestproject'
   chekedRemember = false
+  sigininChekedRemember = false
   name:string
   lastname:string
   username:string
@@ -21,11 +22,11 @@ export class AppComponent implements OnInit {
 
   signedin() {
     console.log('signedin');
-  /*    if(localStorage.length != 0){
+      if(localStorage.length != 0){
       this.email = localStorage.getItem('clientEmail')
       this.password = localStorage.getItem('clientPassword')
-    }  */
-    //else{
+    } 
+    else{
       this.usrLogin.userSignIn()
       .then(res => {
         console.log("All from app comp " + JSON.stringify(res))
@@ -55,6 +56,12 @@ export class AppComponent implements OnInit {
             passwordFound = true
            }
        if(emailFound && passwordFound){
+           if(this.sigininChekedRemember){
+             let signinEmail = this.email
+             let siginPassword = this.password
+            localStorage.setItem('clientEmail',signinEmail)
+            localStorage.setItem('clientPassword',siginPassword)
+           }
             alert('email and password found user is signed in')
          }       
        if(emailFound && passwordFound == false) {
@@ -69,6 +76,7 @@ export class AppComponent implements OnInit {
       }) 
       .catch(err => console.log('error from getting dataMongo ' + err))
     } 
+  }
   
   signedup() {
     let newName = this.name
