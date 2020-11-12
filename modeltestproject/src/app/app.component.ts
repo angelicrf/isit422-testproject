@@ -13,6 +13,8 @@ export class AppComponent implements OnInit {
   username:string
   email:string
   password:string
+  isEmailValid:boolean
+
   
   constructor(private usrLogin: UserLoginService){}
   ngOnInit() {}
@@ -85,7 +87,20 @@ export class AppComponent implements OnInit {
       localStorage.setItem('clientPassword',newPassword)
     }
     return newSignedup
+
   }
+  validateEmail(email):boolean {
+    
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(re.test(String(email).toLowerCase())){
+      return this.isEmailValid = true
+    }
+    else {
+      alert('email is invalid')
+      return this.isEmailValid = false
+    }
+   }
+   
   menu_info() {
     console.log('menu info clicked');
   }
