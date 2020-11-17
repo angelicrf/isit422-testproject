@@ -6,9 +6,9 @@
 
 <p>Which cloud storage do you choose to transfer data from ? </p>
 <section class="chckBox-section">
-<mat-checkbox  [disabled]="gdchecked ? true : null" class="chckBox-margin"  [(ngModel)]="dpchecked">DropBox</mat-checkbox>
+<mat-checkbox  [disabled]="gdchecked ? true : null" class="chckBox-margin"  [(ngModel)]="dpchecked" [ngModelOptions]="{standalone: true}">DropBox</mat-checkbox>
 <br />
-<mat-checkbox [disabled]="dpchecked ? true : null" class="chckBox-margin"  [(ngModel)]="gdchecked">Google Drive</mat-checkbox>
+<mat-checkbox [disabled]="dpchecked ? true : null" class="chckBox-margin"  [(ngModel)]="gdchecked" [ngModelOptions]="{standalone: true}">Google Drive</mat-checkbox>
 </section>
 <br />
 <p *ngIf="dpchecked">Choose files to transfer from {{dpname}}</p>
@@ -19,7 +19,7 @@
 <br />
 <button *ngIf="gdchecked" (click)="loadPicker()">GoogleDrivePicker</button>
 <br />
-<p *ngIf="dataRetreived" [(ngModel)]="dataRetreived">Which cloud storage do you choose to transfer data into ? </p>
+<p *ngIf="dataRetreived" [(ngModel)]="dataRetreived" [ngModelOptions]="{standalone: true}">Which cloud storage do you choose to transfer data into ? </p>
 <section *ngIf="dataRetreived" class="chckBox-section">
 <mat-checkbox [disabled]="gdtransfer ? true : null" class="chckBox-margin" [(ngModel)]="dptransfer">DropBox</mat-checkbox>
 <br />

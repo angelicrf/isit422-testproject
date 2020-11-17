@@ -21,6 +21,6 @@
       "gapi.client.drive",
       "google.picker"
     ],
-    "lib": ["es2018", "dom"]
+    "lib": ["es2018", "dom","dom.iterable"]
   }
 }

@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DragdropComponent } from './dragdrop/dragdrop.component';
 
 //import {NgbDropdownModule, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
 export function initGapi(gapiSession: FeaturesComponent) {
@@ -24,7 +25,7 @@ export function initGapi(gapiSession: FeaturesComponent) {
 }
 
 @NgModule({
-  declarations: [AppComponent, ServicesComponent, FeaturesComponent],
+  declarations: [AppComponent, ServicesComponent, FeaturesComponent, DragdropComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

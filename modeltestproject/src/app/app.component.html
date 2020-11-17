@@ -80,7 +80,7 @@
                 </div>
               </div>
               <div class="form-check">
-                <input type="checkbox" [(ngModel)]="sigininChekedRemember" class="form-check-input" id="dropdownCheck2">
+                <input type="checkbox" [(ngModel)]="sigininChekedRemember" [ngModelOptions]="{standalone: true}" class="form-check-input" id="dropdownCheck2">
                 <label class="form-check-label" for="dropdownCheck2">
                   Remember me
                 </label>
@@ -103,9 +103,9 @@
         <mat-icon>cloud_download</mat-icon>
         <span>Services</span>
       </button>
-      <button mat-menu-item (click)="menu_info()">
+      <button mat-menu-item routerLink="/dragdrop">
         <mat-icon>info</mat-icon>
-        <span>Info</span>
+        <span>Drag-Drop</span>
       </button>
     </div>
     </mat-menu>

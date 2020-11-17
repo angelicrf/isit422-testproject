@@ -1,0 +1,17 @@
+#dropOne.highlight {
+    border-color: rgb(139, 90, 57);
+  } 
+#dragOne, #dropOne {
+    float: left;
+    width: 340px;
+    height: 280px;
+    margin: 8px;
+    padding: 7px;
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+}
+img {
+  width: 200px;
+  height: 200px;
+  margin-left: 20px;
+}
