@@ -2,6 +2,8 @@ const express = require('express')
 const path = require('path')
 const folder = './AllFiles'
 const fs = require( 'fs' )
+const multer = require('multer')
+const upload = multer();
 const mongoose = require('mongoose')
 const {v4 : uuidv4} = require('uuid')
 const MongoUsers = require("./MongoUsers")
@@ -61,6 +63,12 @@ app.get('/UserMongoCR', function (req, res) {
     res.status(200).json(AllClients);
   })
 })
+app.post('/HandleDrDrp', upload.any(), function (req, res) {
+  console.log('HandleDrDrp called')
+    let holdUserName = req.body
+    console.log('holdUserName is' + JSON.stringify(req.body))
+    res.json(holdUserName)
+  })
 app.post('/UserLogin', function (req, res) {
   res.header('Access-Control-Allow-Origin', '*')
   console.log("req userLoginName body from node " + JSON.stringify(req.body.uName))
