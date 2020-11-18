@@ -46,8 +46,8 @@ uploadFile(file) {
   let formData = new FormData()
   //"multipart/form-data"
   let myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append('Content-Type', "multipart/form-data");
+  myHeaders.append('Content-Type', "application/x-www-form-urlencoded");
+  //myHeaders.append('Content-Type', "multipart/form-data");
   formData.append('file', file)
   for(var pair of formData.entries()) {
     console.log(JSON.stringify(pair[0]) + ', '+ pair[1]); 
