@@ -1,0 +1,25 @@
+.multicloudImg {
+  margin-left: 150px;
+  margin-top: 250px;
+  float: left;
+}
+.signUp {
+  float: left;
+  margin-top: 50px;
+  margin-left: 150px;
+}
+.row {
+    display: flex;
+    margin-left: 50px;
+    margin-top: 50px;
+  }
+  
+  .column {
+    flex: 20%;
+  }
+  .form-group{
+    width: 300px;
+  }
+  h3{
+    margin-left: 40px;
+  }

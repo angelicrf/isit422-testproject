@@ -1,0 +1,41 @@
+<div>
+    <mat-toolbar color="primary">
+     <button mat-icon-button class="btn btn-primary" [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+      </button>
+      <span id="team_name">Yellow Team App</span>
+      <nav>
+        <a routerLink="/home" id="a_three">Home</a>
+        <a routerLink="/cloudmanagement" id="a_one">Cloud Management</a>
+        <a routerLink="/filetransfer" id="a_three">File Transfer</a>
+        <a routerLink="/sign-up" id="a_three">{{appSpName}}</a>
+        <a routerLink="/sign-in" id="a_four">{{appSiName}}</a>
+       
+      </nav>
+    </mat-toolbar> 
+      <mat-menu #menu="matMenu">
+        <div class="card">
+            <button mat-menu-item routerLink="/home" >
+              <mat-icon >home</mat-icon>
+              <span>home</span>
+            </button>
+            <button mat-menu-item routerLink="/sign-in" >
+              <mat-icon>login</mat-icon>
+              <span>{{appSiName}}</span>
+            </button>
+            <button mat-menu-item routerLink="/sign-up">
+              <mat-icon>add_task</mat-icon>
+              <span>{{appSpName}}</span>
+            </button>
+            <button mat-menu-item routerLink="/cloudmanagement" >
+             <mat-icon >cloud_download</mat-icon>
+             <span>Cloud Management</span>
+            </button>
+           <button mat-menu-item routerLink="/filetransfer" >
+            <mat-icon >perm_media</mat-icon>
+            <span>File Transfer</span>
+           </button>
+      </div>
+      </mat-menu>
+<router-outlet></router-outlet>
+<app-messages></app-messages>
