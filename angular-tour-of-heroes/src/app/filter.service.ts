@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class FilterService {
   filters: string[] = [
-    'Images to Dropbox',
-    'Documents to Google Drive'
+    //'Images to Dropbox',
+    //'Documents to Google Drive'
   ];
 
   add(filter: string) {

@@ -114,6 +114,22 @@ dpGetClientInfo(dpAccessToken:string){
         .catch((err) => console.log(err));
     })
   }   
+  async dPDownloadLocalFromNode() {
+    return await new Promise((resolve,reject) => {
+      fetch('/api/DPDownloadLocal', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then((response) => {
+          console.log(response)
+          return resolve(response)
+        })
+        .catch((err) => console.log(err));
+    })
+  }   
 
   async dPUploadFromNode() {
     return await new Promise((resolve,reject) => {
@@ -123,6 +139,26 @@ dpGetClientInfo(dpAccessToken:string){
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
+      })
+        .then((response) => {
+          alert("File is submitted to your Dropbox");
+          console.log(response)
+          return resolve(response);
+        })
+        .catch((err) => console.log(err));
+    })
+  }
+  async dPUploadLocalFromNode(fileName) {
+    return await new Promise((resolve,reject) => {
+      fetch('/api/DPUploadLocal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({
+          fileName: fileName
+        })
       })
         .then((response) => {
           alert("File is submitted to your Dropbox");

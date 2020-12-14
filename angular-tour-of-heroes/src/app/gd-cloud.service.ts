@@ -113,6 +113,40 @@ export class GdCloudService {
    })
   
   }
+  async gDUploadLocal(fileName) {
+    return await new Promise((resolve,reject) => {
+      fetch('/api/UploadGdLocal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({
+          fileName: fileName
+        })
+      })
+        .then((response) => {
+          console.log(response)
+          return resolve(response) })
+        .catch((err) => console.log(err));
+    })
+  }
+  async gDUpdateLocalFileName() {
+    return await new Promise((resolve,reject) => {
+     fetch('/api/GDUpdateLocalFile', {
+       method: 'GET',
+       headers: {
+         'Content-Type': 'application/json',
+         'Access-Control-Allow-Origin': '*',
+       },
+     })
+       .then((response) => {
+          console.log(response) 
+         return (resolve(response))})
+       .catch((err) => console.log(err));
+    })
+   
+   }
   //Take care of the fileId
   async getGdId(fileId:string,fileGdName:string){
     console.log("fileGdName from gd-service " + fileGdName);
@@ -157,7 +191,22 @@ export class GdCloudService {
           return resolve(response) })
         .catch((err) => console.log(err));
     })  
-  } 
+  }
+  async gDDownloadLocalFromNode() {
+    return await new Promise((resolve,reject) => {
+      fetch('/api/DownloadGdLocal', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then((response) => {
+          console.log(response)
+          return resolve(response) })
+        .catch((err) => console.log(err));
+    })  
+  }
 }
 
 function sendGdClientInfo(getGdName,getgdEmail,getUserMongoId){

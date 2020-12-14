@@ -8,9 +8,9 @@
         <button *ngIf="!leftServiceForm" class="services-button" (click)="leftServiceForm = true">{{serviceNames[service1]}}<br>{{serviceAccounts[service1]}}</button>
         <div *ngIf="leftServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
-          <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles()">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
+          <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles('left')">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
-          <button class="services-button" (click)="files1=[]; displayClientFiles(); service1 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
+          <button class="services-button" (click)="files1=[]; displayClientFiles('left'); googleDriveInit(); leftServiceForm = false; service1 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
           <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 2;">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">
@@ -38,12 +38,12 @@
                   <label class="file-text">{{fil}}</label>
                 </div>
             </div>
-              <div *ngIf="folders.length > 0">
-                <div class="example-box" *ngFor="let fol of folders" cdkDrag>
-                  <img class="file" src="assets/images/folder.png" width="60" height="60">
-                  <label class="file-text">{{fol}}</label>
-                </div>
+            <div *ngIf="folders.length > 0">
+              <div class="example-box" *ngFor="let fol of folders" cdkDrag>
+                <img class="file" src="assets/images/folder.png" width="60" height="60">
+                <label class="file-text">{{fol}}</label>
               </div>
+            </div>
           </div>
         </div>
     </div>
@@ -52,9 +52,9 @@
         <button *ngIf="!rightServiceForm" class="services-button" (click)="rightServiceForm = true">{{serviceNames[service2]}}<br>{{serviceAccounts[service2]}}</button>
         <div *ngIf="rightServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
-          <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 0;">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
+          <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 0;  dpProcessFiles('right')">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
-          <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 1; googleDriveInit()">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
+          <button class="services-button" (click)="files2=[]; displayClientFiles('right'); googleDriveInit(); rightServiceForm = false; service2 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
           <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 2;">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">
