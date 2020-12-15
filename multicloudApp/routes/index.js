@@ -12,6 +12,8 @@ let Gdrecivedid = '';
 let GdrecivedName = '';
 let getDpFilePath = '';
 let storeLastPart = '';
+let holdBoxCode = '';
+let boxAccessToke = '';
 let appDir = path.dirname(require.main.filename);
 // fs for reading local files
 const fs = require('fs');
@@ -22,6 +24,7 @@ const mongoose = require("mongoose");
 const MCUsers = require("../McUsers");
 const MCClient = require("../McCloud");
 const DbClient = require('../DbCloud');
+const { stdout, stderr } = require('process');
 
 // mongodb connection string
 const dbURI =
@@ -954,7 +957,7 @@ router.get('/DownloadGdLocal', function (req, res)
   console.log("GdId from node " + Gdrecivedid)
   console.log("GdrecivedName from node " + GdrecivedName)
   //      --header 'Content-Type: application/json' \
-  let sendToGd = ""
+  let sendToGd = "";
   let fileNameCreate = GdrecivedName.toString();
   return child.exec(
      `curl --location --request GET 'https://www.googleapis.com/drive/v2/files/${Gdrecivedid}?alt=media&source=downloadUrl' \
@@ -994,8 +997,39 @@ async function tpMoveFilestoAllFiles(filename){
     return resolve(stdout);
     });
   });
-  
+  //some comments to see
 }
+// Post code
+router.post('/BoxCode', function (req,res) {
+  console.log("BoxCode called");
+  holdBoxCode = req.body.saveCode;
+  console.log("holdBoxCode is " + holdBoxCode);
+  //if(res.ok){
+    res.status(200).json({"issuedCode":`the code is received ${holdBoxCode}`});
+    return holdBoxCode;
+  ///}
+});
+//Issue AccessToken by using the code
+router.get('/BoxOauth', (req,res) => {
+  console.log("BoxOauth called");
+  console.log("holdBoxCode from BoxOath " + holdBoxCode);
+  return child.exec(
+    `curl -i -X POST "https://api.box.com/oauth2/token" \
+      -H "Content-Type: application/x-www-form-urlencoded" \
+      -d "client_id=cizpnka9apgvmixa683wgv0lk63cbv7q" \
+      -d "client_secret=5g7OcCqXqheEdINx3zDeF1jeXnBth137" \
+      -d "code=${holdBoxCode}" \
+      -d "grant_type=authorization_code"`,
+  (err,stdout,stderr) => {
+    if(err){
+      console.log("err from BoxOath " + err)
+    }
+    console.log("the BoxOath stdout is " + stdout);
+    console.log("the BoxOath stderr is " + stderr);
+    boxAccessToken = stdout.toString();
+    res.status(200).json({"boxAccesToken": "box_AccessToken_Issued", "access_token": boxAccessToken});
+  });
+});
 function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
    , (err, stdout, stderr) => {
