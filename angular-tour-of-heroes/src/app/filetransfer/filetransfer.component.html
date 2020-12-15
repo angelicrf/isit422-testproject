@@ -14,7 +14,7 @@
           <img src="{{serviceIcons[2]}}" width="64" height="64">
           <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 2;">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">
-          <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 3;">{{serviceNames[3]}}<br>{{serviceAccounts[3]}}</button><br>
+          <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 3; boxProcessFiles();">{{serviceNames[3]}}<br>{{serviceAccounts[3]}}</button><br>
           <img src="{{serviceIcons[4]}}" width="64" height="64">
           <button class="services-button" (click)="files1=[]; leftServiceForm = false; getLocalFiles('left'); service1 = 4;">{{serviceNames[4]}}<br>{{serviceAccounts[4]}}</button>
         </div>

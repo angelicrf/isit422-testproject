@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BxCloudService } from '../bx-cloud.service';
 import { FilterService } from '../filter.service';
 import { GdCloudService } from '../gd-cloud.service';
 import { GDClientCredentials } from '../gdClientCredentials';
@@ -10,7 +11,7 @@ import { GDClientCredentials } from '../gdClientCredentials';
 })
 export class CloudmanagementComponent {
   
-  constructor(public filterService: FilterService, private gdService: GdCloudService, private gdcl:GDClientCredentials) {}
+  constructor(public filterService: FilterService, private gdService: GdCloudService, private gdcl:GDClientCredentials, private bxService: BxCloudService) {}
   
   title = 'CloudManagementComponent';
   checked = false;
@@ -128,6 +129,9 @@ export class CloudmanagementComponent {
     let link = document.createElement('a')
     link.href = dpUrl
     link.click()
+  }
+  boxSaveCode(){
+    this.bxService.boxRedirectCode();
   }
  
 }

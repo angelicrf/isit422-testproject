@@ -5,8 +5,10 @@ import { GdCloudService } from '../gd-cloud.service';
 import { DpCloudService } from '../dp-cloud.service';
 import { CheckCategories, buildFileListByFilter } from '../filetransfer/filterByFileType.js';
 import { GDClientCredentials } from '../gdClientCredentials';
+import { BxCloudService } from '../bx-cloud.service';
 let clFile: string[];
 let showData: string;
+let bxCode:string;
 let retreiveDpFiles:any = {};
 let holdClientFilesToDisplay:any = {};
 
@@ -62,8 +64,10 @@ export class FiletransferComponent implements OnInit {
   constructor(public filterService: FilterService,
     private gdService: GdCloudService, 
     private dpService: DpCloudService,
-    private gdcl:GDClientCredentials) {
-      showData = this.dpService.getCodefromUri();
+    private gdcl:GDClientCredentials,
+    private bxService: BxCloudService) {
+      //showData = this.dpService.getCodefromUri();
+      bxCode = this.bxService.getBoxCodefromUri();
     }
 
   ngOnInit(){
@@ -545,4 +549,12 @@ export class FiletransferComponent implements OnInit {
       })
     }) 
   }
+  async boxProcessFiles(){
+    //console.log("bxCode is " + bxCode);
+    await this.bxService.getboxCodeOauth(bxCode);
+    //console.log("getBoxCode is " + JSON.stringify(getBoxCd));
+    await this.bxService.issueBoxAccessToken();
+    //console.log("showBoxAccessToken is " + showBoxAccessToken);
+  }
+  
 }
