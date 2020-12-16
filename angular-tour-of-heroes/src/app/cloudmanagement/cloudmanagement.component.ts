@@ -25,7 +25,8 @@ export class CloudmanagementComponent {
   localForm = false;
   gdEmail:string = this.readLocalStorageValue('gdUserEmail')
   dpEmail:string = this.readLocalStorageValue('dpEmail')
-
+  bxEmail:string = this.readLocalStorageValue('boxClientEmail')
+  
   dbAccount = {
     "username": "",
     "password": ""

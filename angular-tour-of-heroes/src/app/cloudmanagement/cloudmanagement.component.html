@@ -55,15 +55,15 @@
       </div><br>
       
       <input *ngIf="!boxForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
-      <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxSaveCode();">Box<br>(No account associated)</button>
+      <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxSaveCode();">Box<br>{{bxEmail}}</button>
      <!--  <label *ngIf="boxForm" class="services">Associate a new Box account:</label>
       <div *ngIf="boxForm">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="bAccount.username">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="password" [(ngModel)]="bAccount.password">
         <button class="service-input" (click)="boxForm = false">Submit</button>
         <button class="service-input" (click)="boxForm = false">Cancel</button>
-      </div><br> -->
-
+      </div> -->
+      <br>
       <input *ngIf="!localForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/folder.png" width="64" height="64">
       <button *ngIf="!localForm" class="services-button" (click)="localForm = true">Local File System<br>{{readLocalStorageValue('localFilePath')}}</button>
       <label *ngIf="localForm" class="services">Specify a local file path:</label>

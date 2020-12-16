@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AnyPtrRecord, AnySoaRecord } from 'dns';
 
 @Injectable({
   providedIn: 'root'
@@ -75,5 +76,115 @@ export class BxCloudService {
           resolve(this.accesToken);
       });
    });
+  }
+  async getBoxClientEmail(){
+    return await  new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let requestOptions = {
+        method: 'GET',
+        headers: myHeaders
+      };
+
+      fetch('/api/BoxClientEmail', requestOptions)
+        .then((response) => {
+          return response.json();
+        })
+        .then((result) => {
+          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
+          let saveClientEmail:any = result[Object.keys(result)[1]];
+          console.log("BoxClientEmail form BoxService " + saveClientEmail);
+          resolve(saveClientEmail);
+      });   
+    });
+  }
+  async boxShowFile(){
+    return await  new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let requestOptions = {
+        method: 'GET',
+        headers: myHeaders
+      };
+
+      fetch('/api/BoxGetFile', requestOptions)
+        .then((response) => {
+          return response.json();
+        })
+        .then((result) => {
+          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
+          let holdFileInfo:any = result[Object.keys(result)[1]];
+          console.log("boxShowFile form BoxService " + JSON.stringify(holdFileInfo));
+          resolve(holdFileInfo);
+      });   
+    });
+  }
+  async boxAllFoldersFiles(){
+    return await  new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let requestOptions = {
+        method: 'GET',
+        headers: myHeaders
+      };
+
+      fetch('/api/BoxGetFolders', requestOptions)
+        .then((response) => {
+          return response.json();
+        })
+        .then((result) => {
+          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
+          let holdAllFlsFils:any = result[Object.keys(result)[1]];
+          console.log("boxAllFoldersFiles form BoxService " + JSON.stringify(holdAllFlsFils));
+          resolve(holdAllFlsFils);
+      });   
+    });
+  }
+  async boxDownload(){
+    return await  new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let requestOptions = {
+        method: 'GET',
+        headers: myHeaders
+      };
+
+      fetch('/api/BxDownload', requestOptions)
+        .then((response) => {
+          return response.json();
+        })
+        .then((result) => {
+          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
+          let msgDisplay:any = result[Object.keys(result)[0]];
+          console.log("boxDownload form BoxService " + msgDisplay);
+          resolve(msgDisplay);
+      });   
+    });
+  }
+  async boxUpload(){
+    return await  new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let requestOptions = {
+        method: 'GET',
+        headers: myHeaders
+      };
+
+      fetch('/api/BxUpload', requestOptions)
+        .then((response) => {
+          return response.json();
+        })
+        .then((result) => {
+          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
+          let msgDisplay:any = result[Object.keys(result)[0]];
+          console.log("boxUpload form BoxService " + msgDisplay);
+          resolve(msgDisplay);
+      });   
+    });
   }
 }

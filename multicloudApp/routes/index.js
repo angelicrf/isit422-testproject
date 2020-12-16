@@ -13,7 +13,9 @@ let GdrecivedName = '';
 let getDpFilePath = '';
 let storeLastPart = '';
 let holdBoxCode = '';
-let boxAccessToke = '';
+let boxAccessToken = '';
+let boxFile = {};
+let boxFolders = {};
 let appDir = path.dirname(require.main.filename);
 // fs for reading local files
 const fs = require('fs');
@@ -1014,23 +1016,108 @@ router.get('/BoxOauth', (req,res) => {
   console.log("BoxOauth called");
   console.log("holdBoxCode from BoxOath " + holdBoxCode);
   return child.exec(
-    `curl -i -X POST "https://api.box.com/oauth2/token" \
+    `curl POST "https://api.box.com/oauth2/token" \
       -H "Content-Type: application/x-www-form-urlencoded" \
       -d "client_id=cizpnka9apgvmixa683wgv0lk63cbv7q" \
       -d "client_secret=5g7OcCqXqheEdINx3zDeF1jeXnBth137" \
       -d "code=${holdBoxCode}" \
       -d "grant_type=authorization_code"`,
   (err,stdout,stderr) => {
-    if(err){
+     if(err){
       console.log("err from BoxOath " + err)
-    }
-    console.log("the BoxOath stdout is " + stdout);
-    console.log("the BoxOath stderr is " + stderr);
-    boxAccessToken = stdout.toString();
+    } 
+    let obj = stdout;
+    let newObj = obj.toString().split(":")[1];
+    console.log("the BoxOath stdout is " + newObj.substring( 0, newObj.indexOf(",")));
+    console.log("the obj stderr is " + obj);
+    
+    boxAccessToken = newObj.substring( 0, newObj.indexOf(","));
+    
     res.status(200).json({"boxAccesToken": "box_AccessToken_Issued", "access_token": boxAccessToken});
   });
 });
-function toDeleteAllFiles(){
+router.get('/BoxClientEmail', (req,res) => {
+  console.log("BoxClientEmail called" + boxAccessToken);
+  return child.exec(
+    `curl GET "https://api.box.com/2.0/users/me" \
+    -H "Authorization: Bearer ${boxAccessToken}"`
+  ,
+  (err,stdout,stderr) => {
+    if(err){
+      console.log("err from BoxClientEmail " + err)
+    }
+    let obj = stdout;
+    let newObj = obj.toString().split(":")[4];
+    console.log("the BoxClientEmail stdout is " + stdout);
+    console.log("the BoxClientEmail stderr is " + stderr);
+    let boxEmail = newObj.substring( 0, newObj.indexOf(","));
+    res.status(200).json({"BoxClientEmailMSG": "BoxClientEmail_Issued", "boxEmail": boxEmail.replace(/['"]+/g, '')});
+  });
+});
+router.get('/BoxGetFile', (req,res) => {
+  console.log("BoxGetFile called");
+  return child.exec(
+    `curl -i -X GET "https://api.box.com/2.0/files/12345" \
+    -H "Authorization: Bearer ${boxAccessToken}"`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from BoxGetFile " + err)
+      }
+      console.log("the BoxGetFile stdout is " + stdout);
+      console.log("the BoxGetFile stderr is " + stderr);
+      boxFile = stdout;
+      res.status(200).json({"BoxGetFileMSG": "BoxGetFile_Received", "boxFile": boxFile});
+    }); 
+});
+router.get('/BoxGetFolders', (req,res) => {
+  console.log("BoxGetFolders called");
+  return child.exec(
+    `curl -i -X GET "https://api.box.com/2.0/folders/0" \
+     -H "Authorization: Bearer ${boxAccessToken}`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from BoxGetFolders " + err)
+      }
+      console.log("the BoxGetFolders stdout is " + stdout);
+      console.log("the BoxGetFolders stderr is " + stderr);
+      boxFolders = stdout;
+      res.status(200).json({"BoxGetFoldersMSG": "BoxGetFolders_Received", "boxFolders": boxFolders});
+    }); 
+});
+router.get('/BxDownload', (req,res) => {
+  console.log("BxDownload called");
+  return child.exec(
+    `curl -i -X GET "https://api.box.com/2.0/files/12345/content" \
+     -H "Authorization: Bearer ${boxAccessToken}" \
+     -L`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from BxDownload " + err)
+      }
+      console.log("the BxDownload stdout is " + stdout);
+      console.log("the BxDownload stderr is " + stderr);
+      res.status(200).json({"BxDownloadMSG": "BoxFile_Downloaded"});
+    }); 
+});
+router.get('/BxUpload', (req,res) => {
+  console.log("BxUpload called");
+  //Needs Extra Info
+  return child.exec(
+    `curl -i -X POST "https://upload.box.com/api/2.0/files/content" \
+     -H "Authorization: Bearer <ACCESS_TOKEN>" \
+     -H "Content-Type: multipart/form-data" \
+     -F attributes="{"name":"Contract.pdf", "parent":{"id":"11446498"}}" \
+     -F file=@<FILE_NAME>`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from BxUpload " + err)
+      }
+      console.log("the BxUpload stdout is " + stdout);
+      console.log("the BxUpload stderr is " + stderr);
+      res.status(200).json({"BxUploadMSG": "BoxFile_Uploaded"});
+    }); 
+});
+  function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
    , (err, stdout, stderr) => {
     if (err) {

@@ -43,7 +43,7 @@ export class FiletransferComponent implements OnInit {
     localStorage.getItem('dpEmail'),
     localStorage.getItem('gdUserEmail'),
     "(No account associated)",
-    "(No account associated)",
+    localStorage.getItem('boxClientEmail'),
     localStorage.getItem('localFilePath')
   ]
 
@@ -533,7 +533,7 @@ export class FiletransferComponent implements OnInit {
       this.folders.push(intersection[index]);   
     }
   }
-    window.history.replaceState(null, null, window.location.pathname);
+  this.removeUrlParams();
   }
 
   // TODO: get the file id to pass into request
@@ -549,12 +549,19 @@ export class FiletransferComponent implements OnInit {
       })
     }) 
   }
+  removeUrlParams(){
+    return window.history.replaceState(null, null, window.location.pathname);
+  }
   async boxProcessFiles(){
-    //console.log("bxCode is " + bxCode);
     await this.bxService.getboxCodeOauth(bxCode);
-    //console.log("getBoxCode is " + JSON.stringify(getBoxCd));
     await this.bxService.issueBoxAccessToken();
-    //console.log("showBoxAccessToken is " + showBoxAccessToken);
+    let storeBxEmail:any = await this.bxService.getBoxClientEmail();
+    localStorage.setItem("boxClientEmail", storeBxEmail );
+    this.removeUrlParams();
+   /*  await this.bxService.boxAllFoldersFiles();
+    await this.bxService.boxShowFile();
+    await this.bxService.boxDownload();
+    await this.bxService.boxUpload(); */
   }
   
 }
