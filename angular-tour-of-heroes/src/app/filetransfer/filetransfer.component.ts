@@ -560,26 +560,23 @@ export class FiletransferComponent implements OnInit {
     localStorage.setItem("boxClientEmail", storeBxEmail );
     this.removeUrlParams();
     holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
-    boxDisplayFoldersFiles();
-    /*  await this.bxService.boxShowFile();
+    this.boxDisplayFoldersFiles();
+  /*await this.bxService.boxShowFile();
     await this.bxService.boxDownload();
     await this.bxService.boxUpload(); */
   }
-  
+  boxDisplayFoldersFiles(){
+    let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);
+    let storeFlsFolders:any = savedFlsFolders.item_collection.entries;
+    for (let index = 0; index < storeFlsFolders.length; index++) {
+      if(storeFlsFolders[index].type === "folder"){
+      this.folders.push(storeFlsFolders[index].name);
+      }
+      else{
+        this.files1.push(storeFlsFolders[index].name);
+      }
+      } 
+  }
+
 }
-function boxDisplayFoldersFiles(){
-  //console.log("keys are " + keys);
-  let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);
-  //let keys = Object.keys(savedFlsFolders);
-   let testFiles:any = [];
- Object.entries(savedFlsFolders).forEach(([key, value]) => {
-    testFiles.push(value);
- });
-/*  let holdBoxStoredItem = [];
- for (let index = 0; index < testFiles.length; index++) {
-  holdBoxStoredItem.push(testFiles[index]);
-   } */
-   // + "ortwo " + testFiles["id"] + "orThree " + testFiles[0].id
-   console.log("testFiles " + testFiles + "The length " + testFiles.length + "orOne " + testFiles[0] );
-   console.log("savedFlsFolders.id " + savedFlsFolders.id)
-}
+
