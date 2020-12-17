@@ -11,6 +11,7 @@ let showData: string;
 let bxCode:string;
 let retreiveDpFiles:any = {};
 let holdClientFilesToDisplay:any = {};
+let holdBoxAllFlsFl:any = {};
 
 @Component({
   selector: 'app-filetransfer',
@@ -558,10 +559,27 @@ export class FiletransferComponent implements OnInit {
     let storeBxEmail:any = await this.bxService.getBoxClientEmail();
     localStorage.setItem("boxClientEmail", storeBxEmail );
     this.removeUrlParams();
-   /*  await this.bxService.boxAllFoldersFiles();
-    await this.bxService.boxShowFile();
+    holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
+    boxDisplayFoldersFiles();
+    /*  await this.bxService.boxShowFile();
     await this.bxService.boxDownload();
     await this.bxService.boxUpload(); */
   }
   
+}
+function boxDisplayFoldersFiles(){
+  //console.log("keys are " + keys);
+  let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);
+  //let keys = Object.keys(savedFlsFolders);
+   let testFiles:any = [];
+ Object.entries(savedFlsFolders).forEach(([key, value]) => {
+    testFiles.push(value);
+ });
+/*  let holdBoxStoredItem = [];
+ for (let index = 0; index < testFiles.length; index++) {
+  holdBoxStoredItem.push(testFiles[index]);
+   } */
+   // + "ortwo " + testFiles["id"] + "orThree " + testFiles[0].id
+   console.log("testFiles " + testFiles + "The length " + testFiles.length + "orOne " + testFiles[0] );
+   console.log("savedFlsFolders.id " + savedFlsFolders.id)
 }

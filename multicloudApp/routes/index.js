@@ -1057,7 +1057,7 @@ router.get('/BoxClientEmail', (req,res) => {
 router.get('/BoxGetFile', (req,res) => {
   console.log("BoxGetFile called");
   return child.exec(
-    `curl -i -X GET "https://api.box.com/2.0/files/12345" \
+    `curl -X GET "https://api.box.com/2.0/files/12345" \
     -H "Authorization: Bearer ${boxAccessToken}"`,
     (err,stdout,stderr) => {
       if(err){
@@ -1072,8 +1072,8 @@ router.get('/BoxGetFile', (req,res) => {
 router.get('/BoxGetFolders', (req,res) => {
   console.log("BoxGetFolders called");
   return child.exec(
-    `curl -i -X GET "https://api.box.com/2.0/folders/0" \
-     -H "Authorization: Bearer ${boxAccessToken}`,
+    `curl GET "https://api.box.com/2.0/folders/0" \
+     -H "Authorization: Bearer ${boxAccessToken}"`,
     (err,stdout,stderr) => {
       if(err){
         console.log("err from BoxGetFolders " + err)
@@ -1087,7 +1087,7 @@ router.get('/BoxGetFolders', (req,res) => {
 router.get('/BxDownload', (req,res) => {
   console.log("BxDownload called");
   return child.exec(
-    `curl -i -X GET "https://api.box.com/2.0/files/12345/content" \
+    `curl -X GET "https://api.box.com/2.0/files/12345/content" \
      -H "Authorization: Bearer ${boxAccessToken}" \
      -L`,
     (err,stdout,stderr) => {
@@ -1103,7 +1103,7 @@ router.get('/BxUpload', (req,res) => {
   console.log("BxUpload called");
   //Needs Extra Info
   return child.exec(
-    `curl -i -X POST "https://upload.box.com/api/2.0/files/content" \
+    `curl -X POST "https://upload.box.com/api/2.0/files/content" \
      -H "Authorization: Bearer <ACCESS_TOKEN>" \
      -H "Content-Type: multipart/form-data" \
      -F attributes="{"name":"Contract.pdf", "parent":{"id":"11446498"}}" \

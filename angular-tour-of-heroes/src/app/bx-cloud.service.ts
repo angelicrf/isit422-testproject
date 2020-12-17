@@ -136,9 +136,7 @@ export class BxCloudService {
           return response.json();
         })
         .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
           let holdAllFlsFils:any = result[Object.keys(result)[1]];
-          console.log("boxAllFoldersFiles form BoxService " + JSON.stringify(holdAllFlsFils));
           resolve(holdAllFlsFils);
       });   
     });
