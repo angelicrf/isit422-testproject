@@ -141,14 +141,20 @@ export class BxCloudService {
       });   
     });
   }
-  async boxDownload(){
+  async boxDownload(bxId:string, bxName:string){
+    console.log("boxDownload from service " + bxId + bxName);
     return await  new Promise((resolve,reject) => {
       let myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
-
+      let raw = JSON.stringify({
+        title: 'codefromAngular',
+        boxFileId: bxId,
+        boxFileName: bxName
+      });
       let requestOptions = {
-        method: 'GET',
-        headers: myHeaders
+        method: 'POST',
+        headers: myHeaders,
+        body: raw
       };
 
       fetch('/api/BxDownload', requestOptions)

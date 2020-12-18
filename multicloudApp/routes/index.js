@@ -14,6 +14,7 @@ let getDpFilePath = '';
 let storeLastPart = '';
 let holdBoxCode = '';
 let boxAccessToken = '';
+let boxRetreivedName = '';
 let boxFile = {};
 let boxFolders = {};
 let appDir = path.dirname(require.main.filename);
@@ -947,8 +948,6 @@ router.get('/DownloadGd', function (req, res)
          console.log("the stdErr is " + stderr)            
      } 
      console.log("the stdOut is " + JSON.stringify(sendToGd)) 
-      // move file to AllFiles
-     //tpMoveFilestoAllFiles(GdrecivedName)
      res.send("Response from Node: File downloaded from Google drive")   
    }) 
 })
@@ -985,8 +984,7 @@ async function tpMoveFilestoAllFiles(filename){
   console.log('the newAppDir is ' + newAppDir );
   let singlepathAp = `${newAppDir}routes/AllFiles`
   console.log('the singlepathAp is ' + singlepathAp );
-  //find . -name '${filename}' -exec mv {} /AllFiles \;
-  //mv "${filename}" ${singlepathAp}
+
   return child.exec(`mv "${filename}" ${singlepathAp}`,   
   (err, stdout, stderr) => {
     if (err) {
@@ -1084,38 +1082,60 @@ router.get('/BoxGetFolders', (req,res) => {
       res.status(200).json({"BoxGetFoldersMSG": "BoxGetFolders_Received", "boxFolders": boxFolders});
     }); 
 });
-router.get('/BxDownload', (req,res) => {
+router.post('/BxDownload', (req,res) => {
   console.log("BxDownload called");
+
+  let boxRetreivedId = req.body.boxFileId;
+  boxRetreivedName = req.body.boxFileName;
+  console.log("boxRetreivedId " + boxRetreivedId + "boxFileName " + boxRetreivedName);
   return child.exec(
-    `curl -X GET "https://api.box.com/2.0/files/12345/content" \
+    `curl --location --request GET "https://api.box.com/2.0/files/${boxRetreivedId}/content" \
      -H "Authorization: Bearer ${boxAccessToken}" \
-     -L`,
+     -o "${boxRetreivedName}"`,
     (err,stdout,stderr) => {
       if(err){
         console.log("err from BxDownload " + err)
       }
       console.log("the BxDownload stdout is " + stdout);
       console.log("the BxDownload stderr is " + stderr);
-      res.status(200).json({"BxDownloadMSG": "BoxFile_Downloaded"});
+      res.status(200).json({"BxDownloadMSG": "BoxFile_Downloaded"}); 
     }); 
 });
 router.get('/BxUpload', (req,res) => {
   console.log("BxUpload called");
   //Needs Extra Info
-  return child.exec(
-    `curl -X POST "https://upload.box.com/api/2.0/files/content" \
-     -H "Authorization: Bearer <ACCESS_TOKEN>" \
-     -H "Content-Type: multipart/form-data" \
-     -F attributes="{"name":"Contract.pdf", "parent":{"id":"11446498"}}" \
-     -F file=@<FILE_NAME>`,
-    (err,stdout,stderr) => {
-      if(err){
-        console.log("err from BxUpload " + err)
+  console.log("BoxRetrivedName from bxUpload " + boxRetreivedName);
+  setTimeout(async() => {
+    let moveFileResule = await tpMoveFilestoAllFiles(boxRetreivedName);
+    console.log("moveFileResule after Boxdownload " + moveFileResule);
+  },10000 ); 
+  setTimeout(( ) => {
+    let boxConcatFile = '';
+    fs.readdirSync( folder ).forEach( file => {
+      if(file === boxRetreivedName) {
+        console.log("inside the folderOne ")
+        const extname = path.extname( file );
+        const filename = path.basename( file, extname );
+        const absolutePath = path.resolve( folder, file );
+        boxConcatFile = (filename + extname);
       }
-      console.log("the BxUpload stdout is " + stdout);
-      console.log("the BxUpload stderr is " + stderr);
-      res.status(200).json({"BxUploadMSG": "BoxFile_Uploaded"});
-    }); 
+      }); 
+      //--data-binary
+      return child.exec(
+        `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
+        -H "Authorization: Bearer ${boxAccessToken}" \
+        -H "Content-Type: multipart/form-data" \
+        -F attributes="{"name":"${boxRetreivedName}", "parent":{"id":"0"}}" \
+        -F file=@./routes/AllFiles/${boxConcatFile}`,
+        (err,stdout,stderr) => {
+          if(err){
+            console.log("err from BxUpload " + err)
+          }
+          console.log("the BxUpload stdout is " + stdout);
+          console.log("the BxUpload stderr is " + stderr);
+          res.status(200).json({"BxUploadMSG": "BoxFile_Uploaded"});
+        }); 
+  },15000);
 });
   function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
@@ -1127,6 +1147,4 @@ router.get('/BxUpload', (req,res) => {
    });
 }
 
-//tpMoveFilestoAllFiles('jpegfile.jpeg');
-//toDeleteAllFiles();
 module.exports = router;

@@ -12,6 +12,8 @@ let bxCode:string;
 let retreiveDpFiles:any = {};
 let holdClientFilesToDisplay:any = {};
 let holdBoxAllFlsFl:any = {};
+let boxFiles = [];
+let holdBoxSelectedFile = [];
 
 @Component({
   selector: 'app-filetransfer',
@@ -392,6 +394,19 @@ export class FiletransferComponent implements OnInit {
         if(this.service1 === 4 && this.service2 === 0) {
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
+        if(this.service1 === 3){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          //     holdBoxItems["bxFileName"]
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+        }
       }
     }
   }
@@ -561,18 +576,23 @@ export class FiletransferComponent implements OnInit {
     this.removeUrlParams();
     holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
     this.boxDisplayFoldersFiles();
-  /*await this.bxService.boxShowFile();
-    await this.bxService.boxDownload();
+    
+  /*  await this.bxService.boxShowFile(); 
     await this.bxService.boxUpload(); */
   }
   boxDisplayFoldersFiles(){
     let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);
     let storeFlsFolders:any = savedFlsFolders.item_collection.entries;
     for (let index = 0; index < storeFlsFolders.length; index++) {
+      let holdBoxItems = {};
       if(storeFlsFolders[index].type === "folder"){
-      this.folders.push(storeFlsFolders[index].name);
+        this.folders.push(storeFlsFolders[index].name);
       }
       else{
+        holdBoxItems["bxFileName"] = storeFlsFolders[index].name;
+        holdBoxItems["bxFileId"] = storeFlsFolders[index].id;
+        console.log("holdBoxItems bxFileId " + holdBoxItems["bxFileId"]);
+        boxFiles.push(holdBoxItems);
         this.files1.push(storeFlsFolders[index].name);
       }
       } 
