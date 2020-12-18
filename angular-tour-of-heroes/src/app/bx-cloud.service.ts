@@ -162,21 +162,24 @@ export class BxCloudService {
           return response.json();
         })
         .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
           let msgDisplay:any = result[Object.keys(result)[0]];
           console.log("boxDownload form BoxService " + msgDisplay);
           resolve(msgDisplay);
       });   
     });
   }
-  async boxUpload(){
+  async boxUpload(bxFlName:string){
     return await  new Promise((resolve,reject) => {
       let myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
-
+      let raw = JSON.stringify({
+        title: 'codefromAngular',
+        boxUpFileName: bxFlName
+      });
       let requestOptions = {
-        method: 'GET',
-        headers: myHeaders
+        method: 'POST',
+        headers: myHeaders,
+        body:raw
       };
 
       fetch('/api/BxUpload', requestOptions)
@@ -184,7 +187,6 @@ export class BxCloudService {
           return response.json();
         })
         .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
           let msgDisplay:any = result[Object.keys(result)[0]];
           console.log("boxUpload form BoxService " + msgDisplay);
           resolve(msgDisplay);

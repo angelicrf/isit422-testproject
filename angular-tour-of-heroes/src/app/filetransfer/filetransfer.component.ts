@@ -397,7 +397,6 @@ export class FiletransferComponent implements OnInit {
         if(this.service1 === 3){
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
-          //     holdBoxItems["bxFileName"]
           let keys = Object.keys(boxFiles);
           for(let i = 0; i < keys.length; i++){
               if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
@@ -406,6 +405,7 @@ export class FiletransferComponent implements OnInit {
           } 
           console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.bxService.boxUpload(holdBoxSelectedFile[1]); 
         }
       }
     }
@@ -577,8 +577,7 @@ export class FiletransferComponent implements OnInit {
     holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
     this.boxDisplayFoldersFiles();
     
-  /*  await this.bxService.boxShowFile(); 
-    await this.bxService.boxUpload(); */
+  /*  await this.bxService.boxShowFile(); */
   }
   boxDisplayFoldersFiles(){
     let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);

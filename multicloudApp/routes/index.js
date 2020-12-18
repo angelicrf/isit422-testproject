@@ -1101,18 +1101,19 @@ router.post('/BxDownload', (req,res) => {
       res.status(200).json({"BxDownloadMSG": "BoxFile_Downloaded"}); 
     }); 
 });
-router.get('/BxUpload', (req,res) => {
+router.post('/BxUpload', (req,res) => {
+  let boxUploadFileName = req.body.boxUpFileName;
   console.log("BxUpload called");
   //Needs Extra Info
-  console.log("BoxRetrivedName from bxUpload " + boxRetreivedName);
-  setTimeout(async() => {
-    let moveFileResule = await tpMoveFilestoAllFiles(boxRetreivedName);
+  console.log("boxUploadFileName from bxUpload " + boxUploadFileName);
+   setTimeout(async() => {
+    let moveFileResule = await tpMoveFilestoAllFiles(boxUploadFileName);
     console.log("moveFileResule after Boxdownload " + moveFileResule);
-  },10000 ); 
+  },10000 );  
   setTimeout(( ) => {
     let boxConcatFile = '';
     fs.readdirSync( folder ).forEach( file => {
-      if(file === boxRetreivedName) {
+      if(file === boxUploadFileName) {
         console.log("inside the folderOne ")
         const extname = path.extname( file );
         const filename = path.basename( file, extname );
@@ -1125,7 +1126,7 @@ router.get('/BxUpload', (req,res) => {
         `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
         -H "Authorization: Bearer ${boxAccessToken}" \
         -H "Content-Type: multipart/form-data" \
-        -F attributes="{"name":"${boxRetreivedName}", "parent":{"id":"0"}}" \
+        -F attributes='{"name":"MTC${boxUploadFileName}", "parent":{"id":"0"}}' \
         -F file=@./routes/AllFiles/${boxConcatFile}`,
         (err,stdout,stderr) => {
           if(err){
@@ -1134,8 +1135,10 @@ router.get('/BxUpload', (req,res) => {
           console.log("the BxUpload stdout is " + stdout);
           console.log("the BxUpload stderr is " + stderr);
           res.status(200).json({"BxUploadMSG": "BoxFile_Uploaded"});
+          toDeleteAllFiles();
         }); 
   },15000);
+
 });
   function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
