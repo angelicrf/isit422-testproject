@@ -3,6 +3,7 @@ import { BxCloudService } from '../bx-cloud.service';
 import { FilterService } from '../filter.service';
 import { GdCloudService } from '../gd-cloud.service';
 import { GDClientCredentials } from '../gdClientCredentials';
+import { OdCloudService } from '../od-cloud.service';
 
 @Component({
   selector: 'app-cloudmanagement',
@@ -11,7 +12,7 @@ import { GDClientCredentials } from '../gdClientCredentials';
 })
 export class CloudmanagementComponent {
   
-  constructor(public filterService: FilterService, private gdService: GdCloudService, private gdcl:GDClientCredentials, private bxService: BxCloudService) {}
+  constructor(public filterService: FilterService, private gdService: GdCloudService, private gdcl:GDClientCredentials, private bxService: BxCloudService, private odService: OdCloudService) {}
   
   title = 'CloudManagementComponent';
   checked = false;
@@ -134,7 +135,9 @@ export class CloudmanagementComponent {
   boxSaveCode(){
     this.bxService.boxRedirectCode();
   }
- 
+  oneDriveLogin(){
+    this.odService.login();
+  }
 }
 
 

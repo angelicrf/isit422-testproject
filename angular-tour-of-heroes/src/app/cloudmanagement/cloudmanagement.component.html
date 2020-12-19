@@ -45,14 +45,15 @@
         <button class="service-input" (click)="googleDriveForm = false">Cancel</button> 
       </div>--><br>
       <input *ngIf="!oneDriveForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/onedrive.png" width="64" height="64">
-      <button *ngIf="!oneDriveForm" class="services-button" (click)="oneDriveForm = true">OneDrive<br>(No account associated)</button>
-      <label *ngIf="oneDriveForm" class="services">Associate a new OneDrive account:</label>
-      <div *ngIf="oneDriveForm">
+      <button *ngIf="!oneDriveForm" class="services-button" (click)="oneDriveForm = true; oneDriveLogin();">OneDrive<br>(No account associated)</button>
+       <!--<label *ngIf="oneDriveForm" class="services">Associate a new OneDrive account:</label>
+        <div *ngIf="oneDriveForm">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="odAccount.username">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="password" [(ngModel)]="odAccount.password">
         <button class="service-input" (click)="oneDriveForm = false">Submit</button>
         <button class="service-input" (click)="oneDriveForm = false">Cancel</button>
-      </div><br>
+      </div> -->
+      <br>
       
       <input *ngIf="!boxForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
       <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxSaveCode();">Box<br>{{bxEmail}}</button>
