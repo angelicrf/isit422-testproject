@@ -27,6 +27,7 @@ export class CloudmanagementComponent {
   gdEmail:string = this.readLocalStorageValue('gdUserEmail')
   dpEmail:string = this.readLocalStorageValue('dpEmail')
   bxEmail:string = this.readLocalStorageValue('boxClientEmail')
+  odEmail:string = this.readLocalStorageValue('odClientEmail');
   
   dbAccount = {
     "username": "",
@@ -119,7 +120,6 @@ export class CloudmanagementComponent {
     return await this.clientEmailValue(this.gdcl.holdDataClient[0])
    }
   async googleDriveInit(){
-    //this.googleDriveForm = true
     let holdPromise = await this.gdService.googleImplementCallBack()
     console.log("HoldPromises " + holdPromise)
     let holdUserData = await this.getClientEmail()

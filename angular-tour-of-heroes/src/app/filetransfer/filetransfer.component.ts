@@ -25,7 +25,7 @@ export class FiletransferComponent implements OnInit {
 
   leftServiceForm = false;
   rightServiceForm = false;
-  gdEmail:string = this.readLocalStorageValue('gdUserEmail')
+  gdEmail:string = this.readLocalStorageValue('gdUserEmail');
   
   serviceIcons = [
     "assets/images/dropbox.png",
@@ -46,7 +46,7 @@ export class FiletransferComponent implements OnInit {
   serviceAccounts = [
     localStorage.getItem('dpEmail'),
     localStorage.getItem('gdUserEmail'),
-    "(No account associated)",
+    localStorage.getItem('odClientEmail'),,
     localStorage.getItem('boxClientEmail'),
     localStorage.getItem('localFilePath')
   ]
@@ -599,9 +599,9 @@ export class FiletransferComponent implements OnInit {
       }
       } 
   }
-  async odClientprofile(){
-    let saveOdProfile:any = await this.odService.login();
-    console.log("saveOdProfile " + saveOdProfile);
+  async odDisplayFiles(){
+    let saveOdFiles:any = await this.odService.odGetFiles();
+    console.log("saveOdProfile " + saveOdFiles);
   }
 
 }

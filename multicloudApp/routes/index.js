@@ -18,6 +18,7 @@ let boxRetreivedName = '';
 let odAccessToken = '';
 let boxFile = {};
 let boxFolders = {};
+let odFiles = {};
 let appDir = path.dirname(require.main.filename);
 // fs for reading local files
 const fs = require('fs');
@@ -1144,7 +1145,6 @@ router.post('/BxUpload', (req,res) => {
 router.post('/OdProfile', (req,res) => {
   console.log("OdProfile called");
   odAccessToken = req.body.odAccess;
-  console.log("odAccessToken " + odAccessToken);
   return child.exec(
     `curl GET "https://graph.microsoft.com/v1.0/me" \
      -H "Authorization: Bearer ${odAccessToken}"`,
@@ -1152,10 +1152,29 @@ router.post('/OdProfile', (req,res) => {
       if(err){
         console.log("err from OdProfile " + err)
       }
-      console.log("the OdProfile stdout is " + stdout);
-      console.log("the OdProfile stderr is " + stderr);
-      let odProfileInfo = stdout;
-      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": odProfileInfo});
+      let obj = stdout;
+      let newObj = obj.toString().split(":")[12];
+      console.log("the BoxClientEmail stdout is " + stdout);
+      console.log("the BoxClientEmail stderr is " + stderr);
+      let odEmail = newObj.substring( 0, newObj.indexOf(","));
+      let odClientEmail = odEmail.substr(0, odEmail.indexOf('#'));
+      let edittedEmail = odClientEmail.replace(/_(?=[^_]*$)/, '@');
+      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": edittedEmail.replace(/['"]+/g, '')});
+    }); 
+});
+router.get('/OdGetFiles', (req,res) => {
+  console.log("OdGetFiles called");
+  return child.exec(
+    `curl GET "https://graph.microsoft.com/v1.0/users/drive/root/children" \
+     -H "Authorization: Bearer ${odAccessToken}"`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from OdGetFiles " + err)
+      }
+      console.log("the OdGetFiles stdout is " + stdout);
+      console.log("the OdGetFiles stderr is " + stderr);
+      odFiles = stdout;
+      res.status(200).json({"OdGetFilesMSG": "OdFiles_Received", "OdFiles": odFiles});
     }); 
 });
   function toDeleteAllFiles(){
