@@ -15,6 +15,7 @@ let storeLastPart = '';
 let holdBoxCode = '';
 let boxAccessToken = '';
 let boxRetreivedName = '';
+let odAccessToken = '';
 let boxFile = {};
 let boxFolders = {};
 let appDir = path.dirname(require.main.filename);
@@ -1139,6 +1140,23 @@ router.post('/BxUpload', (req,res) => {
         }); 
   },15000);
 
+});
+router.post('/OdProfile', (req,res) => {
+  console.log("OdProfile called");
+  odAccessToken = req.body.odAccess;
+  console.log("odAccessToken " + odAccessToken);
+  return child.exec(
+    `curl GET "https://graph.microsoft.com/v1.0/me" \
+     -H "Authorization: Bearer ${odAccessToken}"`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from OdProfile " + err)
+      }
+      console.log("the OdProfile stdout is " + stdout);
+      console.log("the OdProfile stderr is " + stderr);
+      let odProfileInfo = stdout;
+      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": odProfileInfo});
+    }); 
 });
   function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`

@@ -6,6 +6,7 @@ import { DpCloudService } from '../dp-cloud.service';
 import { CheckCategories, buildFileListByFilter } from '../filetransfer/filterByFileType.js';
 import { GDClientCredentials } from '../gdClientCredentials';
 import { BxCloudService } from '../bx-cloud.service';
+import { OdCloudService } from '../od-cloud.service';
 let clFile: string[];
 let showData: string;
 let bxCode:string;
@@ -68,9 +69,11 @@ export class FiletransferComponent implements OnInit {
     private gdService: GdCloudService, 
     private dpService: DpCloudService,
     private gdcl:GDClientCredentials,
-    private bxService: BxCloudService) {
+    private bxService: BxCloudService, 
+    private odService: OdCloudService) {
       //showData = this.dpService.getCodefromUri();
-      bxCode = this.bxService.getBoxCodefromUri();
+      //bxCode = this.bxService.getBoxCodefromUri();
+      
     }
 
   ngOnInit(){
@@ -595,6 +598,10 @@ export class FiletransferComponent implements OnInit {
         this.files1.push(storeFlsFolders[index].name);
       }
       } 
+  }
+  async odClientprofile(){
+    let saveOdProfile:any = await this.odService.login();
+    console.log("saveOdProfile " + saveOdProfile);
   }
 
 }
