@@ -600,8 +600,8 @@ export class FiletransferComponent implements OnInit {
       } 
   }
   async odDisplayFiles(){
-    let saveOdFiles:any = await this.odService.odGetFiles();
-    console.log("saveOdProfile " + saveOdFiles);
+    let saveOdAccessToken:any = await this.odService.getOdCodefromUri();
+    console.log("saveOdProfile " + saveOdAccessToken);
   }
 
 }

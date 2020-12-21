@@ -1142,20 +1142,52 @@ router.post('/BxUpload', (req,res) => {
   },15000);
 
 });
-router.post('/OdProfile', (req,res) => {
+router.post('/OdAccessToken', (req,res) => {
+  console.log("OdAccessToken called");
+  res.header('Access-Control-Allow-Origin', '*');
+
+  let odCodeReceived = req.body.odCode;
+  console.log("odCodeReceived " + odCodeReceived);
+  return child.exec(
+    `curl POST https://login.microsoftonline.com/common/oauth2/v2.0/token \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d code=${odCodeReceived} \
+    -d grant_type=authorization_code \
+    -d redirect_uri=http://localhost:4200/filetransfer/ \
+    -d client_id=266792a9-b745-45e2-a76d-494d6720ebb8 \
+    -d client_secret=nId3l2..QyfDoQ5oy2P2~C.u6Vz4ZJ4NKu`
+    ,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from OdAccessToken " + err)
+      }
+      console.log("the OdAccessToken stdout is " + stdout);
+      console.log("the OdAccessToken stderr is " + stderr);
+      let obj = stdout;
+      let newObj = obj.toString().split(":");
+      let getNewObjLn = newObj.length;
+      console.log(newObj + " getNewObjLn " + getNewObjLn);
+      let newObj2 = newObj[6];
+      odAccessToken = newObj2.slice(1, -2);
+      console.log("odAccessToken is " + odAccessToken);
+      res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Issued", "OdAccessToken": odAccessToken});
+    }); 
+});
+router.get('/OdProfile', (req,res) => {
   console.log("OdProfile called");
-  odAccessToken = req.body.odAccess;
+  let profileAccessToken = req.body.odProfileAcTk;
+  console.log("odAccessToken is " + odAccessToken)
   return child.exec(
     `curl GET "https://graph.microsoft.com/v1.0/me" \
-     -H "Authorization: Bearer ${odAccessToken}"`,
+     -H "Authorization: Bearer ${profileAccessToken}"`,
     (err,stdout,stderr) => {
       if(err){
         console.log("err from OdProfile " + err)
       }
       let obj = stdout;
       let newObj = obj.toString().split(":")[12];
-      console.log("the BoxClientEmail stdout is " + stdout);
-      console.log("the BoxClientEmail stderr is " + stderr);
+      console.log("the OdProfile stdout is " + stdout);
+      console.log("the OdProfile stderr is " + stderr);
       let odEmail = newObj.substring( 0, newObj.indexOf(","));
       let odClientEmail = odEmail.substr(0, odEmail.indexOf('#'));
       let edittedEmail = odClientEmail.replace(/_(?=[^_]*$)/, '@');
@@ -1165,7 +1197,7 @@ router.post('/OdProfile', (req,res) => {
 router.get('/OdGetFiles', (req,res) => {
   console.log("OdGetFiles called");
   return child.exec(
-    `curl GET "https://graph.microsoft.com/v1.0/users/drive/root/children" \
+    `curl GET "https://graph.microsoft.com/v1.0/me/drive/root/children" \
      -H "Authorization: Bearer ${odAccessToken}"`,
     (err,stdout,stderr) => {
       if(err){

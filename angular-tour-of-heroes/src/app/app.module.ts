@@ -35,10 +35,11 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     MatButtonModule,
     MatToolbarModule,
     DragDropModule,
-    MsalModule.forRoot({
+     MsalModule.forRoot({
       auth: {
         clientId: '266792a9-b745-45e2-a76d-494d6720ebb8', 
-        authority: 'https://login.microsoftonline.com/86f787e3-7449-44ed-bf0d-e38849bb7370', //f8cdef31-a31e-4b4a-93e4-5f571e91255a //86f787e3-7449-44ed-bf0d-e38849bb7370
+        authority: 'https://login.microsoftonline.com/86f787e3-7449-44ed-bf0d-e38849bb7370', 
+    //f8cdef31-a31e-4b4a-93e4-5f571e91255a //86f787e3-7449-44ed-bf0d-e38849bb7370
         redirectUri: 'http://localhost:4200/filetransfer/'
       },
       cache: {
@@ -57,7 +58,7 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
         ['https://graph.microsoft.com/v1.0/me', ['user.read']]
       ],
       extraQueryParameters: {}
-    })
+    }) 
   ],
   declarations: [
     AppComponent,
@@ -70,11 +71,11 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     FiletransferComponent
   ],
   providers: [
-    {
+     {
         provide: HTTP_INTERCEPTORS,
         useClass: MsalInterceptor,
         multi: true
-    }
+    } 
    ],
   bootstrap: [ AppComponent ]
 })
