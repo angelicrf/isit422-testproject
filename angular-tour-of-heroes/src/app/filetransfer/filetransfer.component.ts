@@ -600,8 +600,25 @@ export class FiletransferComponent implements OnInit {
       } 
   }
   async odDisplayFiles(){
-    let saveOdAccessToken:any = await this.odService.getOdCodefromUri();
-    console.log("saveOdProfile " + saveOdAccessToken);
+    let showAllOdFlsFiles:any = await this.odService.getOdCodefromUri();
+    //console.log("showAllOdFlsFiles is " + JSON.stringify(showAllOdFlsFiles));
+    let runAllOdFlsFiles:any = await this.odFilesFls(showAllOdFlsFiles);
+
+  }
+  async odFilesFls(odFlsFiles:[]){
+    return await new Promise((resolve,reject) =>{
+      let storeOdItemsInArray:string[] = Object.values(odFlsFiles);
+      let odFilesStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') != -1);
+      let odFolderStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') === -1);
+      console.log("odFilesStored is " + odFilesStored + "odFolderStored " + odFolderStored );
+      for (let index = 0; index < odFilesStored.length; index++) {
+        this.files1.push(odFilesStored[index]);
+      }
+      for (let index = 0; index < odFolderStored.length; index++) {
+        this.folders.push(odFolderStored[index])
+      }  
+      return resolve(this.files1);
+    })
   }
 
 }

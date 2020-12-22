@@ -1161,22 +1161,22 @@ router.post('/OdAccessToken', (req,res) => {
       if(err){
         console.log("err from OdAccessToken " + err)
       }
-      console.log("the OdAccessToken stdout is " + stdout);
+      //console.log("the OdAccessToken stdout is " + stdout);
       console.log("the OdAccessToken stderr is " + stderr);
       let obj = stdout;
       let newObj = obj.toString().split(":");
       let getNewObjLn = newObj.length;
-      console.log(newObj + " getNewObjLn " + getNewObjLn);
+      //console.log(newObj + " getNewObjLn " + getNewObjLn);
       let newObj2 = newObj[6];
       odAccessToken = newObj2.slice(1, -2);
       console.log("odAccessToken is " + odAccessToken);
       res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Issued", "OdAccessToken": odAccessToken});
     }); 
 });
-router.get('/OdProfile', (req,res) => {
+router.post('/OdProfile', (req,res) => {
   console.log("OdProfile called");
   let profileAccessToken = req.body.odProfileAcTk;
-  console.log("odAccessToken is " + odAccessToken)
+  //console.log("odAccessToken is " + odAccessToken)
   return child.exec(
     `curl GET "https://graph.microsoft.com/v1.0/me" \
      -H "Authorization: Bearer ${profileAccessToken}"`,

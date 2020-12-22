@@ -7,10 +7,11 @@ export class OdCloudService {
   profile: any;
   getOdAccessToken:any;
   issuedOdAccessToken:any;
+  storeOdFiles = [];
 
 constructor(
    private broadcastService: BroadcastService,
-  private authService: MsalService
+   private authService: MsalService
   ) { }
   login() {
     let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/filetransfer/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite.All"
@@ -25,7 +26,7 @@ async odGetAccessToken(){
   };
   this.authService.acquireTokenSilent(requestObj)
   .then(function (tokenResponse) {
-      console.log("New AccessToken from service "+ JSON.stringify(tokenResponse));
+      //console.log("New AccessToken from service "+ JSON.stringify(tokenResponse));
       return resolve(tokenResponse.accessToken);
       }).catch(function (error) {
       console.log(error);
@@ -33,40 +34,52 @@ async odGetAccessToken(){
   });      
  }
  async getOdCodefromUri(){
-  let isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
-  if(isIE){
-    this.authService.loginRedirect({
-      extraScopesToConsent: ["user.read", "openid", "profile"]    
-    });
-    setTimeout(async () => {
-      const uriLink = location.href;
-  const newUri = new URL(uriLink);
-  const findParam = newUri.searchParams.get('code');
-  console.log(findParam);
-  this.issuedOdAccessToken = await getOdAccessToken(findParam);
-  let profileAccessToken = await this.odGetAccessToken();
-  console.log("profileAccessToken " + profileAccessToken);
+   return await new Promise((resolve,reject) => {
+    let isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+    
+  
+    if(isIE){
+      this.authService.loginRedirect({
+        extraScopesToConsent: ["user.read", "openid", "profile"]    
+      });
+      setTimeout(async () => {
+        let displayFlsFiles:any = this.odDisplayFilesFlsProcess();   
+        return resolve(displayFlsFiles);
+      },30000);
+    }else{
+      this.authService.loginPopup({
+        extraScopesToConsent: ["user.read", "openid", "profile"]
+      });
+     setTimeout(async () => {
+      let displayFlsFiles:any = this.odDisplayFilesFlsProcess();  
+      return resolve(displayFlsFiles);
     },30000);
-  }else{
-    this.authService.loginPopup({
-      extraScopesToConsent: ["user.read", "openid", "profile"]
-    });
-   setTimeout(async () => {
-    const uriLink = location.href;
+    } 
+   });
+}
+ async odDisplayFilesFlsProcess(){
+  const uriLink = location.href;
   const newUri = new URL(uriLink);
   const findParam = newUri.searchParams.get('code');
-  console.log(findParam);
+
   this.issuedOdAccessToken = await getOdAccessToken(findParam);
   let profileAccessToken:any = await this.odGetAccessToken();
-  let profileClientInfo = getProfile(profileAccessToken);
-  console.log("profileAccessToken " + profileClientInfo);
-   },30000);
-  } 
-  //let odStoreClientProfile:any = await getProfile();
-  //console.log("odStoreClientProfile " + odStoreClientProfile);
-  //localStorage.setItem("odClientEmail", odStoreClientProfile);
-  return this.issuedOdAccessToken;
+  let profileClientInfo:any = await getProfile(profileAccessToken);
+  
+  localStorage.setItem("odClientEmail", profileClientInfo);
+  let odAallFiles:any = await this.odGetFiles();
+  let holdOdItems:any = this.storeOdFlsFiles(odAallFiles);
+  return holdOdItems;
 }
+ storeOdFlsFiles(odFilesFls:any){
+  let savedOdFlsFolders = JSON.parse(odFilesFls);
+  let storeOdFlsFolders:any = savedOdFlsFolders.value;
+  
+  for (let index = 0; index < storeOdFlsFolders.length; index++) {
+      this.storeOdFiles.push(storeOdFlsFolders[index].name);
+  }
+  return this.storeOdFiles;
+ }
  async odGetFiles(){
   return await new Promise((resolve,reject) => {
     let myHeaders = new Headers();
@@ -76,14 +89,12 @@ async odGetAccessToken(){
         method: 'GET',
         headers: myHeaders
       };
-
       fetch('/api/OdGetFiles', requestOptions)
         .then((response) => {
           return response.json();
         })
         .then((result) => {
           let holdOdAllFlsFils:any = result[Object.keys(result)[1]];
-          console.log("odFiles from service " + holdOdAllFlsFils);
           resolve(holdOdAllFlsFils);
       });  
   })
@@ -128,6 +139,7 @@ async function getProfile(profileAccess:string) {
          }) 
          .then(response => {
           let msgDisplay:any = response[Object.keys(response)[1]];
+          //console.log("msgDisplay " + msgDisplay);
           resolve(msgDisplay)
         })
         .catch((err) => console.log(err));

@@ -21,7 +21,6 @@ export class BxCloudService {
     const uriLink = location.href;
     const newUri = new URL(uriLink);
     const findParam = newUri.searchParams.get('code');
-    //console.log(findParam)
     return findParam;
   }
   async getboxCodeOauth(boxIssuedCode:string){
@@ -41,7 +40,6 @@ export class BxCloudService {
         headers: myHeaders,
         body: raw,
       };
-
       fetch('/api/BoxCode', requestOptions)
         .then((response) => {
           console.log("inside the ResponseOne"); 
@@ -51,8 +49,7 @@ export class BxCloudService {
           console.log("inside the ResponseTWo");
           resolve(`Code Issued ${result}`);
         })
-        .catch(err => console.log("Error from BoxCode " + err));
-        
+        .catch(err => console.log("Error from BoxCode " + err));   
    });
   }
   async issueBoxAccessToken(){
@@ -64,13 +61,11 @@ export class BxCloudService {
         method: 'GET',
         headers: myHeaders
       };
-
       fetch('/api/BoxOauth', requestOptions)
         .then((response) => {
           return response.json();
         })
         .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
           this.accesToken = result[Object.keys(result)[1]];
           console.log("AccessToken form BoxService " + this.accesToken);
           resolve(this.accesToken);
@@ -86,13 +81,11 @@ export class BxCloudService {
         method: 'GET',
         headers: myHeaders
       };
-
       fetch('/api/BoxClientEmail', requestOptions)
         .then((response) => {
           return response.json();
         })
         .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
           let saveClientEmail:any = result[Object.keys(result)[1]];
           console.log("BoxClientEmail form BoxService " + saveClientEmail);
           resolve(saveClientEmail);
@@ -108,13 +101,11 @@ export class BxCloudService {
         method: 'GET',
         headers: myHeaders
       };
-
       fetch('/api/BoxGetFile', requestOptions)
         .then((response) => {
           return response.json();
         })
         .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
           let holdFileInfo:any = result[Object.keys(result)[1]];
           console.log("boxShowFile form BoxService " + JSON.stringify(holdFileInfo));
           resolve(holdFileInfo);
