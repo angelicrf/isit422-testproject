@@ -1209,6 +1209,31 @@ router.get('/OdGetFiles', (req,res) => {
       res.status(200).json({"OdGetFilesMSG": "OdFiles_Received", "OdFiles": odFiles});
     }); 
 });
+router.post('/OdDownload', (req,res) => {
+  console.log("OdDownload called");
+
+  let odFileUrl = req.body.odFileUrl;
+  let odFileName = req.body.odFileName;
+  
+  console.log("OdFileName " + odFileName + "odFileId " + odFileUrl);
+  return child.exec(
+    `curl --location --request GET ${odFileUrl} \
+     -H "Authorization: Bearer ${odAccessToken}" \
+     -o "${odFileName}"`,
+    (err,stdout,stderr) => {
+      if(err){
+        console.log("err from OdDownload " + err)
+      }
+      console.log("the OdDownload stdout is " + stdout);
+      console.log("the OdDownload stderr is " + stderr);
+      odFileDownload = stdout;
+      res.status(200).json({"odDownloadMSG": "odFile_Downloaded", "OdDownload": odFileDownload});
+    }); 
+});
+
+//POST https://graph.microsoft.com/v1.0/me/drive/items/{item-id}/children
+//Content-Type: multipart/related; boundary="A100x"
+
   function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
    , (err, stdout, stderr) => {

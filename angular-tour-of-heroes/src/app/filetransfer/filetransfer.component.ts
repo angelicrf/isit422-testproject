@@ -15,6 +15,8 @@ let holdClientFilesToDisplay:any = {};
 let holdBoxAllFlsFl:any = {};
 let boxFiles = [];
 let holdBoxSelectedFile = [];
+let holdOdSelectedFile = [];
+let odFile = [];
 
 @Component({
   selector: 'app-filetransfer',
@@ -410,6 +412,19 @@ export class FiletransferComponent implements OnInit {
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
           await this.bxService.boxUpload(holdBoxSelectedFile[1]); 
         }
+        if(this.service1 === 2){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          //await this.bxService.boxUpload(holdBoxSelectedFile[1]); 
+        }
       }
     }
   }
@@ -601,15 +616,23 @@ export class FiletransferComponent implements OnInit {
   }
   async odDisplayFiles(){
     let showAllOdFlsFiles:any = await this.odService.getOdCodefromUri();
-    //console.log("showAllOdFlsFiles is " + JSON.stringify(showAllOdFlsFiles));
+    console.log("showAllOdFlsFiles " + showAllOdFlsFiles + "Name " + showAllOdFlsFiles[0].odFileName);
     let runAllOdFlsFiles:any = await this.odFilesFls(showAllOdFlsFiles);
 
   }
-  async odFilesFls(odFlsFiles:[]){
+  async odFilesFls(odFlsFiles:any){
     return await new Promise((resolve,reject) =>{
-      let storeOdItemsInArray:string[] = Object.values(odFlsFiles);
+      let storeOdItemsInArray:string[] = [];
+      let key = Object.values(odFlsFiles);
+
+      for (let index = 0; index < key.length; index++) {
+        odFile.push(odFlsFiles[index]);
+        storeOdItemsInArray.push(odFlsFiles[index].odFileName); 
+      }
+ 
       let odFilesStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') != -1);
       let odFolderStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') === -1);
+      
       console.log("odFilesStored is " + odFilesStored + "odFolderStored " + odFolderStored );
       for (let index = 0; index < odFilesStored.length; index++) {
         this.files1.push(odFilesStored[index]);

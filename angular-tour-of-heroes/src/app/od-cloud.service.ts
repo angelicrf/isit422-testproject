@@ -76,7 +76,12 @@ async odGetAccessToken(){
   let storeOdFlsFolders:any = savedOdFlsFolders.value;
   
   for (let index = 0; index < storeOdFlsFolders.length; index++) {
-      this.storeOdFiles.push(storeOdFlsFolders[index].name);
+    let holdOdItems = {};
+    let getOdUrl = "@microsoft.graph.downloadUrl";
+    holdOdItems["odFileName"] = storeOdFlsFolders[index].name;
+    holdOdItems["odFileUrl"] = storeOdFlsFolders[index]["@microsoft.graph.downloadUrl"];
+      
+    this.storeOdFiles.push(holdOdItems);
   }
   return this.storeOdFiles;
  }
@@ -97,6 +102,29 @@ async odGetAccessToken(){
           let holdOdAllFlsFils:any = result[Object.keys(result)[1]];
           resolve(holdOdAllFlsFils);
       });  
+  })
+}
+async odDownloadFile(odUrl:string,odFl:string) {
+  return await new Promise((resolve,reject) => {
+    fetch('/api/OdDownload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({
+        odFileUrl: odUrl,
+        odFileName: odFl 
+      })
+    })
+       .then((result) => {
+        return result.json();
+       }) 
+       .then(response => {
+        let msgDisplay:any = response[Object.keys(response)[1]];
+        resolve(msgDisplay)
+      })
+      .catch((err) => console.log(err));
   })
 }
 }
@@ -122,6 +150,7 @@ async function getOdAccessToken(odToken:string) {
       .catch((err) => console.log(err));
   })
 }
+
 async function getProfile(profileAccess:string) {
     return await new Promise((resolve,reject) => {
       fetch('/api/OdProfile', {
