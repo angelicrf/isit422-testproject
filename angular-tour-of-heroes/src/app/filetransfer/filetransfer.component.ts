@@ -422,8 +422,8 @@ export class FiletransferComponent implements OnInit {
               }
           } 
           console.log("holdOdSelectedFile " + holdOdSelectedFile);
-          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
-          //await this.bxService.boxUpload(holdBoxSelectedFile[1]); 
+          //await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.odService.odUploadFile(holdOdSelectedFile[1]); 
         }
       }
     }

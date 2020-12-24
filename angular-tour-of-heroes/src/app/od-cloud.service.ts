@@ -127,6 +127,30 @@ async odDownloadFile(odUrl:string,odFl:string) {
       .catch((err) => console.log(err));
   })
 }
+async odUploadFile(odFl:string) {
+  //odUpFileName
+  console.log("odFl is " + odFl);
+  return await new Promise((resolve,reject) => {
+    fetch('/api/OdUpload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({
+        odUpFileName: odFl 
+      })
+    })
+       .then((result) => {
+        return result.json();
+       }) 
+       .then(response => {
+        let msgDisplay:any = response[Object.keys(response)[1]];
+        resolve(msgDisplay)
+      })
+      .catch((err) => console.log(err));
+  })
+}
 }
 async function getOdAccessToken(odToken:string) {
   return await new Promise((resolve,reject) => {

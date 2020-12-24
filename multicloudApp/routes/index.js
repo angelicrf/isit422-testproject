@@ -869,16 +869,8 @@ router.get('/DPDownload', async function (req, res)
         console.log("the stdOut is " + JSON.stringify(stdout));
       })
         console.log("file transfered");
-        res.send("Response from Node: file downloaded");
-        /* setTimeout(async() => {
-          let moveFileResule = await tpMoveFilestoAllFiles(storeLastPart);
-          console.log("moveFileResule after send " + moveFileResule);
-        },10000 );    */           
-  }  
-/*   setTimeout(async() => {
-    let moveFileResule2 = await tpMoveFilestoAllFiles(storeLastPart);
-    console.log("moveFileResule after send " + moveFileResule2);
-  },10000 ); */  
+        res.send("Response from Node: file downloaded");          
+  }    
 })
 router.get('/DPDownloadLocal', async function (req, res)
 {
@@ -895,7 +887,6 @@ router.get('/DPDownloadLocal', async function (req, res)
 
   if(saveAccess.charAt(0) == '"' || saveAccess.charAt(saveAccess.length - 1) == '"'){
     console.log('there is "')
-    //check it out
     //-H 'Content-Type: application/octet-stream' \
     child.exec(
       `curl -X POST https://content.dropboxapi.com/2/files/download \
@@ -908,21 +899,11 @@ router.get('/DPDownloadLocal', async function (req, res)
             console.log("the stdErr is " + stderr);           
         } 
         console.log("the stdOut is " + JSON.stringify(stdout));
-
-        // move file to AllFiles
         tpMoveFilestoAllFiles(storeLastPart)
       })
         console.log("file transfered");
-        res.send("Response from Node: file downloaded");
-        /* setTimeout(async() => {
-          let moveFileResule = await tpMoveFilestoAllFiles(storeLastPart);
-          console.log("moveFileResule after send " + moveFileResule);
-        },10000 );    */           
-  }  
-/*   setTimeout(async() => {
-    let moveFileResule2 = await tpMoveFilestoAllFiles(storeLastPart);
-    console.log("moveFileResule after send " + moveFileResule2);
-  },10000 ); */  
+        res.send("Response from Node: file downloaded");         
+  }   
 })
 router.post('/GdId', function (req, res) {
   console.log("GdId called ")
@@ -1230,11 +1211,47 @@ router.post('/OdDownload', (req,res) => {
       res.status(200).json({"odDownloadMSG": "odFile_Downloaded", "OdDownload": odFileDownload});
     }); 
 });
+router.post('/OdUpload', (req,res) => {
+  console.log("OdUpload called");
+  let odUploadFileName = req.body.odUpFileName;
+  console.log("odUpFileName is " + odUploadFileName);
 
-//POST https://graph.microsoft.com/v1.0/me/drive/items/{item-id}/children
-//Content-Type: multipart/related; boundary="A100x"
+   setTimeout(async() => {
+    let moveFileResule = await tpMoveFilestoAllFiles(odUploadFileName);
+    console.log("moveFileResule after OdDownload " + moveFileResule);
+  },10000 );  
 
-  function toDeleteAllFiles(){
+  setTimeout(( ) => {
+    let odConcatFile = '';
+    fs.readdirSync( folder ).forEach( file => {
+    //    if(file === odUploadFileName) {
+        console.log("inside the folderOne ")
+        const extname = path.extname( file );
+        const filename = path.basename( file, extname );
+        const absolutePath = path.resolve( folder, file );
+        odConcatFile = (filename + extname);
+     // } 
+    });
+      return child.exec(
+        `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
+        -H "Authorization: Bearer ${odAccessToken}" \
+        --data-binary @./routes/AllFiles/${odConcatFile} \
+        -H "Content-Type: application/json"`,
+        (err,stdout,stderr) => {
+          if(err){
+            console.log("err from OdUpload " + err)
+          }
+          console.log("the OdUpload stdout is " + stdout);
+          console.log("the OdUpload stderr is " + stderr);
+          odFileUpload = stdout;
+          res.status(200).json({"odUploadMSG": "odFile_Uploaded", "OdUpload": odFileUpload});
+        }); 
+     
+  },14000); 
+});
+//; boundary="A100x"
+
+function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
    , (err, stdout, stderr) => {
     if (err) {
