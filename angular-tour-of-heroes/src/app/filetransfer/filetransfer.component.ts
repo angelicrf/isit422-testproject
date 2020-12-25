@@ -72,11 +72,7 @@ export class FiletransferComponent implements OnInit {
     private dpService: DpCloudService,
     private gdcl:GDClientCredentials,
     private bxService: BxCloudService, 
-    private odService: OdCloudService) {
-      //showData = this.dpService.getCodefromUri();
-      //bxCode = this.bxService.getBoxCodefromUri();
-      
-    }
+    private odService: OdCloudService) {}
 
   ngOnInit(){
      this.getFilters();
@@ -525,6 +521,7 @@ export class FiletransferComponent implements OnInit {
   }
 
   async dpProcessFiles(side){
+  showData = this.dpService.getCodefromUri();
   let displayResult:any = await this.dpService.sendMessageToNode(showData)
   this.dpService.dpGetClientInfo(displayResult)
 
@@ -587,10 +584,19 @@ export class FiletransferComponent implements OnInit {
     return window.history.replaceState(null, null, window.location.pathname);
   }
   async boxProcessFiles(){
+    bxCode = this.bxService.getBoxCodefromUri();
     await this.bxService.getboxCodeOauth(bxCode);
     await this.bxService.issueBoxAccessToken();
-    let storeBxEmail:any = await this.bxService.getBoxClientEmail();
-    localStorage.setItem("boxClientEmail", storeBxEmail );
+
+    let storeBxInfo:any = await this.bxService.getBoxClientInfo();
+    let hlBxClName:string = storeBxInfo[0];
+    let hlBxClEmail:string = storeBxInfo[1];
+    let formathlBxClName = hlBxClName.split(",")[0];
+    localStorage.setItem("boxClientEmail", hlBxClEmail );
+    let mongoDbUserId = localStorage.getItem('userMnId');
+   
+    this.bxService.sendBoxClientInfo(formathlBxClName.replace(/['"]+/g, '').toString(),hlBxClEmail.toString(),mongoDbUserId);
+
     this.removeUrlParams();
     holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
     this.boxDisplayFoldersFiles();
@@ -609,6 +615,7 @@ export class FiletransferComponent implements OnInit {
         holdBoxItems["bxFileName"] = storeFlsFolders[index].name;
         holdBoxItems["bxFileId"] = storeFlsFolders[index].id;
         console.log("holdBoxItems bxFileId " + holdBoxItems["bxFileId"]);
+        
         boxFiles.push(holdBoxItems);
         this.files1.push(storeFlsFolders[index].name);
       }

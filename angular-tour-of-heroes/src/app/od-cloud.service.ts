@@ -66,7 +66,15 @@ async odGetAccessToken(){
   let profileAccessToken:any = await this.odGetAccessToken();
   let profileClientInfo:any = await getProfile(profileAccessToken);
   
-  localStorage.setItem("odClientEmail", profileClientInfo);
+  let hlOdName:string = profileClientInfo[1];
+  let formatlClName:string = hlOdName.split(",")[0];
+  let hlOdEmail:string = profileClientInfo[0];
+  console.log("hlOdName is " + formatlClName + "hlOdEmail " + hlOdEmail);
+  localStorage.setItem("odClientEmail", profileClientInfo[0]);
+
+  let mongoDbUserId:string = localStorage.getItem('userMnId');
+  sendOdClientInfo(formatlClName.replace(/['"]+/g, '').toString(),hlOdEmail.toString(),mongoDbUserId);
+  
   let odAallFiles:any = await this.odGetFiles();
   let holdOdItems:any = this.storeOdFlsFiles(odAallFiles);
   return holdOdItems;
@@ -122,7 +130,8 @@ async odDownloadFile(odUrl:string,odFl:string) {
        }) 
        .then(response => {
         let msgDisplay:any = response[Object.keys(response)[1]];
-        resolve(msgDisplay)
+     
+        resolve(msgDisplay);
       })
       .catch((err) => console.log(err));
   })
@@ -192,10 +201,31 @@ async function getProfile(profileAccess:string) {
          }) 
          .then(response => {
           let msgDisplay:any = response[Object.keys(response)[1]];
+          let msgBxNameDisplay:any = response[Object.keys(response)[2]];
+          let holdBxClInfo = [];
+          holdBxClInfo.push(msgDisplay,msgBxNameDisplay);
           //console.log("msgDisplay " + msgDisplay);
-          resolve(msgDisplay)
+          resolve(holdBxClInfo)
         })
         .catch((err) => console.log(err));
     })
+}
+function sendOdClientInfo(getOdName:string,getOdEmail:string,getUserMongoId:string){
+  console.log("getOdName from service " + getOdName);
+  let odClientValue = JSON.stringify({
+    odname: getOdName,
+    odemail: getOdEmail,
+    usermongoid: getUserMongoId, 
+  })
+  let myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+  return fetch('/api/MCOdClient',{
+    method: 'POST',
+    headers: myHeaders,
+    body: odClientValue
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.log(err))
 }
 

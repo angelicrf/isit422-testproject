@@ -28,7 +28,9 @@ const mongoose = require("mongoose");
 
 const MCUsers = require("../McUsers");
 const MCClient = require("../McCloud");
+const BoxClient = require("../BoxCloud");
 const DbClient = require('../DbCloud');
+const OdClient = require("../OdCloud");
 const { stdout, stderr } = require('process');
 
 // mongodb connection string
@@ -230,7 +232,44 @@ router.post('/MCGdClient', function(req, res) {
     }
   });
 });
+router.post('/MCBoxClient', function(req, res) {
+  console.log("MCBoxClient called " + req.body.bxname);
 
+  let oneNewBoxClient = new BoxClient({
+    bxname: req.body.bxname,
+    bxemail: req.body.bxemail,
+    usermongoid: req.body.usermongoid
+  });  
+  oneNewBoxClient.save((err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    else {
+    console.log(result);
+    res.status(201).json(result);
+    }
+  });
+});
+router.post('/MCOdClient', function(req, res) {
+  console.log("MCOdClient called " + req.body.odname);
+
+  let oneNewOdClient = new OdClient({
+    odname: req.body.odname,
+    odemail: req.body.odemail,
+    usermongoid: req.body.usermongoid
+  });  
+  oneNewOdClient.save((err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    else {
+    console.log(result);
+    res.status(201).json(result);
+    }
+  });
+});
 /* delete one User */
 router.delete('/DeleteMCUser', function (req, res) {
   if (LoggedInUserID !== '' || LoggedInUserID !== null) {
@@ -1026,13 +1065,16 @@ router.get('/BoxClientEmail', (req,res) => {
   (err,stdout,stderr) => {
     if(err){
       console.log("err from BoxClientEmail " + err)
-    }
-    let obj = stdout;
-    let newObj = obj.toString().split(":")[4];
+    } 
     console.log("the BoxClientEmail stdout is " + stdout);
     console.log("the BoxClientEmail stderr is " + stderr);
+    
+    let obj = stdout;
+    let boxClientName = obj.toString().split(":")[3];
+    let newObj = obj.toString().split(":")[4];
     let boxEmail = newObj.substring( 0, newObj.indexOf(","));
-    res.status(200).json({"BoxClientEmailMSG": "BoxClientEmail_Issued", "boxEmail": boxEmail.replace(/['"]+/g, '')});
+    
+    res.status(200).json({"BoxClientEmailMSG": "BoxClientEmail_Issued", "boxEmail": boxEmail.replace(/['"]+/g, ''), "BoxClientName":boxClientName});
   });
 });
 router.get('/BoxGetFile', (req,res) => {
@@ -1165,14 +1207,18 @@ router.post('/OdProfile', (req,res) => {
       if(err){
         console.log("err from OdProfile " + err)
       }
-      let obj = stdout;
-      let newObj = obj.toString().split(":")[12];
       console.log("the OdProfile stdout is " + stdout);
       console.log("the OdProfile stderr is " + stderr);
+      
+      let obj = stdout;
+      let odClientName = obj.toString().split(":")[4];
+      
+      let newObj = obj.toString().split(":")[12];
       let odEmail = newObj.substring( 0, newObj.indexOf(","));
       let odClientEmail = odEmail.substr(0, odEmail.indexOf('#'));
       let edittedEmail = odClientEmail.replace(/_(?=[^_]*$)/, '@');
-      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": edittedEmail.replace(/['"]+/g, '')});
+
+      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": edittedEmail.replace(/['"]+/g, ''), "odClientName":odClientName});
     }); 
 });
 router.get('/OdGetFiles', (req,res) => {

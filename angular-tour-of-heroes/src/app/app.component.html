@@ -1,5 +1,5 @@
 <div>
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" class="fixed-header">
      <button mat-icon-button class="btn btn-primary" [matMenuTriggerFor]="menu">
       <mat-icon>menu</mat-icon>
       </button>
@@ -9,8 +9,7 @@
         <a routerLink="/cloudmanagement" id="a_one">Cloud Management</a>
         <a routerLink="/filetransfer" id="a_three">File Transfer</a>
         <a routerLink="/sign-up" id="a_three">{{appSpName}}</a>
-        <a routerLink="/sign-in" id="a_four">{{appSiName}}</a>
-       
+        <a routerLink="/sign-in" id="a_four">{{appSiName}}</a> 
       </nav>
     </mat-toolbar> 
       <mat-menu #menu="matMenu">

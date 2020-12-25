@@ -72,7 +72,7 @@ export class BxCloudService {
       });
    });
   }
-  async getBoxClientEmail(){
+  async getBoxClientInfo(){
     return await  new Promise((resolve,reject) => {
       let myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -87,8 +87,12 @@ export class BxCloudService {
         })
         .then((result) => {
           let saveClientEmail:any = result[Object.keys(result)[1]];
+          let saveClientName:any = result[Object.keys(result)[2]];
+          let holdBoxClientInfo = [];
+          
+          holdBoxClientInfo.push(saveClientName,saveClientEmail)
           console.log("BoxClientEmail form BoxService " + saveClientEmail);
-          resolve(saveClientEmail);
+          resolve(holdBoxClientInfo);
       });   
     });
   }
@@ -183,5 +187,22 @@ export class BxCloudService {
           resolve(msgDisplay);
       });   
     });
+  }
+  sendBoxClientInfo(getBxName:string,getBxEmail:string,getUserMongoId:string){
+    let bxClientValue = JSON.stringify({
+      bxname: getBxName,
+      bxemail: getBxEmail,
+      usermongoid: getUserMongoId, 
+    })
+    let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+    return fetch('/api/MCBoxClient',{
+      method: 'POST',
+      headers: myHeaders,
+      body: bxClientValue
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
   }
 }

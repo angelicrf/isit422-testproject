@@ -56,3 +56,6 @@ li {
 input[type=checkbox] {
     transform: scale(1.5);
 }
+.cmBar{
+    margin-top: 100px;
+  }
