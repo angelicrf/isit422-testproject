@@ -222,7 +222,6 @@ export class FiletransferComponent implements OnInit {
           //this.moveLocalFile(this.serviceAccounts[4] + '/' + this.files2[0]);
         }
       }
-
       // if going to left container
       if(event.container.id === 'left') {
         // if right is dropbox and left is google drive
@@ -353,6 +352,39 @@ export class FiletransferComponent implements OnInit {
           console.log( "inside the loop");
           await this.dpService.dPDownloadLocalFromNode();
         }
+        if(this.service1 === 0 && this.service2 === 2) {
+          //Download
+          let storePath = (this.files2[0]).toString();
+          console.log( "this.files2 " + this.files2)
+          let holdLowerpath = []
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+              }
+          } 
+          console.log( "inside the looptwo");
+          await this.dpService.dpPathFiles(holdLowerpath[0]);
+          console.log( "inside the loop");
+          await this.odService.odUploadFile(storePath);
+        }
+        if(this.service1 === 0 && this.service2 === 3) {
+          //Download
+          let storePath = (this.files2[0]).toString();
+          console.log( "this.files2 " + this.files2)
+          let holdLowerpath = []
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+              }
+          } 
+          console.log( "inside the looptwo");
+          await this.dpService.dpPathFiles(holdLowerpath[0]);
+          console.log( "inside the loop");
+          await this.bxService.boxUpload(storePath);
+        }
+        
         // if left is google drive and right is drop box
         if(this.service1 === 1 && this.service2 === 0) {
           console.log("this.files2[0] " + this.files2[0])
@@ -369,6 +401,38 @@ export class FiletransferComponent implements OnInit {
           let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
           console.log("gdDownloadResult " + gdDownloadResult); 
           await this.dpService.dPUploadFromNode()  
+        }
+        if(this.service1 === 1 && this.service2 === 2) {
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          console.log("gdDownloadResult " + gdDownloadResult); 
+          await this.odService.odUploadFile(gdStoreName); 
+        }
+        if(this.service1 === 1 && this.service2 === 3) {
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          console.log("gdDownloadResult " + gdDownloadResult); 
+          await this.bxService.boxUpload(gdStoreName);
         }
         // if left is google drive and right is local
         if(this.service1 === 1 && this.service2 === 4) {
@@ -395,7 +459,66 @@ export class FiletransferComponent implements OnInit {
         if(this.service1 === 4 && this.service2 === 0) {
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
-        if(this.service1 === 3){
+        if(this.service1 === 4 && this.service2 === 2) {
+          await this.odService.odUploadFile(this.files2[0]);
+        }
+        if(this.service1 === 4 && this.service2 === 3) {
+          await this.bxService.boxUpload(this.files2[0]);
+        }
+        if(this.service1 === 2 && this.service2 === 0){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.dpService.dPUploadFromNode();
+        }
+        if(this.service1 === 2 && this.service2 === 1){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.gdService.gDUploadFromNode();
+          setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
+        }
+        if(this.service1 === 2 && this.service2 === 3){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.bxService.boxUpload(holdOdFile);
+        }
+        if(this.service1 === 2 && this.service2 === 4){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.dpService.dPUploadLocalFromNode(holdOdFile); 
+        }
+        if(this.service1 === 3 && this.service2 === 0){
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -406,20 +529,50 @@ export class FiletransferComponent implements OnInit {
           } 
           console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
-          await this.bxService.boxUpload(holdBoxSelectedFile[1]); 
+          await this.dpService.dPUploadFromNode();
+          
         }
-        if(this.service1 === 2){
-          let holdOdFile = this.files2[0];
-          console.log("holdodFile " + holdOdFile);
-          let keys = Object.keys(odFile);
+        if(this.service1 === 3 && this.service2 === 1){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
           for(let i = 0; i < keys.length; i++){
-              if(odFile[i].odFileName === holdOdFile.toString() ) {
-                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
               }
           } 
-          console.log("holdOdSelectedFile " + holdOdSelectedFile);
-          //await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
-          await this.odService.odUploadFile(holdOdSelectedFile[1]); 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.gdService.gDUploadFromNode();
+          setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
+          
+        }
+        if(this.service1 === 3 && this.service2 === 2){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.odService.odUploadFile(holdBoxFile); 
+          
+        }
+        if(this.service1 === 3 && this.service2 === 4){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.dpService.dPUploadLocalFromNode(holdBoxFile); 
         }
       }
     }

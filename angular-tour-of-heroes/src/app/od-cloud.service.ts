@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MsalService, BroadcastService } from '@azure/msal-angular';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -9,67 +9,33 @@ export class OdCloudService {
   issuedOdAccessToken:any;
   storeOdFiles = [];
 
-constructor(
-   private broadcastService: BroadcastService,
-   private authService: MsalService
-  ) { }
+constructor() { }
   login() {
-    let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/filetransfer/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite.All"
+    let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/filetransfer/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
     let link = document.createElement('a');
     link.href = odUrl;
     link.click();
     }
-async odGetAccessToken(){
-    return await new Promise((resolve,reject) => {
-    const requestObj = {
-      scopes: ["user.read"]
-  };
-  this.authService.acquireTokenSilent(requestObj)
-  .then(function (tokenResponse) {
-      //console.log("New AccessToken from service "+ JSON.stringify(tokenResponse));
-      return resolve(tokenResponse.accessToken);
-      }).catch(function (error) {
-      console.log(error);
-    });
-  });      
- }
  async getOdCodefromUri(){
    return await new Promise((resolve,reject) => {
-    let isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
-    
-  
-    if(isIE){
-      this.authService.loginRedirect({
-        extraScopesToConsent: ["user.read", "openid", "profile"]    
-      });
-      setTimeout(async () => {
-        let displayFlsFiles:any = this.odDisplayFilesFlsProcess();   
-        return resolve(displayFlsFiles);
-      },30000);
-    }else{
-      this.authService.loginPopup({
-        extraScopesToConsent: ["user.read", "openid", "profile"]
-      });
-     setTimeout(async () => {
       let displayFlsFiles:any = this.odDisplayFilesFlsProcess();  
       return resolve(displayFlsFiles);
-    },30000);
-    } 
    });
 }
  async odDisplayFilesFlsProcess(){
-  const uriLink = location.href;
-  const newUri = new URL(uriLink);
-  const findParam = newUri.searchParams.get('code');
+  const uriLink:string = location.href;
+  let findParam = uriLink.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
 
-  this.issuedOdAccessToken = await getOdAccessToken(findParam);
-  let profileAccessToken:any = await this.odGetAccessToken();
-  let profileClientInfo:any = await getProfile(profileAccessToken);
-  
+  this.issuedOdAccessToken = await getOdAccessToken(findParam.toString());
+  let profileClientInfo:any = await getProfile();
+  console.log("profileClientInfo " + profileClientInfo);
+
   let hlOdName:string = profileClientInfo[1];
+  console.log("hlOdName " + hlOdName);
   let formatlClName:string = hlOdName.split(",")[0];
+  console.log("formatlClName " + formatlClName);
   let hlOdEmail:string = profileClientInfo[0];
-  console.log("hlOdName is " + formatlClName + "hlOdEmail " + hlOdEmail);
+  console.log("hlOdEmail " + hlOdEmail);
   localStorage.setItem("odClientEmail", profileClientInfo[0]);
 
   let mongoDbUserId:string = localStorage.getItem('userMnId');
@@ -137,8 +103,6 @@ async odDownloadFile(odUrl:string,odFl:string) {
   })
 }
 async odUploadFile(odFl:string) {
-  //odUpFileName
-  console.log("odFl is " + odFl);
   return await new Promise((resolve,reject) => {
     fetch('/api/OdUpload', {
       method: 'POST',
@@ -184,17 +148,14 @@ async function getOdAccessToken(odToken:string) {
   })
 }
 
-async function getProfile(profileAccess:string) {
+async function getProfile() {
     return await new Promise((resolve,reject) => {
       fetch('/api/OdProfile', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          odProfileAcTk:profileAccess
-        })
+        }
       })
          .then((result) => {
           return result.json();
@@ -204,14 +165,14 @@ async function getProfile(profileAccess:string) {
           let msgBxNameDisplay:any = response[Object.keys(response)[2]];
           let holdBxClInfo = [];
           holdBxClInfo.push(msgDisplay,msgBxNameDisplay);
-          //console.log("msgDisplay " + msgDisplay);
+          console.log("holdBxClInfo " + holdBxClInfo);
           resolve(holdBxClInfo)
         })
         .catch((err) => console.log(err));
     })
 }
 function sendOdClientInfo(getOdName:string,getOdEmail:string,getUserMongoId:string){
-  console.log("getOdName from service " + getOdName);
+
   let odClientValue = JSON.stringify({
     odname: getOdName,
     odemail: getOdEmail,

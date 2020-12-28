@@ -5,6 +5,7 @@ const {v4 : uuidv4} = require('uuid');
 const folder = './routes/AllFiles';
 let HoldUserData = [];
 let LoggedInUserID = '';
+let downloadedFileName = '';
 let sendToAngularAccessToken = '';
 let saveGDAccessToken = '';
 let sendToGd = '';
@@ -664,9 +665,9 @@ router.post('/GDAcessToken', function (req, res)
 })
 router.get('/UploadGd', function (req, res)
 {
-  console.log("storeLastPart is " + storeLastPart);
+  console.log("downloadedFileName is " + downloadedFileName);
   setTimeout(async () => {
-    let moveFileResule = await tpMoveFilestoAllFiles(storeLastPart);
+    let moveFileResule = await tpMoveFilestoAllFiles(downloadedFileName);
     console.log("moveFileResule after send " + moveFileResule);
   },10000 );  
   let svAccess = saveGDAccessToken
@@ -682,8 +683,7 @@ router.get('/UploadGd', function (req, res)
    const storeFile = file.toString()
    concatFile = (filename + extname)       
    })  
-   //console.log("concatFile is " + concatFile)
-   //concatFile = 'dog_3.png';
+ 
    return child.exec(
      `curl --location --request POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id' \
       --header 'Authorization: Bearer ${svAccess}' \
@@ -765,9 +765,9 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
       })  
  })
  router.get('/GDUpdateFile' , (req, res) => {
-   console.log("GDUpdateFile called " + sendToGd )
+   console.log("GDUpdateFile called " + downloadedFileName )
    console.log("saveGDAccessToken from GDUpdateFile " + saveGDAccessToken)
-   console.log("storeLastPart is " + storeLastPart);
+   console.log("storeLastPart is " + downloadedFileName);
    let svAccess = saveGDAccessToken;
    let updatedMs = '';
   return child.exec(
@@ -775,7 +775,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
     --header 'Authorization: Bearer ${svAccess}' \
     --header "Content-Type: application/json" \
     --header 'Accept: */*' \
-    --data '{"title":"${storeLastPart.toString()}"}'`
+    --data '{"title":"${downloadedFileName.toString()}"}'`
     ,(stdout, stderr) => {    
       if(stderr.length > 0){
         updatedMs = stderr; 
@@ -789,7 +789,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
 {
   console.log("DpUpload called ")
   setTimeout(async () => {
-    let moveFileResule = await tpMoveFilestoAllFiles(GdrecivedName);
+    let moveFileResule = await tpMoveFilestoAllFiles(downloadedFileName);
     console.log("moveFileResule " + moveFileResule);
   },10000);
   
@@ -887,9 +887,9 @@ router.get('/DPDownload', async function (req, res)
   let saveAccess = (modifyGth[1])
   let sendToGd = ''
   let lastPart = getDpFilePath.split('/')
-  storeLastPart = lastPart[lastPart.length-1]
+  downloadedFileName = lastPart[lastPart.length-1]
   console.log('Last Part is ' + lastPart)
-  console.log('storeLastPart is ' + storeLastPart)
+  console.log('downloadedFileName is ' + downloadedFileName)
 
   if(saveAccess.charAt(0) == '"' || saveAccess.charAt(saveAccess.length - 1) == '"'){
     console.log('there is "')
@@ -899,7 +899,7 @@ router.get('/DPDownload', async function (req, res)
       `curl -X POST https://content.dropboxapi.com/2/files/download \
        -H 'Authorization: Bearer ${saveAccess.substr(1,saveAccess.length - 3)}' \
        -H 'Dropbox-Api-Arg: {"path": "${getDpFilePath}"}' \
-       -o "${storeLastPart}"`
+       -o "${downloadedFileName}"`
       ,(stdout, stderr) => {    
         if(stderr.length > 0){
           sendToGd = stderr;
@@ -920,7 +920,7 @@ router.get('/DPDownloadLocal', async function (req, res)
   let saveAccess = (modifyGth[1])
   let sendToGd = ''
   let lastPart = getDpFilePath.split('/')
-  storeLastPart = lastPart[lastPart.length-1]
+  downloadedFileName = lastPart[lastPart.length-1]
   console.log('Last Part is ' + lastPart)
   console.log('storeLastPart is ' + storeLastPart)
 
@@ -931,7 +931,7 @@ router.get('/DPDownloadLocal', async function (req, res)
       `curl -X POST https://content.dropboxapi.com/2/files/download \
        -H 'Authorization: Bearer ${saveAccess.substr(1,saveAccess.length - 3)}' \
        -H 'Dropbox-Api-Arg: {"path": "${getDpFilePath}"}' \
-       -o "${storeLastPart}"`
+       -o "${downloadedFileName}"`
       ,(stdout, stderr) => {    
         if(stderr.length > 0){
           sendToGd = stderr;
@@ -948,6 +948,8 @@ router.post('/GdId', function (req, res) {
   console.log("GdId called ")
   Gdrecivedid = req.body.gdSaveId
   GdrecivedName = req.body.gdSaveFileName
+  downloadedFileName = GdrecivedName;
+
   console.log("Gdrecivedid from /GdId " + Gdrecivedid + 'and File Name is ' + GdrecivedName);
   res.send("GdId received " + Gdrecivedid + 'with File name : ' + GdrecivedName);
 })
@@ -975,10 +977,10 @@ router.get('/DownloadGd', function (req, res)
 })
 router.get('/DownloadGdLocal', function (req, res)
 {
-  //get gd file name
   console.log("DownloadGdLocal called ")
   console.log("GdId from node " + Gdrecivedid)
   console.log("GdrecivedName from node " + GdrecivedName)
+  downloadedFileName = GdrecivedName;
   //      --header 'Content-Type: application/json' \
   let sendToGd = "";
   let fileNameCreate = GdrecivedName.toString();
@@ -992,7 +994,6 @@ router.get('/DownloadGdLocal', function (req, res)
          console.log("the stdErr is " + stderr)            
      } 
      console.log("the stdOut is " + JSON.stringify(sendToGd)) 
-      // move file to AllFiles
      tpMoveFilestoAllFiles(GdrecivedName)
      res.send("Response from Node: File downloaded from Google drive")   
    }) 
@@ -1019,7 +1020,6 @@ async function tpMoveFilestoAllFiles(filename){
     return resolve(stdout);
     });
   });
-  //some comments to see
 }
 // Post code
 router.post('/BoxCode', function (req,res) {
@@ -1031,7 +1031,7 @@ router.post('/BoxCode', function (req,res) {
     return holdBoxCode;
   ///}
 });
-//Issue AccessToken by using the code
+
 router.get('/BoxOauth', (req,res) => {
   console.log("BoxOauth called");
   console.log("holdBoxCode from BoxOath " + holdBoxCode);
@@ -1129,9 +1129,10 @@ router.post('/BxDownload', (req,res) => {
 router.post('/BxUpload', (req,res) => {
   let boxUploadFileName = req.body.boxUpFileName;
   console.log("BxUpload called");
-  //Needs Extra Info
   console.log("boxUploadFileName from bxUpload " + boxUploadFileName);
-   setTimeout(async() => {
+   
+  downloadedFileName = boxUploadFileName;
+  setTimeout(async() => {
     let moveFileResule = await tpMoveFilestoAllFiles(boxUploadFileName);
     console.log("moveFileResule after Boxdownload " + moveFileResule);
   },10000 );  
@@ -1146,7 +1147,6 @@ router.post('/BxUpload', (req,res) => {
         boxConcatFile = (filename + extname);
       }
       }); 
-      //--data-binary
       return child.exec(
         `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
         -H "Authorization: Bearer ${boxAccessToken}" \
@@ -1169,8 +1169,11 @@ router.post('/OdAccessToken', (req,res) => {
   console.log("OdAccessToken called");
   res.header('Access-Control-Allow-Origin', '*');
 
-  let odCodeReceived = req.body.odCode;
-  console.log("odCodeReceived " + odCodeReceived);
+  odAccessToken = req.body.odCode;
+  console.log("OdAccessToken is " + odAccessToken);
+  res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Received", "OdAccessToken": odAccessToken});
+  return odAccessToken;
+  /* console.log("odCodeReceived " + odCodeReceived);
   return child.exec(
     `curl POST https://login.microsoftonline.com/common/oauth2/v2.0/token \
     -H "Content-Type: application/x-www-form-urlencoded" \
@@ -1194,15 +1197,14 @@ router.post('/OdAccessToken', (req,res) => {
       odAccessToken = newObj2.slice(1, -2);
       console.log("odAccessToken is " + odAccessToken);
       res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Issued", "OdAccessToken": odAccessToken});
-    }); 
+    });  */
 });
-router.post('/OdProfile', (req,res) => {
+router.get('/OdProfile', (req,res) => {
   console.log("OdProfile called");
-  let profileAccessToken = req.body.odProfileAcTk;
-  //console.log("odAccessToken is " + odAccessToken)
+  
   return child.exec(
     `curl GET "https://graph.microsoft.com/v1.0/me" \
-     -H "Authorization: Bearer ${profileAccessToken}"`,
+     -H "Authorization: Bearer ${odAccessToken}"`,
     (err,stdout,stderr) => {
       if(err){
         console.log("err from OdProfile " + err)
@@ -1211,14 +1213,18 @@ router.post('/OdProfile', (req,res) => {
       console.log("the OdProfile stderr is " + stderr);
       
       let obj = stdout;
-      let odClientName = obj.toString().split(":")[4];
-      
-      let newObj = obj.toString().split(":")[12];
+      let odClientName = obj.toString().split(":")[6];
+      console.log("odClientName " + odClientName);
+      let newObj = obj.toString().split(":")[7];
+      console.log("newObj " + newObj);
       let odEmail = newObj.substring( 0, newObj.indexOf(","));
-      let odClientEmail = odEmail.substr(0, odEmail.indexOf('#'));
+      console.log("odEmail " + odEmail);
+   /*    let odClientEmail = odEmail.substr(0, odEmail.indexOf('#'));
       let edittedEmail = odClientEmail.replace(/_(?=[^_]*$)/, '@');
+      console.log("odClientEmail " + odClientEmail);
+      console.log("edittedEmail " + edittedEmail); */
 
-      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": edittedEmail.replace(/['"]+/g, ''), "odClientName":odClientName});
+      res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": odEmail, "odClientName":odClientName});
     }); 
 });
 router.get('/OdGetFiles', (req,res) => {
@@ -1241,7 +1247,8 @@ router.post('/OdDownload', (req,res) => {
 
   let odFileUrl = req.body.odFileUrl;
   let odFileName = req.body.odFileName;
-  
+  downloadedFileName = odFileName;
+
   console.log("OdFileName " + odFileName + "odFileId " + odFileUrl);
   return child.exec(
     `curl --location --request GET ${odFileUrl} \
@@ -1270,13 +1277,13 @@ router.post('/OdUpload', (req,res) => {
   setTimeout(( ) => {
     let odConcatFile = '';
     fs.readdirSync( folder ).forEach( file => {
-    //    if(file === odUploadFileName) {
+        if(file === odUploadFileName) {
         console.log("inside the folderOne ")
         const extname = path.extname( file );
         const filename = path.basename( file, extname );
         const absolutePath = path.resolve( folder, file );
         odConcatFile = (filename + extname);
-     // } 
+      } 
     });
       return child.exec(
         `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
@@ -1295,7 +1302,6 @@ router.post('/OdUpload', (req,res) => {
      
   },14000); 
 });
-//; boundary="A100x"
 
 function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
