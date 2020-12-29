@@ -225,120 +225,26 @@ async ngOnInit(){
       }
       // if going to left container
       if(event.container.id === 'left') {
-        // if right is dropbox and left is google drive
-        if(this.service2 === 0 && this.service1 === 1) {
-          //Download and then upload to dp
-          let storePath = (this.files1[0]).toString();
-          console.log( "this.files1 " + this.files1)
-          let holdLowerpath = []
-          let keys = Object.keys(retreiveDpFiles);
-          for(let i = 0; i < keys.length; i++){
-            if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
-              holdLowerpath.push(retreiveDpFiles[i].dpClPath)
-            }
-          } 
-          console.log( "inside the looptwo");
-          await this.dpService.dpPathFiles(holdLowerpath[0]);
-          console.log( "inside the loop");
-          await this.dpService.dPDownloadFromNode();
-          await this.gdService.gDUploadFromNode();
-          setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
-        }
-        // if right is dropbox and left is local
-        if(this.service2 === 0 && this.service1 === 4) {
-          //Download
-          let storePath = (this.files1[0]).toString();
-          console.log( "this.files1 " + this.files1)
-          let holdLowerpath = []
-          let keys = Object.keys(retreiveDpFiles);
-          for(let i = 0; i < keys.length; i++){
-              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
-                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
-              }
-          } 
-          console.log( "inside the looptwo");
-          await this.dpService.dpPathFiles(holdLowerpath[0]);
-          console.log( "inside the loop");
-          await this.dpService.dPDownloadLocalFromNode();
-        }
-        // if right is google drive and left is dropbox
-        if(this.service2 === 1 && this.service1 === 0) {
-          console.log( "this.files1[0] " + this.files1[0])
-          let gdStoreName = (this.files1[0]).toString();
-          let holdGdIdFiles = [];
-          let keys = Object.keys(holdClientFilesToDisplay);
-          for (let index = 0; index < keys.length; index++) {
-            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
-              console.log( "inside the loop");
-              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
-            }   
-          }
-          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
-          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
-          console.log("gdDownloadResult " + gdDownloadResult); 
-          await this.dpService.dPUploadFromNode()   
-        }
-        // if right is google drive and left is local
-        if(this.service2 === 1 && this.service1 === 4) {
-          console.log("this.files1[0] " + this.files1[0])
-          let gdStoreName = (this.files1[0]).toString();
-          let holdGdIdFiles = [];
-          let keys = Object.keys(holdClientFilesToDisplay);
-          for (let index = 0; index < keys.length; index++) {
-            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
-              console.log( "inside the loop");
-              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
-            }   
-          }
-          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
-          let gdDownloadResult:any = await this.gdService.gDDownloadLocalFromNode();
-          console.log("gdDownloadResult " + gdDownloadResult);
-        }
-        // if right is local and left is Dropbox
-        if(this.service2 === 4 && this.service1 === 0) {
-          await this.dpService.dPUploadLocalFromNode(this.files1[0])
-        }// if right is local and left is Google Drive
-        if( this.service2 === 4 && this.service1 === 1) {
-          await this.gdService.gDUploadLocal(this.files1[0]);
-          setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
-        }
-      }
-
-      // if coming from right container
-      if(event.previousContainer.id === "right") {
-
-      }
-
-      // if going to right container
-      if(event.container.id === 'right') {
-        // if left is dropbox and right is google drive
         if(this.service1 === 0 && this.service2 === 1) {
-          //Download and then upload to dp
-          // console.log( "this.files2[0] " + this.files2[0])
+          
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
           let keys = Object.keys(retreiveDpFiles);
           for(let i = 0; i < keys.length; i++){
-            //for (let index = 0; index < (this.files2).length; index++) {
-              //console.log( "inside the loop one ")
+            
               if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
                 holdLowerpath.push(retreiveDpFiles[i].dpClPath)
               }
-          } 
-          //console.log( "holdLowerpath " + holdLowerpath)
-          // for (let index = 0; index < holdLowerpath.length; index++){  
-          //  setInterval(async () => {
+          }
           console.log( "inside the looptwo");
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
           await this.dpService.dPDownloadFromNode();
           await this.gdService.gDUploadFromNode();
           setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
-        }
-        // if left is dropbox and right is local
-        if(this.service1 === 0 && this.service2 === 4) {
-          //Download
+        } 
+        if(this.service1 === 0 && this.service2 === 2 ) {
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -351,26 +257,26 @@ async ngOnInit(){
           console.log( "inside the looptwo");
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
-          await this.dpService.dPDownloadLocalFromNode();
-        }
-        if(this.service1 === 0 && this.service2 === 2) {
-          //Download
-          let storePath = (this.files2[0]).toString();
-          console.log( "this.files2 " + this.files2)
-          let holdLowerpath = []
-          let keys = Object.keys(retreiveDpFiles);
-          for(let i = 0; i < keys.length; i++){
-              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
-                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
-              }
-          } 
-          console.log( "inside the looptwo");
-          await this.dpService.dpPathFiles(holdLowerpath[0]);
-          console.log( "inside the loop");
+          await this.dpService.dPDownloadFromNode();
           await this.odService.odUploadFile(storePath);
         }
         if(this.service1 === 0 && this.service2 === 3) {
-          //Download
+            let storePath = (this.files2[0]).toString();
+            console.log( "this.files2 " + this.files2)
+            let holdLowerpath = []
+            let keys = Object.keys(retreiveDpFiles);
+            for(let i = 0; i < keys.length; i++){
+                if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                  holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+                }
+            } 
+            console.log( "inside the looptwo");
+            await this.dpService.dpPathFiles(holdLowerpath[0]);
+            console.log( "inside the loop");
+            await this.dpService.dPDownloadFromNode();
+            await this.bxService.boxUpload(storePath);
+        }
+        if(this.service1 === 0 && this.service2 === 4) {
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -383,11 +289,11 @@ async ngOnInit(){
           console.log( "inside the looptwo");
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
-          await this.bxService.boxUpload(storePath);
+          await this.dpService.dPDownloadFromNode();
+          await this.dpService.dPUploadLocalFromNode(storePath);
         }
-        
-        // if left is google drive and right is drop box
-        if(this.service1 === 1 && this.service2 === 0) {
+        // if right is dropbox and left is google drive
+         if(this.service1 === 1 && this.service2 === 0 ) {
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -400,8 +306,7 @@ async ngOnInit(){
           }
           await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
           let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
-          console.log("gdDownloadResult " + gdDownloadResult); 
-          await this.dpService.dPUploadFromNode()  
+          await this.dpService.dPUploadFromNode();
         }
         if(this.service1 === 1 && this.service2 === 2) {
           console.log("this.files2[0] " + this.files2[0])
@@ -435,37 +340,12 @@ async ngOnInit(){
           console.log("gdDownloadResult " + gdDownloadResult); 
           await this.bxService.boxUpload(gdStoreName);
         }
-        // if left is google drive and right is local
-        if(this.service1 === 1 && this.service2 === 4) {
-          console.log("this.files2[0] " + this.files2[0])
-          let gdStoreName = (this.files2[0]).toString();
-          let holdGdIdFiles = [];
-          let keys = Object.keys(holdClientFilesToDisplay);
-          for (let index = 0; index < keys.length; index++) {
-            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
-              console.log( "inside the loop");
-              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
-            }   
-          }
-          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
-          let gdDownloadResult:any = await this.gdService.gDDownloadLocalFromNode();
-          console.log("gdDownloadResult " + gdDownloadResult);
-        }
-        // if left is local and right is Google Drive
-        if(this.service1 === 4 && this.service2 === 1) {
-          await this.gdService.gDUploadLocal(this.files2[0]);
+        if( this.service1 === 1 && this.service2 === 4 ) {
+          await this.gdService.gDUploadLocal(this.files1[0]);
           setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
         }
-        // if left is local and right is Dropbox
-        if(this.service1 === 4 && this.service2 === 0) {
-          await this.dpService.dPUploadLocalFromNode(this.files2[0])
-        }
-        if(this.service1 === 4 && this.service2 === 2) {
-          await this.odService.odUploadFile(this.files2[0]);
-        }
-        if(this.service1 === 4 && this.service2 === 3) {
-          await this.bxService.boxUpload(this.files2[0]);
-        }
+        // if right is dropbox and left is local
+      
         if(this.service1 === 2 && this.service2 === 0){
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
@@ -479,6 +359,7 @@ async ngOnInit(){
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
           await this.dpService.dPUploadFromNode();
         }
+        // if left is local and right is Dropbox
         if(this.service1 === 2 && this.service2 === 1){
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
@@ -575,6 +456,294 @@ async ngOnInit(){
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
           await this.dpService.dPUploadLocalFromNode(holdBoxFile); 
         }
+        // if right is google drive and left is local
+        if(this.service1 === 4 && this.service2 === 0) {
+          await this.dpService.dPUploadLocalFromNode(this.files2[0])
+        }
+        // if left is local and right is Google Drive
+        if(this.service1 === 4 && this.service2 === 1) {
+          await this.gdService.gDUploadLocal(this.files2[0]);
+          setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
+        }
+        if(this.service1 === 4 && this.service2 === 2) {
+          await this.odService.odUploadFile(this.files2[0]);
+        }
+        if(this.service1 === 4 && this.service2 === 3) {
+          await this.bxService.boxUpload(this.files2[0]);
+        }
+ 
+      }
+
+      // if coming from right container
+      if(event.previousContainer.id === "right") {
+
+      }
+
+      // if going to right container
+      if(event.container.id === 'right') {
+
+        if(this.service1 === 0 && this.service2 === 1) {
+          let storePath = (this.files2[0]).toString();
+          console.log( "this.files2 " + this.files2)
+          let holdLowerpath = []
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+              }
+          } 
+          console.log( "inside the looptwo");
+          await this.dpService.dpPathFiles(holdLowerpath[0]);
+          console.log( "inside the loop");
+          await this.dpService.dPDownloadFromNode();
+          await this.gdService.gDUploadFromNode();
+          setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
+        }
+        if(this.service1 === 0 && this.service2 === 2) {
+          //Download
+          let storePath = (this.files2[0]).toString();
+          console.log( "this.files2 " + this.files2)
+          let holdLowerpath = []
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+              }
+          } 
+          console.log( "inside the looptwo");
+          await this.dpService.dpPathFiles(holdLowerpath[0]);
+          console.log( "inside the loop");
+          await this.dpService.dPDownloadFromNode();
+          await this.odService.odUploadFile(storePath);
+        }
+        if(this.service1 === 0 && this.service2 === 3) {
+          //Download
+          let storePath = (this.files2[0]).toString();
+          console.log( "this.files2 " + this.files2)
+          let holdLowerpath = []
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+              }
+          } 
+          console.log( "inside the looptwo");
+          await this.dpService.dpPathFiles(holdLowerpath[0]);
+          console.log( "inside the loop");
+          await this.dpService.dPDownloadFromNode();
+          await this.bxService.boxUpload(storePath);
+        }
+        // if left is dropbox and right is local
+        if(this.service1 === 0 && this.service2 === 4) {
+          //Download
+          let storePath = (this.files2[0]).toString();
+          console.log( "this.files2 " + this.files2)
+          let holdLowerpath = []
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(retreiveDpFiles[i].dpClName === storePath.toString() ) {
+                holdLowerpath.push(retreiveDpFiles[i].dpClPath)
+              }
+          } 
+          console.log( "inside the looptwo");
+          await this.dpService.dpPathFiles(holdLowerpath[0]);
+          console.log( "inside the loop");
+          await this.dpService.dPDownloadFromNode();
+          await this.dpService.dPUploadLocalFromNode(storePath);
+        }
+
+        // if left is google drive and right is drop box
+        if(this.service1 === 1 && this.service2 === 0) {
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          console.log("gdDownloadResult " + gdDownloadResult); 
+          await this.dpService.dPUploadFromNode()  
+        }
+        if(this.service1 === 1 && this.service2 === 2) {
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          console.log("gdDownloadResult " + gdDownloadResult); 
+          await this.odService.odUploadFile(gdStoreName); 
+        }
+        if(this.service1 === 1 && this.service2 === 3) {
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          console.log("gdDownloadResult " + gdDownloadResult); 
+          await this.bxService.boxUpload(gdStoreName);
+        }
+        // if left is google drive and right is local
+        if(this.service1 === 1 && this.service2 === 4) {
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadLocalFromNode();
+          console.log("gdDownloadResult " + gdDownloadResult);
+          await this.dpService.dPUploadLocalFromNode(gdStoreName);
+        }
+       
+        if(this.service1 === 2 && this.service2 === 0){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.dpService.dPUploadFromNode();
+        }
+        // if left is local and right is Dropbox
+        if(this.service1 === 2 && this.service2 === 1){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.gdService.gDUploadFromNode();
+          setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
+        }
+        if(this.service1 === 2 && this.service2 === 3){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.bxService.boxUpload(holdOdFile);
+        }
+        if(this.service1 === 2 && this.service2 === 4){
+          let holdOdFile = this.files2[0];
+          console.log("holdodFile " + holdOdFile);
+          let keys = Object.keys(odFile);
+          for(let i = 0; i < keys.length; i++){
+              if(odFile[i].odFileName === holdOdFile.toString() ) {
+                holdOdSelectedFile.push(odFile[i].odFileUrl,odFile[i].odFileName )
+              }
+          } 
+          console.log("holdOdSelectedFile " + holdOdSelectedFile);
+          await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.dpService.dPUploadLocalFromNode(holdOdFile); 
+        }
+        if(this.service1 === 3 && this.service2 === 0){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.dpService.dPUploadFromNode();
+          
+        }
+        if(this.service1 === 3 && this.service2 === 1){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.gdService.gDUploadFromNode();
+          setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
+          
+        }
+        if(this.service1 === 3 && this.service2 === 2){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.odService.odUploadFile(holdBoxFile); 
+          
+        }
+        if(this.service1 === 3 && this.service2 === 4){
+          let holdBoxFile = this.files2[0];
+          console.log("holdBoxFile " + holdBoxFile);
+          let keys = Object.keys(boxFiles);
+          for(let i = 0; i < keys.length; i++){
+              if(boxFiles[i].bxFileName === holdBoxFile.toString() ) {
+                holdBoxSelectedFile.push(boxFiles[i].bxFileId,boxFiles[i].bxFileName )
+              }
+          } 
+          console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
+          await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.dpService.dPUploadLocalFromNode(holdBoxFile); 
+        }
+        if(this.service1 === 4 && this.service2 === 0) {
+          await this.dpService.dPUploadLocalFromNode(this.files2[0])
+        }
+        // if left is local and right is Google Drive
+        if(this.service1 === 4 && this.service2 === 1) {
+          await this.gdService.gDUploadLocal(this.files2[0]);
+          setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
+        }
+        if(this.service1 === 4 && this.service2 === 2) {
+          await this.odService.odUploadFile(this.files2[0]);
+        }
+        if(this.service1 === 4 && this.service2 === 3) {
+          await this.bxService.boxUpload(this.files2[0]);
+        }
+        
       }
     }
   }

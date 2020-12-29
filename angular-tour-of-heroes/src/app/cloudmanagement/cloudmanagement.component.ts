@@ -150,10 +150,10 @@ export class CloudmanagementComponent {
     return await this.clientEmailValue(this.gdcl.holdDataClient[0])
    }
   async googleDriveInit(){
-    let holdPromise = await this.gdService.googleImplementCallBack()
-    console.log("HoldPromises " + holdPromise)
-    let holdUserData = await this.getClientEmail()
-    console.log("holdUserData " + holdUserData)
+    let holdPromise = await this.gdService.googleImplementCallBack();
+    console.log("HoldPromises " + holdPromise);
+    let holdUserData = await this.getClientEmail();
+    console.log("holdUserData " + holdUserData);
     }
   removeUrlParams(){
       return window.history.replaceState(null, null, window.location.pathname);

@@ -669,7 +669,7 @@ router.get('/UploadGd', function (req, res)
   setTimeout(async () => {
     let moveFileResule = await tpMoveFilestoAllFiles(downloadedFileName);
     console.log("moveFileResule after send " + moveFileResule);
-  },10000 );  
+  },30000 );  
   let svAccess = saveGDAccessToken
   let savefileId = '';
   let concatFile = '';
@@ -701,7 +701,7 @@ router.get('/UploadGd', function (req, res)
      
      res.send("Response from Node: File uploaded to Google drive")
       });
-  },14000);
+  },35000);
    
 })
 let localFile;
@@ -741,7 +741,7 @@ router.post('/UploadGdLocal', function (req, res)
      
      res.send("Response from Node: File uploaded to Google drive")
       });
-  },14000);
+  },35000);
    
 })
 router.get('/GDUpdateLocalFile' , (req, res) => {
@@ -791,7 +791,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
   setTimeout(async () => {
     let moveFileResule = await tpMoveFilestoAllFiles(downloadedFileName);
     console.log("moveFileResule " + moveFileResule);
-  },10000);
+  },30000);
   
   let gth = (sendToAngularAccessToken)
   console.log("gth is " + gth)
@@ -826,7 +826,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
             toDeleteAllFiles()
             res.send("Response from Node: file uploaded to Dropbox")   
           })
-    },14000);  
+    },35000);  
   }
 })
 router.post('/DPUploadLocal', function (req, res)
@@ -867,7 +867,7 @@ router.post('/DPUploadLocal', function (req, res)
             toDeleteAllFiles()
             res.send("Response from Node: file uploaded to Dropbox")   
           })
-    },14000);  
+    },35000);  
   }
 })
 router.post('/DpPath', function (req, res)
@@ -955,8 +955,7 @@ router.post('/GdId', function (req, res) {
 })
 router.get('/DownloadGd', function (req, res)
 {
-  //get gd file name
-  console.log("DownloadGd called ")
+    console.log("DownloadGd called ")
   console.log("GdId from node " + Gdrecivedid)
   console.log("GdrecivedName from node " + GdrecivedName)
   //      --header 'Content-Type: application/json' \
@@ -1021,7 +1020,6 @@ async function tpMoveFilestoAllFiles(filename){
     });
   });
 }
-// Post code
 router.post('/BoxCode', function (req,res) {
   console.log("BoxCode called");
   holdBoxCode = req.body.saveCode;
@@ -1031,7 +1029,6 @@ router.post('/BoxCode', function (req,res) {
     return holdBoxCode;
   ///}
 });
-
 router.get('/BoxOauth', (req,res) => {
   console.log("BoxOauth called");
   console.log("holdBoxCode from BoxOath " + holdBoxCode);
@@ -1135,7 +1132,7 @@ router.post('/BxUpload', (req,res) => {
   setTimeout(async() => {
     let moveFileResule = await tpMoveFilestoAllFiles(boxUploadFileName);
     console.log("moveFileResule after Boxdownload " + moveFileResule);
-  },10000 );  
+  },30000 );  
   setTimeout(( ) => {
     let boxConcatFile = '';
     fs.readdirSync( folder ).forEach( file => {
@@ -1162,7 +1159,7 @@ router.post('/BxUpload', (req,res) => {
           res.status(200).json({"BxUploadMSG": "BoxFile_Uploaded"});
           toDeleteAllFiles();
         }); 
-  },15000);
+  },35000);
 
 });
 router.post('/OdAccessToken', (req,res) => {
@@ -1173,31 +1170,7 @@ router.post('/OdAccessToken', (req,res) => {
   console.log("OdAccessToken is " + odAccessToken);
   res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Received", "OdAccessToken": odAccessToken});
   return odAccessToken;
-  /* console.log("odCodeReceived " + odCodeReceived);
-  return child.exec(
-    `curl POST https://login.microsoftonline.com/common/oauth2/v2.0/token \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    -d code=${odCodeReceived} \
-    -d grant_type=authorization_code \
-    -d redirect_uri=http://localhost:4200/filetransfer/ \
-    -d client_id=266792a9-b745-45e2-a76d-494d6720ebb8 \
-    -d client_secret=nId3l2..QyfDoQ5oy2P2~C.u6Vz4ZJ4NKu`
-    ,
-    (err,stdout,stderr) => {
-      if(err){
-        console.log("err from OdAccessToken " + err)
-      }
-      //console.log("the OdAccessToken stdout is " + stdout);
-      console.log("the OdAccessToken stderr is " + stderr);
-      let obj = stdout;
-      let newObj = obj.toString().split(":");
-      let getNewObjLn = newObj.length;
-      //console.log(newObj + " getNewObjLn " + getNewObjLn);
-      let newObj2 = newObj[6];
-      odAccessToken = newObj2.slice(1, -2);
-      console.log("odAccessToken is " + odAccessToken);
-      res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Issued", "OdAccessToken": odAccessToken});
-    });  */
+ 
 });
 router.get('/OdProfile', (req,res) => {
   console.log("OdProfile called");
@@ -1219,11 +1192,6 @@ router.get('/OdProfile', (req,res) => {
       console.log("newObj " + newObj);
       let odEmail = newObj.substring( 0, newObj.indexOf(","));
       console.log("odEmail " + odEmail);
-   /*    let odClientEmail = odEmail.substr(0, odEmail.indexOf('#'));
-      let edittedEmail = odClientEmail.replace(/_(?=[^_]*$)/, '@');
-      console.log("odClientEmail " + odClientEmail);
-      console.log("edittedEmail " + edittedEmail); */
-
       res.status(200).json({"OdProfileMSG": "OdProfile_ProfileInfo", "OdProfileInfo": odEmail, "odClientName":odClientName});
     }); 
 });
@@ -1272,7 +1240,7 @@ router.post('/OdUpload', (req,res) => {
    setTimeout(async() => {
     let moveFileResule = await tpMoveFilestoAllFiles(odUploadFileName);
     console.log("moveFileResule after OdDownload " + moveFileResule);
-  },10000 );  
+  },30000 );  
 
   setTimeout(( ) => {
     let odConcatFile = '';
@@ -1298,9 +1266,10 @@ router.post('/OdUpload', (req,res) => {
           console.log("the OdUpload stderr is " + stderr);
           odFileUpload = stdout;
           res.status(200).json({"odUploadMSG": "odFile_Uploaded", "OdUpload": odFileUpload});
+          toDeleteAllFiles();
         }); 
      
-  },14000); 
+  },35000); 
 });
 
 function toDeleteAllFiles(){
