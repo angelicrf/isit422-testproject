@@ -9,7 +9,7 @@ import { BxCloudService } from '../bx-cloud.service';
 import { OdCloudService } from '../od-cloud.service';
 let clFile: string[];
 let showData: string;
-let bxCode:string;
+let bxCode:any;
 let retreiveDpFiles:any = {};
 let holdClientFilesToDisplay:any = {};
 let holdBoxAllFlsFl:any = {};
@@ -74,9 +74,10 @@ export class FiletransferComponent implements OnInit {
     private bxService: BxCloudService, 
     private odService: OdCloudService) {}
 
-  ngOnInit(){
+async ngOnInit(){
      this.getFilters();
-     this.serviceAccounts[0] = localStorage.getItem('dpEmail')
+     this.serviceAccounts[0] = localStorage.getItem('dpEmail');
+    
   }
 
   readLocalStorageValue(key) {
@@ -636,21 +637,13 @@ export class FiletransferComponent implements OnInit {
   async getFiles() {
     console.log("getFiles called")
     return await new Promise(async(resolve,reject) => {
-     /*  return gapi.client
-      .request({
-        method: 'GET',
-        path:
-          'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
-      })
-      .then(async () => { */
         console.log("getFiles called two")
         let displayItems:any = await this.gdService.listGoogleDriveFiles();   
           
         return resolve(displayItems);
-      //})
+ 
     }) 
   }
-
   // display files from Google Drive
   async displayClientFiles(side){
     if(side === "left") {
@@ -672,10 +665,10 @@ export class FiletransferComponent implements OnInit {
        return this.files2
     }
   }
-
+  
   async dpProcessFiles(side){
-  showData = this.dpService.getCodefromUri();
-  let displayResult:any = await this.dpService.sendMessageToNode(showData)
+  
+  let displayResult:string = localStorage.getItem("dpAccessToken");
   this.dpService.dpGetClientInfo(displayResult)
 
   retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult)
@@ -737,24 +730,20 @@ export class FiletransferComponent implements OnInit {
     return window.history.replaceState(null, null, window.location.pathname);
   }
   async boxProcessFiles(){
-    bxCode = this.bxService.getBoxCodefromUri();
-    await this.bxService.getboxCodeOauth(bxCode);
-    await this.bxService.issueBoxAccessToken();
 
-    let storeBxInfo:any = await this.bxService.getBoxClientInfo();
-    let hlBxClName:string = storeBxInfo[0];
-    let hlBxClEmail:string = storeBxInfo[1];
-    let formathlBxClName = hlBxClName.split(",")[0];
-    localStorage.setItem("boxClientEmail", hlBxClEmail );
-    let mongoDbUserId = localStorage.getItem('userMnId');
-   
-    this.bxService.sendBoxClientInfo(formathlBxClName.replace(/['"]+/g, '').toString(),hlBxClEmail.toString(),mongoDbUserId);
-
-    this.removeUrlParams();
-    holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
-    this.boxDisplayFoldersFiles();
+      let storeBxInfo:any = await this.bxService.getBoxClientInfo();
+      let hlBxClName:string = storeBxInfo[0];
+      let hlBxClEmail:string = storeBxInfo[1];
+      let formathlBxClName = hlBxClName.split(",")[0];
+      localStorage.setItem("boxClientEmail", hlBxClEmail );
+      let mongoDbUserId = localStorage.getItem('userMnId');
     
-  /*  await this.bxService.boxShowFile(); */
+      this.bxService.sendBoxClientInfo(formathlBxClName.replace(/['"]+/g, '').toString(),hlBxClEmail.toString(),mongoDbUserId);
+
+      this.removeUrlParams();
+      holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
+      this.boxDisplayFoldersFiles();
+
   }
   boxDisplayFoldersFiles(){
     let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);
@@ -775,10 +764,8 @@ export class FiletransferComponent implements OnInit {
       } 
   }
   async odDisplayFiles(){
-    let showAllOdFlsFiles:any = await this.odService.getOdCodefromUri();
-    console.log("showAllOdFlsFiles " + showAllOdFlsFiles + "Name " + showAllOdFlsFiles[0].odFileName);
+    let showAllOdFlsFiles:any = await this.odService.odDisplayFilesFlsProcess();
     let runAllOdFlsFiles:any = await this.odFilesFls(showAllOdFlsFiles);
-
   }
   async odFilesFls(odFlsFiles:any){
     return await new Promise((resolve,reject) =>{

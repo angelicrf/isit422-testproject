@@ -12,16 +12,18 @@ export class BxCloudService {
   boxCodeStored:string = '';
 
   boxRedirectCode(){
-    let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=http://localhost:4200/filetransfer";
+    let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=http://localhost:4200/cloudmanagement";
     let link = document.createElement('a')
     link.href = bxUrl;
     link.click();
   }
-  getBoxCodefromUri(): string {
-    const uriLink = location.href;
-    const newUri = new URL(uriLink);
-    const findParam = newUri.searchParams.get('code');
-    return findParam;
+ async getBoxCodefromUri(){
+    return await new Promise((resolve,reject) => {
+      const uriLink = location.href;
+      const newUri = new URL(uriLink);
+      const findParam = newUri.searchParams.get('code');
+      return resolve(findParam);
+    }); 
   }
   async getboxCodeOauth(boxIssuedCode:string){
     console.log("getboxCodeOauth called");
@@ -68,6 +70,7 @@ export class BxCloudService {
         .then((result) => {
           this.accesToken = result[Object.keys(result)[1]];
           console.log("AccessToken form BoxService " + this.accesToken);
+          localStorage.setItem("bxAccessToken", this.accesToken);
           resolve(this.accesToken);
       });
    });

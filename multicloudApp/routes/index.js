@@ -641,7 +641,7 @@ router.post('/ShowData', function (req, res) {
       `curl https://api.dropbox.com/oauth2/token \
               -d code=${codeData} \
               -d grant_type=authorization_code \
-              -d redirect_uri=http://localhost:4200/filetransfer \
+              -d redirect_uri=http://localhost:4200/cloudmanagement \
               -u 4kbv0so8hjs83lf:hzrap940rcg09t1`
    ,(stdout, stderr) => {       
       if(stderr.length > 0){

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BxCloudService } from '../bx-cloud.service';
+import { DpCloudService } from '../dp-cloud.service';
 import { FilterService } from '../filter.service';
 import { GdCloudService } from '../gd-cloud.service';
 import { GDClientCredentials } from '../gdClientCredentials';
@@ -12,7 +13,12 @@ import { OdCloudService } from '../od-cloud.service';
 })
 export class CloudmanagementComponent {
   
-  constructor(public filterService: FilterService, private gdService: GdCloudService, private gdcl:GDClientCredentials, private bxService: BxCloudService, private odService: OdCloudService) {}
+  constructor(public filterService: FilterService,
+     private gdService: GdCloudService,
+     private dpService: DpCloudService,
+     private gdcl:GDClientCredentials,
+     private bxService: BxCloudService,
+     private odService: OdCloudService) {}
   
   title = 'CloudManagementComponent';
   checked = false;
@@ -64,11 +70,35 @@ export class CloudmanagementComponent {
   service: String;
 
   filters: String[];
-
+  saveDpCode:any;
   localFilePath: string;
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.getFilters();
+    const uriLink:string = location.href;
+    if(uriLink.includes('code=MdDdy')){
+      this.saveDpCode = await this.dpService.getCodefromUri();
+      let stDpCode:string = this.saveDpCode;
+      console.log("stDpCode " + stDpCode);
+      let saveDpAccessToken:any = await this.dpService.sendMessageToNode(stDpCode);
+      localStorage.setItem("dpAccessToken", saveDpAccessToken); 
+      this.removeUrlParams();
+    }
+    if(uriLink.includes('code') && !uriLink.includes('code=MdDdy')){
+      let saveBxCode:any = await this.bxService.getBoxCodefromUri();
+      let stBxCode:string = saveBxCode;
+      console.log("stBxCode " + stBxCode);
+      await this.bxService.getboxCodeOauth(saveBxCode);
+      await this.bxService.issueBoxAccessToken();
+      this.removeUrlParams();
+    }
+    if(uriLink.includes('access_token')){
+      let saveOdCode:any = await this.odService.odCodeFromUri();
+      let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
+      localStorage.setItem("odAccessToken", saveOdAccessToken);
+      this.removeUrlParams();
+    }
+    
   }
 
   getFilters(): void {
@@ -125,17 +155,16 @@ export class CloudmanagementComponent {
     let holdUserData = await this.getClientEmail()
     console.log("holdUserData " + holdUserData)
     }
-  dropBoxClientLogin(){
-    //this.dropboxForm = false
-    const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Ffiletransfer"
-    let link = document.createElement('a')
-    link.href = dpUrl
-    link.click()
+  removeUrlParams(){
+      return window.history.replaceState(null, null, window.location.pathname);
+    }
+  async dropBoxClientLogin(){
+   this.dpService.dropBoxClLogin();
   }
-  boxSaveCode(){
+  async boxClientLogin(){
     this.bxService.boxRedirectCode();
   }
-  oneDriveLogin(){
+  async oneDriveClientLogin(){
     this.odService.login();
   }
 }

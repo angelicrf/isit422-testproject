@@ -11,39 +11,39 @@ export class OdCloudService {
 
 constructor() { }
   login() {
-    let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/filetransfer/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
+    let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/cloudmanagement/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
     let link = document.createElement('a');
     link.href = odUrl;
     link.click();
     }
- async getOdCodefromUri(){
-   return await new Promise((resolve,reject) => {
-      let displayFlsFiles:any = this.odDisplayFilesFlsProcess();  
-      return resolve(displayFlsFiles);
-   });
+async odCodeFromUri(){
+  return await new Promise((resolve,reject) => {
+    const uriLink:string = location.href;
+    let findParam = uriLink.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
+    return resolve(findParam);
+  })
 }
  async odDisplayFilesFlsProcess(){
-  const uriLink:string = location.href;
-  let findParam = uriLink.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
-
-  this.issuedOdAccessToken = await getOdAccessToken(findParam.toString());
-  let profileClientInfo:any = await getProfile();
-  console.log("profileClientInfo " + profileClientInfo);
-
-  let hlOdName:string = profileClientInfo[1];
-  console.log("hlOdName " + hlOdName);
-  let formatlClName:string = hlOdName.split(",")[0];
-  console.log("formatlClName " + formatlClName);
-  let hlOdEmail:string = profileClientInfo[0];
-  console.log("hlOdEmail " + hlOdEmail);
-  localStorage.setItem("odClientEmail", profileClientInfo[0]);
-
-  let mongoDbUserId:string = localStorage.getItem('userMnId');
-  sendOdClientInfo(formatlClName.replace(/['"]+/g, '').toString(),hlOdEmail.toString(),mongoDbUserId);
+   return await new Promise(async(resolve,reject) => {
+    
+    let profileClientInfo:any = await getProfile();
+    console.log("profileClientInfo " + profileClientInfo);
   
-  let odAallFiles:any = await this.odGetFiles();
-  let holdOdItems:any = this.storeOdFlsFiles(odAallFiles);
-  return holdOdItems;
+    let hlOdName:string = profileClientInfo[1];
+    console.log("hlOdName " + hlOdName);
+    let formatlClName:string = hlOdName.split(",")[0];
+    console.log("formatlClName " + formatlClName);
+    let hlOdEmail:string = profileClientInfo[0];
+    console.log("hlOdEmail " + hlOdEmail);
+    localStorage.setItem("odClientEmail", profileClientInfo[0]);
+  
+    let mongoDbUserId:string = localStorage.getItem('userMnId');
+    sendOdClientInfo(formatlClName.replace(/['"]+/g, '').toString(),hlOdEmail.toString(),mongoDbUserId);
+    
+    let odAallFiles:any = await this.odGetFiles();
+    let holdOdItems:any = this.storeOdFlsFiles(odAallFiles);
+    return resolve(holdOdItems);
+   });
 }
  storeOdFlsFiles(odFilesFls:any){
   let savedOdFlsFolders = JSON.parse(odFilesFls);
@@ -124,8 +124,7 @@ async odUploadFile(odFl:string) {
       .catch((err) => console.log(err));
   })
 }
-}
-async function getOdAccessToken(odToken:string) {
+async odAccessToken(odToken:string) {
   return await new Promise((resolve,reject) => {
     fetch('/api/OdAccessToken', {
       method: 'POST',
@@ -146,6 +145,7 @@ async function getOdAccessToken(odToken:string) {
       })
       .catch((err) => console.log(err));
   })
+}
 }
 
 async function getProfile() {

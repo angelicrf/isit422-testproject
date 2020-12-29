@@ -45,7 +45,7 @@
         <button class="service-input" (click)="googleDriveForm = false">Cancel</button> 
       </div>--><br>
       <input *ngIf="!oneDriveForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/onedrive.png" width="64" height="64">
-      <button *ngIf="!oneDriveForm" class="services-button" (click)="oneDriveForm = true; oneDriveLogin();">OneDrive<br>{{odEmail}}</button>
+      <button *ngIf="!oneDriveForm" class="services-button" (click)="oneDriveForm = true; oneDriveClientLogin();">OneDrive<br>{{odEmail}}</button>
        <!--<label *ngIf="oneDriveForm" class="services">Associate a new OneDrive account:</label>
         <div *ngIf="oneDriveForm">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="odAccount.username">
@@ -56,7 +56,7 @@
       <br>
       
       <input *ngIf="!boxForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
-      <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxSaveCode();">Box<br>{{bxEmail}}</button>
+      <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxClientLogin();">Box<br>{{bxEmail}}</button>
      <!--  <label *ngIf="boxForm" class="services">Associate a new Box account:</label>
       <div *ngIf="boxForm">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="bAccount.username">

@@ -9,13 +9,19 @@ export class DpCloudService {
   constructor() { }
 
   accesToken: string;
-
-  getCodefromUri(): string {
-    const uriLink = location.href;
-    const newUri = new URL(uriLink);
-    const findParam = newUri.searchParams.get('code');
-    //console.log(findParam)
-    return findParam;
+  dropBoxClLogin(){
+    const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fcloudmanagement"
+    let link = document.createElement('a')
+    link.href = dpUrl
+    link.click()
+  }
+  async getCodefromUri(){
+    return await new Promise((resolve,reject) => {
+      const uriLink = location.href;
+      const newUri = new URL(uriLink);
+      const findParam = newUri.searchParams.get('code'); 
+      return resolve(findParam);
+    });
   }
   sendMessageToNode(sendCodeData: string) {
     return new Promise((resolve, reject) => {

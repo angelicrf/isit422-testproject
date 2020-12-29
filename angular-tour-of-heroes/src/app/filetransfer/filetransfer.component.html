@@ -9,7 +9,7 @@
         <button *ngIf="!leftServiceForm" class="services-button" (click)="leftServiceForm = true">{{serviceNames[service1]}}<br>{{serviceAccounts[service1]}}</button>
         <div *ngIf="leftServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
-          <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles('left')">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
+          <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles('left');">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
           <button class="services-button" (click)="files1=[]; displayClientFiles('left'); googleDriveInit(); leftServiceForm = false; service1 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
