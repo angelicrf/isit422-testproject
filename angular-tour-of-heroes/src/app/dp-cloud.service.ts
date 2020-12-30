@@ -94,7 +94,7 @@ dpGetClientInfo(dpAccessToken:string){
          for (let index = 0; index < hpldDpFiles.length; index++) {
            let holdObj = {};
             holdObj["dpClName"] = hpldDpFiles[index].name;
-            holdObj["dpClPath"] = hpldDpFiles[index].path_lower;
+            holdObj["dpClPath"] = hpldDpFiles[index].path_display;
             holdelement[index] = holdObj;  
          } 
          //console.log(JSON.stringify("Elements are " + JSON.stringify(holdelement)))

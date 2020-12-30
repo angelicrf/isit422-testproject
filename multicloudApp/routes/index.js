@@ -1109,11 +1109,13 @@ router.post('/BxDownload', (req,res) => {
 
   let boxRetreivedId = req.body.boxFileId;
   boxRetreivedName = req.body.boxFileName;
+  downloadedFileName = boxRetreivedName;
+
   console.log("boxRetreivedId " + boxRetreivedId + "boxFileName " + boxRetreivedName);
   return child.exec(
     `curl --location --request GET "https://api.box.com/2.0/files/${boxRetreivedId}/content" \
      -H "Authorization: Bearer ${boxAccessToken}" \
-     -o "${boxRetreivedName}"`,
+     -o "${downloadedFileName}"`,
     (err,stdout,stderr) => {
       if(err){
         console.log("err from BxDownload " + err)
@@ -1132,7 +1134,7 @@ router.post('/BxUpload', (req,res) => {
   setTimeout(async() => {
     let moveFileResule = await tpMoveFilestoAllFiles(boxUploadFileName);
     console.log("moveFileResule after Boxdownload " + moveFileResule);
-  },30000 );  
+  },50000 );  
   setTimeout(( ) => {
     let boxConcatFile = '';
     fs.readdirSync( folder ).forEach( file => {
@@ -1159,7 +1161,7 @@ router.post('/BxUpload', (req,res) => {
           res.status(200).json({"BxUploadMSG": "BoxFile_Uploaded"});
           toDeleteAllFiles();
         }); 
-  },35000);
+  },55000);
 
 });
 router.post('/OdAccessToken', (req,res) => {

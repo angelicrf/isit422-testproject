@@ -11,7 +11,7 @@
           <img src="{{serviceIcons[0]}}" width="64" height="64">
           <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles('left');">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
-          <button class="services-button" (click)="files1=[]; displayClientFiles('left'); googleDriveInit(); leftServiceForm = false; service1 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
+          <button class="services-button" (click)="files1=[]; displayClientFiles(); leftServiceForm = false; service1 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
           <button class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 2; odDisplayFiles();">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">
@@ -55,7 +55,7 @@
           <img src="{{serviceIcons[0]}}" width="64" height="64">
           <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 0;  dpProcessFiles('right')">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
-          <button class="services-button" (click)="files2=[]; displayClientFiles('right'); googleDriveInit(); rightServiceForm = false; service2 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
+          <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
           <button class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 2;">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">

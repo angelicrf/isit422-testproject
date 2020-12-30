@@ -517,7 +517,7 @@ async ngOnInit(){
           await this.odService.odUploadFile(storePath);
         }
         if(this.service1 === 0 && this.service2 === 3) {
-          //Download
+     
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -764,14 +764,6 @@ async ngOnInit(){
   async getClientEmail(){
     return await this.clientEmailValue(this.gdcl.holdDataClient[0])
   }
-
-  async googleDriveInit(){
-    //this.googleDriveForm = true
-    let holdPromise = await this.gdService.googleImplementCallBack()
-    console.log("HoldPromises " + holdPromise)
-    let holdUserData = await this.getClientEmail()
-    console.log("holdUserData " + holdUserData)
-  }
   
   // /** Predicate function that only allows filtered types to be dropped into a list */
   // async filterPredicate(item: CdkDrag<String>, list: CdkDropList) {
@@ -807,15 +799,12 @@ async ngOnInit(){
     console.log("getFiles called")
     return await new Promise(async(resolve,reject) => {
         console.log("getFiles called two")
-        let displayItems:any = await this.gdService.listGoogleDriveFiles();   
-          
+        let displayItems:any = await this.gdService.listGoogleDriveFiles();           
         return resolve(displayItems);
- 
-    }) 
+    });
   }
   // display files from Google Drive
-  async displayClientFiles(side){
-    if(side === "left") {
+  async displayClientFiles(){
       holdClientFilesToDisplay = await this.getFiles()
       // console.log("displayClientFiles " + JSON.stringify(holdClientFilesToDisplay));
        let keys = Object.keys(holdClientFilesToDisplay);
@@ -823,18 +812,7 @@ async ngOnInit(){
             this.files1.push((holdClientFilesToDisplay[i].gdClName));
       };
        return this.files1
-    }
-    if(side === "right") {
-      holdClientFilesToDisplay = await this.getFiles()
-      // console.log("displayClientFiles " + JSON.stringify(holdClientFilesToDisplay));
-       let keys = Object.keys(holdClientFilesToDisplay);
-       for(let i = 0; i < keys.length; i++){
-            this.files2.push((holdClientFilesToDisplay[i].gdClName));
-      };
-       return this.files2
-    }
-  }
-  
+   } 
   async dpProcessFiles(side){
   
   let displayResult:string = localStorage.getItem("dpAccessToken");
