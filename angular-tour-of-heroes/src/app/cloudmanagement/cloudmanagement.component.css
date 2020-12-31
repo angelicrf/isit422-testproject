@@ -1,13 +1,4 @@
 
-/* .text-input-wrapper {
-    font-size: 14px;
-    font-weight: 400;
-    border-radius: 0;
-    padding-top: 8px;
-    padding-left: 18px;
-    height: 44px;
-    margin-bottom: 0;
-} */
 .new-filter {
     border-radius: 5;
     width: 210px;
@@ -32,12 +23,25 @@ li {
     margin: 20px 20px;
     text-align: left;
     vertical-align: middle;
+    
 }
 
 .services-button, .delete-button {
     background: none;
-    border: none;
+    border: none; 
     outline: 0;
+    
+}
+.submit-button{
+    margin: 20px 20px;
+    text-align: left;
+    vertical-align: middle;
+    outline: 0;
+    border: rgb(36, 53, 207);
+    border-radius: 5px;
+    border-width: thick;
+    border-style: solid;
+    width: 60px;
 }
 
 .delete-button {

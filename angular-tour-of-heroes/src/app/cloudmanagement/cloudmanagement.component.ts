@@ -22,6 +22,11 @@ export class CloudmanagementComponent {
   
   title = 'CloudManagementComponent';
   checked = false;
+  dpChecked:boolean = false;
+  gdChecked:boolean = false;
+  odChecked:boolean = false;
+  bxChecked:boolean = false;
+  lfChecked:boolean = false;
 
   addFilterForm = false;
 
@@ -83,6 +88,15 @@ export class CloudmanagementComponent {
       let saveDpAccessToken:any = await this.dpService.sendMessageToNode(stDpCode);
       localStorage.setItem("dpAccessToken", saveDpAccessToken); 
       this.removeUrlParams();
+      if(localStorage.getItem("gdSelected") === "gdSelected"){
+       
+          let holdPromise = await this.gdService.googleImplementCallBack();
+          console.log("HoldPromises " + holdPromise);
+          let holdUserData = await this.getClientEmail();
+          console.log("holdUserData " + holdUserData);
+          localStorage.removeItem("gdSelected");
+      
+      }
     }
     if(uriLink.includes('code') && !uriLink.includes('code=MdDdy')){
       let saveBxCode:any = await this.bxService.getBoxCodefromUri();
@@ -159,13 +173,24 @@ export class CloudmanagementComponent {
       return window.history.replaceState(null, null, window.location.pathname);
     }
   async dropBoxClientLogin(){
-   this.dpService.dropBoxClLogin();
+   // return await new Promise((resolve,reject) => {
+      (this.dpService.dropBoxClLogin());
+   //});
   }
-  async boxClientLogin(){
+  boxClientLogin(){
     this.bxService.boxRedirectCode();
   }
-  async oneDriveClientLogin(){
+  oneDriveClientLogin(){
     this.odService.login();
+  }
+  testLogin(){
+    console.log("tested login");
+  }
+  async handleClientLogin(){
+    if(this.dpChecked && this.gdChecked){
+      localStorage.setItem("gdSelected","gdSelected");
+      this.dropBoxClientLogin();   
+    }
   }
 }
 

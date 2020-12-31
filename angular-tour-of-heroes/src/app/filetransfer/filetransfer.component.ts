@@ -29,6 +29,7 @@ export class FiletransferComponent implements OnInit {
   rightServiceForm = false;
   gdEmail:string = this.readLocalStorageValue('gdUserEmail');
   
+
   serviceIcons = [
     "assets/images/dropbox.png",
     "assets/images/googledrive.png",

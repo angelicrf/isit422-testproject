@@ -25,7 +25,7 @@
       </ul>
     </div>
     <div style="margin-left: 620px;">
-      <input *ngIf="!dropboxForm" type="checkbox" class="services" aria-checked="false"><img src="assets/images/dropbox.png" width="64" height="64">
+      <input *ngIf="!dropboxForm" type="checkbox" [(ngModel)]="dpChecked" [ngModelOptions]="{standalone:true}" class="services" aria-checked="false"><img src="assets/images/dropbox.png" width="64" height="64">
       <button *ngIf="!dropboxForm" class="services-button" (click)="dropBoxClientLogin()">Dropbox<br><span>{{dpEmail}}</span></button>
      <!--  <label *ngIf="dropboxForm" class="services">Associate a new Dropbox account:</label>
       <div *ngIf="dropboxForm">
@@ -35,7 +35,7 @@
         <button class="service-input" (click)="dropboxForm = false">Cancel</button> </div>
       -->
       <br>
-      <input *ngIf="!googleDriveForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/googledrive.png" width="64" height="64">
+      <input *ngIf="!googleDriveForm" type="checkbox" [(ngModel)]="gdChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/googledrive.png" width="64" height="64">
       <button *ngIf="!googleDriveForm"  class="services-button" (click)="googleDriveInit()">Google Drive<br><span >{{gdEmail}}</span></button>
       <!--<label *ngIf="googleDriveForm" class="services">{{gdEmail}}</label>
       <div *ngIf="googleDriveForm">
@@ -44,7 +44,7 @@
         <button class="service-input" (click)="googleDriveInit()">Submit</button>
         <button class="service-input" (click)="googleDriveForm = false">Cancel</button> 
       </div>--><br>
-      <input *ngIf="!oneDriveForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/onedrive.png" width="64" height="64">
+      <input *ngIf="!oneDriveForm" type="checkbox" [(ngModel)]="odChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/onedrive.png" width="64" height="64">
       <button *ngIf="!oneDriveForm" class="services-button" (click)="oneDriveForm = true; oneDriveClientLogin();">OneDrive<br>{{odEmail}}</button>
        <!--<label *ngIf="oneDriveForm" class="services">Associate a new OneDrive account:</label>
         <div *ngIf="oneDriveForm">
@@ -55,7 +55,7 @@
       </div> -->
       <br>
       
-      <input *ngIf="!boxForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
+      <input *ngIf="!boxForm" type="checkbox" [(ngModel)]="bxChecked" [ngModelOptions]="{standalone:true}"class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
       <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxClientLogin();">Box<br>{{bxEmail}}</button>
      <!--  <label *ngIf="boxForm" class="services">Associate a new Box account:</label>
       <div *ngIf="boxForm">
@@ -65,7 +65,7 @@
         <button class="service-input" (click)="boxForm = false">Cancel</button>
       </div> -->
       <br>
-      <input *ngIf="!localForm" type="checkbox" class="services"  aria-checked="false"><img src="assets/images/folder.png" width="64" height="64">
+      <input *ngIf="!localForm" type="checkbox" [(ngModel)]="lfChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/folder.png" width="64" height="64">
       <button *ngIf="!localForm" class="services-button" (click)="localForm = true">Local File System<br>{{readLocalStorageValue('localFilePath')}}</button>
       <label *ngIf="localForm" class="services">Specify a local file path:</label>
       <div *ngIf="localForm">
@@ -73,7 +73,9 @@
         
         <button class="service-input" (click)="setLocalStorageFilePath()">Submit</button>
         <button class="service-input" (click)="localForm = false">Cancel</button>
-      </div><br>
+      </div><br><br>
+      <button *ngIf="!dropboxForm" class="btn btn-danger submit-button" (click)="handleClientLogin()">Submit<br></button>
     </div>
+   
   </div>
 </div>
