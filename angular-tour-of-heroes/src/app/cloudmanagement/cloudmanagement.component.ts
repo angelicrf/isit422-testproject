@@ -22,6 +22,7 @@ export class CloudmanagementComponent {
   
   title = 'CloudManagementComponent';
   checked = false;
+  selected:boolean = false;
   dpChecked:boolean = false;
   gdChecked:boolean = false;
   odChecked:boolean = false;
@@ -81,6 +82,7 @@ export class CloudmanagementComponent {
   async ngOnInit() {
     this.getFilters();
     const uriLink:string = location.href;
+
     if(uriLink.includes('code=MdDdy')){
       this.saveDpCode = await this.dpService.getCodefromUri();
       let stDpCode:string = this.saveDpCode;
@@ -88,31 +90,78 @@ export class CloudmanagementComponent {
       let saveDpAccessToken:any = await this.dpService.sendMessageToNode(stDpCode);
       localStorage.setItem("dpAccessToken", saveDpAccessToken); 
       this.removeUrlParams();
+
       if(localStorage.getItem("gdSelected") === "gdSelected"){
-       
-          let holdPromise = await this.gdService.googleImplementCallBack();
-          console.log("HoldPromises " + holdPromise);
-          let holdUserData = await this.getClientEmail();
-          console.log("holdUserData " + holdUserData);
-          localStorage.removeItem("gdSelected");
-      
+        this.googleDriveInit();
+        this.removeSelectedCloud("gdSelected");
+      }
+      if(localStorage.getItem("bxSelected") === "bxSelected"){
+        this.bxService.boxRedirectCode();
+        let saveBxCode:any = await this.bxService.getBoxCodefromUri();
+        let stBxCode:string = saveBxCode;
+        console.log("stBxCode " + stBxCode);
+        await this.bxService.getboxCodeOauth(saveBxCode);
+        await this.bxService.issueBoxAccessToken();
+        this.removeUrlParams();
+
+        this.removeSelectedCloud("bxSelected");
+      }
+      if(localStorage.getItem("odSelected") === "odSelected"){
+        this.odService.login();
+        let saveOdCode:any = await this.odService.odCodeFromUri();
+        let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
+        localStorage.setItem("odAccessToken", saveOdAccessToken);
+        this.removeUrlParams();
+
+        this.removeSelectedCloud("odSelected");
+      }
+      if(localStorage.getItem("lfSelected") === "lfSelected"){
+        alert("lf under construction :((");
+        this.removeSelectedCloud("lfSelected");
       }
     }
     if(uriLink.includes('code') && !uriLink.includes('code=MdDdy')){
+
       let saveBxCode:any = await this.bxService.getBoxCodefromUri();
       let stBxCode:string = saveBxCode;
       console.log("stBxCode " + stBxCode);
       await this.bxService.getboxCodeOauth(saveBxCode);
       await this.bxService.issueBoxAccessToken();
       this.removeUrlParams();
+
+      if(localStorage.getItem("gdSelected") === "gdSelected"){
+        this.googleDriveInit();
+        this.removeSelectedCloud("gdSelected");
+      }
+      if(localStorage.getItem("odSelected") === "odSelected"){
+        this.odService.login();
+        let saveOdCode:any = await this.odService.odCodeFromUri();
+        let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
+        localStorage.setItem("odAccessToken", saveOdAccessToken);
+        this.removeUrlParams();
+        this.removeSelectedCloud("odSelected");
+      }
+      if(localStorage.getItem("lfSelected") === "lfSelected"){
+        alert("lf under construction :((");
+        this.removeSelectedCloud("lfSelected");
+      }
     }
     if(uriLink.includes('access_token')){
+
       let saveOdCode:any = await this.odService.odCodeFromUri();
       let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
       localStorage.setItem("odAccessToken", saveOdAccessToken);
       this.removeUrlParams();
-    }
-    
+
+      if(localStorage.getItem("gdSelected") === "gdSelected"){
+        this.googleDriveInit();
+        this.removeSelectedCloud("gdSelected");
+      }
+      if(localStorage.getItem("lfSelected") === "lfSelected"){
+        alert("lf under construction :((");
+        this.removeSelectedCloud("lfSelected");
+      }
+    } 
   }
 
   getFilters(): void {
@@ -160,37 +209,90 @@ export class CloudmanagementComponent {
     console.log('the value from set2 ' + this.gdEmail)
     }else this.gdEmail = localStorage.getItem('gdUserEmail')
   }
+
   async getClientEmail(){
     return await this.clientEmailValue(this.gdcl.holdDataClient[0])
    }
+
   async googleDriveInit(){
     let holdPromise = await this.gdService.googleImplementCallBack();
     console.log("HoldPromises " + holdPromise);
     let holdUserData = await this.getClientEmail();
     console.log("holdUserData " + holdUserData);
     }
+
   removeUrlParams(){
       return window.history.replaceState(null, null, window.location.pathname);
     }
-  async dropBoxClientLogin(){
-   // return await new Promise((resolve,reject) => {
-      (this.dpService.dropBoxClLogin());
-   //});
+
+  dropBoxClientLogin(){
+    this.dpService.dropBoxClLogin();
   }
+
   boxClientLogin(){
     this.bxService.boxRedirectCode();
   }
+
   oneDriveClientLogin(){
     this.odService.login();
   }
-  testLogin(){
-    console.log("tested login");
-  }
+
   async handleClientLogin(){
     if(this.dpChecked && this.gdChecked){
+      this.selected = true;
       localStorage.setItem("gdSelected","gdSelected");
       this.dropBoxClientLogin();   
     }
+    if(this.dpChecked && this.odChecked){
+      this.selected = true;
+      localStorage.setItem("odSelected","odSelected");
+      this.dropBoxClientLogin();  
+    }
+    if(this.dpChecked && this.bxChecked){
+      this.selected = true;
+      localStorage.setItem("bxSelected","bxSelected");
+      this.dropBoxClientLogin();  
+    }
+    if(this.dpChecked && this.lfChecked){
+      this.selected = true;
+      localStorage.setItem("lfSelected","lfSelected");
+      this.dropBoxClientLogin();  
+    }
+    if(this.odChecked && this.gdChecked){
+      this.selected = true;
+      localStorage.setItem("gdSelected","gdSelected");
+      this.odService.login();  
+    }
+    if(this.odChecked && this.bxChecked){
+      this.selected = true;
+      localStorage.setItem("bxSelected","bxSelected");
+      this.odService.login();  
+    }
+    if(this.odChecked && this.lfChecked){
+      this.selected = true;
+      localStorage.setItem("lfSelected","lfSelected");
+      this.odService.login();  
+    }
+    if(this.bxChecked && this.gdChecked){
+      this.selected = true;
+      localStorage.setItem("gdSelected","gdSelected");
+      this.boxClientLogin();  
+    }
+    if(this.bxChecked && this.lfChecked){
+      this.selected = true;
+      localStorage.setItem("lfSelected","lfSelected");
+      this.boxClientLogin();  
+    }
+    if(this.lfChecked && this.gdChecked){
+      this.selected = true;
+      localStorage.setItem("gdSelected","gdSelected"); 
+    }
+    if(this.selected == false){
+      alert("Dear customer, please at least check two of the checkboxes");
+    }
+  }
+  removeSelectedCloud(slt:string){
+    localStorage.removeItem(slt);
   }
 }
 

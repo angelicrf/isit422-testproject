@@ -6,7 +6,7 @@
         <li *ngFor="let flt of filters; index as ind">
           <input *ngIf="flt !== ''" autocomplete="off" aria-invalid="false" value={{flt}} readonly>
           <button *ngIf="flt !== ''" class="delete-button" (click)="filters.splice(ind, 1)">X</button>
-          <!-- <span class="badge">{{flt}}</span> -->
+          
         </li>
         <li *ngIf="addFilterForm">
           <select id="fileType" [(ngModel)]="fileType">
@@ -26,47 +26,23 @@
     </div>
     <div style="margin-left: 620px;">
       <input *ngIf="!dropboxForm" type="checkbox" [(ngModel)]="dpChecked" [ngModelOptions]="{standalone:true}" class="services" aria-checked="false"><img src="assets/images/dropbox.png" width="64" height="64">
-      <button *ngIf="!dropboxForm" class="services-button" (click)="dropBoxClientLogin()">Dropbox<br><span>{{dpEmail}}</span></button>
-     <!--  <label *ngIf="dropboxForm" class="services">Associate a new Dropbox account:</label>
-      <div *ngIf="dropboxForm">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="dbAccount.username">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="password" [(ngModel)]="dbAccount.password">
-        <button class="service-input" (click)="dropboxForm = false">Submit</button>
-        <button class="service-input" (click)="dropboxForm = false">Cancel</button> </div>
-      -->
+      <span *ngIf="!dropboxForm" class="services-button">Dropbox<br><span>{{dpEmail}}</span></span>
+  
       <br>
       <input *ngIf="!googleDriveForm" type="checkbox" [(ngModel)]="gdChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/googledrive.png" width="64" height="64">
-      <button *ngIf="!googleDriveForm"  class="services-button" (click)="googleDriveInit()">Google Drive<br><span >{{gdEmail}}</span></button>
-      <!--<label *ngIf="googleDriveForm" class="services">{{gdEmail}}</label>
-      <div *ngIf="googleDriveForm">
-         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="gdAccount.username">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="password" [(ngModel)]="gdAccount.password">
-        <button class="service-input" (click)="googleDriveInit()">Submit</button>
-        <button class="service-input" (click)="googleDriveForm = false">Cancel</button> 
-      </div>--><br>
+      <span *ngIf="!googleDriveForm"  class="services-button">Google Drive<br><span >{{gdEmail}}</span></span>
+      <br>
       <input *ngIf="!oneDriveForm" type="checkbox" [(ngModel)]="odChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/onedrive.png" width="64" height="64">
-      <button *ngIf="!oneDriveForm" class="services-button" (click)="oneDriveForm = true; oneDriveClientLogin();">OneDrive<br>{{odEmail}}</button>
-       <!--<label *ngIf="oneDriveForm" class="services">Associate a new OneDrive account:</label>
-        <div *ngIf="oneDriveForm">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="odAccount.username">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="password" [(ngModel)]="odAccount.password">
-        <button class="service-input" (click)="oneDriveForm = false">Submit</button>
-        <button class="service-input" (click)="oneDriveForm = false">Cancel</button>
-      </div> -->
+      <span *ngIf="!oneDriveForm" class="services-button">OneDrive<br>{{odEmail}}</span>
+   
       <br>
       
       <input *ngIf="!boxForm" type="checkbox" [(ngModel)]="bxChecked" [ngModelOptions]="{standalone:true}"class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
-      <button *ngIf="!boxForm" class="services-button" (click)="boxForm = true; boxClientLogin();">Box<br>{{bxEmail}}</button>
-     <!--  <label *ngIf="boxForm" class="services">Associate a new Box account:</label>
-      <div *ngIf="boxForm">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="username" [(ngModel)]="bAccount.username">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="password" [(ngModel)]="bAccount.password">
-        <button class="service-input" (click)="boxForm = false">Submit</button>
-        <button class="service-input" (click)="boxForm = false">Cancel</button>
-      </div> -->
+      <span *ngIf="!boxForm" class="services-button">Box<br>{{bxEmail}}</span>
+    
       <br>
       <input *ngIf="!localForm" type="checkbox" [(ngModel)]="lfChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/folder.png" width="64" height="64">
-      <button *ngIf="!localForm" class="services-button" (click)="localForm = true">Local File System<br>{{readLocalStorageValue('localFilePath')}}</button>
+      <span *ngIf="!localForm" class="services-button">Local File System<br>{{readLocalStorageValue('localFilePath')}}</span>
       <label *ngIf="localForm" class="services">Specify a local file path:</label>
       <div *ngIf="localForm">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="Local files" [(ngModel)]="localFilePath">
