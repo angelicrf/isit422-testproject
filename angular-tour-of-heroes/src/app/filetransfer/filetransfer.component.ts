@@ -29,8 +29,12 @@ export class FiletransferComponent implements OnInit {
   rightServiceForm = false;
   gdEmail:string = this.readLocalStorageValue('gdUserEmail');
   storedApi = JSON.parse(localStorage.getItem("apiSelected"));
-  isMatched:boolean = false;
-  matchFound:boolean = false;
+  
+  gdApiSelected:boolean = false;
+  dpApiSelected:boolean = false;
+  odApiSelected:boolean = false;
+  bxApiSelected:boolean = false;
+  flApiSelected:boolean = false;
 
   serviceIcons = [
     "assets/images/dropbox.png",
@@ -82,21 +86,42 @@ async ngOnInit(){
      this.serviceAccounts[0] = localStorage.getItem('dpEmail');
     
   }
-findMatch(firstArray:string[], secondArray:string[]):boolean{
+findMatch(firstArray:string[], itemToFound:string ){
    const ARRAYLENGTH = firstArray.length;
    for (let index = 0; index < ARRAYLENGTH; index++) {
-     if(firstArray.includes(secondArray[index])){
-       this.isMatched = true;  
+     if(firstArray.includes(itemToFound)){
+         if(itemToFound === "Dropbox"){
+          this.dpApiSelected = true;
+         }
+         if(itemToFound === "GoogleDrive"){
+          this.gdApiSelected = true;
+         }
+         if(itemToFound === "OneDrive"){
+          this.odApiSelected = true;
+         }
+         if(itemToFound === "Box"){
+          this.bxApiSelected = true;
+         }
+         if(itemToFound === "LocalFiles"){
+          this.flApiSelected = true;
+         }
      }
    }
-   return this.isMatched;
   }
-  testMatch(){
-     this.matchFound = this.findMatch(this.serviceNames,this.storedApi);
-     return this.matchFound;
-  }
+  apiMatch(){
+    let holdApiSelected = [];
+    holdApiSelected = this.storedApi;   
+    for (let index = 0; index < this.serviceNames.length; index++) {
+      console.log("inside storeApi if " + holdApiSelected  );
+      this.findMatch(holdApiSelected,this.serviceNames[index]);     
+    }
+    this.removeLocalStorageValue("apiSelected");
+  } 
   readLocalStorageValue(key) {
     return localStorage.getItem(key)
+  }
+  removeLocalStorageValue(str:string){
+    localStorage.removeItem(str);
   }
 
   async getLocalFiles(side) {
