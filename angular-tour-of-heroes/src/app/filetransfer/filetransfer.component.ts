@@ -28,7 +28,9 @@ export class FiletransferComponent implements OnInit {
   leftServiceForm = false;
   rightServiceForm = false;
   gdEmail:string = this.readLocalStorageValue('gdUserEmail');
-  
+  storedApi = JSON.parse(localStorage.getItem("apiSelected"));
+  isMatched:boolean = false;
+  matchFound:boolean = false;
 
   serviceIcons = [
     "assets/images/dropbox.png",
@@ -39,11 +41,11 @@ export class FiletransferComponent implements OnInit {
   ];
 
   serviceNames = [
-    "Dropbox",
-    "Google Drive",
-    "OneDrive",
-    "Box",
-    "Local Files"
+    'Dropbox',
+    'GoogleDrive',
+    'OneDrive',
+    'Box',
+    'LocalFiles'
   ]
 
   serviceAccounts = [
@@ -80,7 +82,19 @@ async ngOnInit(){
      this.serviceAccounts[0] = localStorage.getItem('dpEmail');
     
   }
-
+findMatch(firstArray:string[], secondArray:string[]):boolean{
+   const ARRAYLENGTH = firstArray.length;
+   for (let index = 0; index < ARRAYLENGTH; index++) {
+     if(firstArray.includes(secondArray[index])){
+       this.isMatched = true;  
+     }
+   }
+   return this.isMatched;
+  }
+  testMatch(){
+     this.matchFound = this.findMatch(this.serviceNames,this.storedApi);
+     return this.matchFound;
+  }
   readLocalStorageValue(key) {
     return localStorage.getItem(key)
   }

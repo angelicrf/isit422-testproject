@@ -22,13 +22,14 @@ export class CloudmanagementComponent {
   
   title = 'CloudManagementComponent';
   checked = false;
+  selectedApi:String[] = [];
   selected:boolean = false;
   dpChecked:boolean = false;
   gdChecked:boolean = false;
   odChecked:boolean = false;
   bxChecked:boolean = false;
   lfChecked:boolean = false;
-
+ 
   addFilterForm = false;
 
   dropboxForm = false;
@@ -36,6 +37,7 @@ export class CloudmanagementComponent {
   oneDriveForm = false;
   boxForm = false;
   localForm = false;
+ 
   gdEmail:string = this.readLocalStorageValue('gdUserEmail')
   dpEmail:string = this.readLocalStorageValue('dpEmail')
   bxEmail:string = this.readLocalStorageValue('boxClientEmail')
@@ -68,17 +70,17 @@ export class CloudmanagementComponent {
 
   services: String[] = [
     'Dropbox',
-    'Google Drive',
+    'GoogleDrive',
     'OneDrive',
     'Box',
-    'Local File System'
+    'LocalFileSystem'
   ]
   service: String;
 
   filters: String[];
   saveDpCode:any;
   localFilePath: string;
-
+ 
   async ngOnInit() {
     this.getFilters();
     const uriLink:string = location.href;
@@ -92,10 +94,11 @@ export class CloudmanagementComponent {
       this.removeUrlParams();
 
       if(localStorage.getItem("gdSelected") === "gdSelected"){
-        this.googleDriveInit();
         this.removeSelectedCloud("gdSelected");
+        this.googleDriveInit();
       }
       if(localStorage.getItem("bxSelected") === "bxSelected"){
+        this.removeSelectedCloud("bxSelected");
         this.bxService.boxRedirectCode();
         let saveBxCode:any = await this.bxService.getBoxCodefromUri();
         let stBxCode:string = saveBxCode;
@@ -103,21 +106,18 @@ export class CloudmanagementComponent {
         await this.bxService.getboxCodeOauth(saveBxCode);
         await this.bxService.issueBoxAccessToken();
         this.removeUrlParams();
-
-        this.removeSelectedCloud("bxSelected");
       }
       if(localStorage.getItem("odSelected") === "odSelected"){
+        this.removeSelectedCloud("odSelected");
         this.odService.login();
         let saveOdCode:any = await this.odService.odCodeFromUri();
         let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
         localStorage.setItem("odAccessToken", saveOdAccessToken);
         this.removeUrlParams();
-
-        this.removeSelectedCloud("odSelected");
       }
       if(localStorage.getItem("lfSelected") === "lfSelected"){
-        alert("lf under construction :((");
         this.removeSelectedCloud("lfSelected");
+        alert("lf under construction :((");  
       }
     }
     if(uriLink.includes('code') && !uriLink.includes('code=MdDdy')){
@@ -130,20 +130,20 @@ export class CloudmanagementComponent {
       this.removeUrlParams();
 
       if(localStorage.getItem("gdSelected") === "gdSelected"){
-        this.googleDriveInit();
         this.removeSelectedCloud("gdSelected");
+        this.googleDriveInit();   
       }
       if(localStorage.getItem("odSelected") === "odSelected"){
+        this.removeSelectedCloud("odSelected");
         this.odService.login();
         let saveOdCode:any = await this.odService.odCodeFromUri();
         let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
         localStorage.setItem("odAccessToken", saveOdAccessToken);
         this.removeUrlParams();
-        this.removeSelectedCloud("odSelected");
       }
       if(localStorage.getItem("lfSelected") === "lfSelected"){
-        alert("lf under construction :((");
         this.removeSelectedCloud("lfSelected");
+        alert("lf under construction :(("); 
       }
     }
     if(uriLink.includes('access_token')){
@@ -154,12 +154,12 @@ export class CloudmanagementComponent {
       this.removeUrlParams();
 
       if(localStorage.getItem("gdSelected") === "gdSelected"){
-        this.googleDriveInit();
         this.removeSelectedCloud("gdSelected");
+        this.googleDriveInit();   
       }
       if(localStorage.getItem("lfSelected") === "lfSelected"){
-        alert("lf under construction :((");
         this.removeSelectedCloud("lfSelected");
+        alert("lf under construction :(("); 
       }
     } 
   }
@@ -239,53 +239,73 @@ export class CloudmanagementComponent {
 
   async handleClientLogin(){
     if(this.dpChecked && this.gdChecked){
+      this.selectedApi.push(this.services[0],this.services[1]);
       this.selected = true;
       localStorage.setItem("gdSelected","gdSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.dropBoxClientLogin();   
     }
     if(this.dpChecked && this.odChecked){
+      this.selectedApi.push(this.services[0],this.services[2]);
       this.selected = true;
       localStorage.setItem("odSelected","odSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.dropBoxClientLogin();  
     }
     if(this.dpChecked && this.bxChecked){
+      this.selectedApi.push(this.services[0],this.services[3]);
       this.selected = true;
       localStorage.setItem("bxSelected","bxSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.dropBoxClientLogin();  
     }
     if(this.dpChecked && this.lfChecked){
+      this.selectedApi.push(this.services[0],this.services[4]);
       this.selected = true;
       localStorage.setItem("lfSelected","lfSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.dropBoxClientLogin();  
     }
     if(this.odChecked && this.gdChecked){
+      this.selectedApi.push(this.services[2],this.services[1]);
       this.selected = true;
       localStorage.setItem("gdSelected","gdSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.odService.login();  
     }
     if(this.odChecked && this.bxChecked){
+      this.selectedApi.push(this.services[2],this.services[3]);
       this.selected = true;
       localStorage.setItem("bxSelected","bxSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.odService.login();  
     }
     if(this.odChecked && this.lfChecked){
+      this.selectedApi.push(this.services[2],this.services[4]);
       this.selected = true;
       localStorage.setItem("lfSelected","lfSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.odService.login();  
     }
     if(this.bxChecked && this.gdChecked){
+      this.selectedApi.push(this.services[3],this.services[1]);
       this.selected = true;
       localStorage.setItem("gdSelected","gdSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.boxClientLogin();  
     }
     if(this.bxChecked && this.lfChecked){
+      this.selectedApi.push(this.services[3],this.services[4]);
       this.selected = true;
       localStorage.setItem("lfSelected","lfSelected");
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
       this.boxClientLogin();  
     }
     if(this.lfChecked && this.gdChecked){
+      this.selectedApi.push(this.services[4],this.services[1]);
       this.selected = true;
       localStorage.setItem("gdSelected","gdSelected"); 
+      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
     }
     if(this.selected == false){
       alert("Dear customer, please at least check two of the checkboxes");
