@@ -77,12 +77,11 @@ export class CloudmanagementComponent {
   ]
   service: String;
 
-  filters: String[];
+  filters: string[] = [];
   saveDpCode:any;
   localFilePath: string;
  
   async ngOnInit() {
-    this.getFilters();
     const uriLink:string = location.href;
 
     if(uriLink.includes('code=MdDdy')){
@@ -164,13 +163,11 @@ export class CloudmanagementComponent {
     } 
   }
 
-  getFilters(): void {
-    this.filters = this.filterService.getFilters();
-  }
-
-  addFilter(filter: String): void {
-    if(!this.filters.includes(filter) && !filter.includes("undefined"))
+  addFilter(filter: string): void {
+   // if(!this.filters.includes(filter) && !filter.includes("undefined")){
       this.filters.push(filter);
+      localStorage.setItem("apiFileFilter", filter);
+   // }
   }
 
   linkAccount(): void {

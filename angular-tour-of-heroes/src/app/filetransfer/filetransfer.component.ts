@@ -7,6 +7,7 @@ import { CheckCategories, buildFileListByFilter } from '../filetransfer/filterBy
 import { GDClientCredentials } from '../gdClientCredentials';
 import { BxCloudService } from '../bx-cloud.service';
 import { OdCloudService } from '../od-cloud.service';
+import { get } from 'https';
 let clFile: string[];
 let showData: string;
 let bxCode:any;
@@ -79,7 +80,7 @@ export class FiletransferComponent implements OnInit {
     private dpService: DpCloudService,
     private gdcl:GDClientCredentials,
     private bxService: BxCloudService, 
-    private odService: OdCloudService) {}
+    private odService: OdCloudService) {this.filters = [];}
 
 async ngOnInit(){
      this.getFilters();
@@ -242,7 +243,22 @@ findMatch(firstArray:string[], itemToFound:string ){
   }
 
   getFilters(): void {
-    this.filters = this.filterService.getFilters();
+    let getFilterArray = [];
+    let getFilterStr =  localStorage.getItem("apiFileFilter");
+    
+    if(getFilterStr !== "" || getFilterStr !== null){
+      if(getFilterStr.includes(',')){
+        getFilterArray = getFilterStr.split(',');
+      }
+      else{
+        getFilterArray.push(getFilterStr);
+      }
+      console.log("getFilterArray " + getFilterArray);
+      this.filters = getFilterArray;
+    }
+    else{
+      this.filters = [];
+    }
   }
 
   async drop(event: CdkDragDrop<string[]>) {
@@ -846,7 +862,7 @@ findMatch(firstArray:string[], itemToFound:string ){
   // display files from Google Drive
   async displayClientFiles(){
       holdClientFilesToDisplay = await this.getFiles()
-      // console.log("displayClientFiles " + JSON.stringify(holdClientFilesToDisplay));
+  
        let keys = Object.keys(holdClientFilesToDisplay);
        for(let i = 0; i < keys.length; i++){
             this.files1.push((holdClientFilesToDisplay[i].gdClName));
@@ -857,13 +873,15 @@ findMatch(firstArray:string[], itemToFound:string ){
   
   let displayResult:string = localStorage.getItem("dpAccessToken");
   this.dpService.dpGetClientInfo(displayResult)
+  retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult);
+  console.log("retreiveDpFiles is" + JSON.stringify(retreiveDpFiles));
+  // work on getting filters
 
-  retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult)
-
-  let filterName = this.filterList(this.filters, this.service1);
+ let filterName = this.filterList(this.filters, this.service1);
+  console.log("filterName is" + filterName);
   let holdArrayRetrieved = []
-  //condition to filter
-  if(filterName === null || filterName === ""){
+
+ if(filterName === null || filterName === ""){
   let keys = Object.keys(retreiveDpFiles);
   for(let i = 0; i < keys.length; i++){   
     holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
@@ -872,17 +890,17 @@ findMatch(firstArray:string[], itemToFound:string ){
     if(side === "right")
       this.files2.push((holdArrayRetrieved[i]));
   }
-  }
+   }
   else{
     let keys = Object.keys(retreiveDpFiles);
-  for(let i = 0; i < keys.length; i++){   
-    holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
-  }
-    let newFilteredFiles = buildFileListByFilter(filterName, holdArrayRetrieved )
-  console.log("newFilteredFiles " + newFilteredFiles)
-    let storedFiles = holdArrayRetrieved.filter(
-      element => element.indexOf('.') != -1
-    )
+    for(let i = 0; i < keys.length; i++){   
+      holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
+    }
+      let newFilteredFiles = buildFileListByFilter(filterName, holdArrayRetrieved )
+    console.log("newFilteredFiles " + newFilteredFiles)
+      let storedFiles = holdArrayRetrieved.filter(
+        element => element.indexOf('.') != -1
+      )
     for(let i = 0; i < newFilteredFiles.length; i++){
       if(side === "left")
         this.files1.push((newFilteredFiles[i])); 
@@ -897,7 +915,7 @@ findMatch(firstArray:string[], itemToFound:string ){
       this.folders.push(intersection[index]);   
     }
   }
-  this.removeUrlParams();
+   
   }
 
   // TODO: get the file id to pass into request
@@ -926,8 +944,6 @@ findMatch(firstArray:string[], itemToFound:string ){
       let mongoDbUserId = localStorage.getItem('userMnId');
     
       this.bxService.sendBoxClientInfo(formathlBxClName.replace(/['"]+/g, '').toString(),hlBxClEmail.toString(),mongoDbUserId);
-
-      this.removeUrlParams();
       holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
       this.boxDisplayFoldersFiles();
 

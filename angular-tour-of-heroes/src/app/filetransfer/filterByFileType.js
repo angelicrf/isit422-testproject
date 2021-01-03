@@ -13,6 +13,7 @@ const IMAGES = [
 	'bmp',
     'gif',
 	'jpg',
+	'jpeg',
     'tiff',
     'svg',
 	'png',
@@ -36,6 +37,7 @@ const VIDEO = [
 	'wmv'	
 ]
 export function buildFileListByFilter(filterName, masterFileList ) {
+	console.log(" masterFileList is " + masterFileList);
 	let newFilterName = filterName.toUpperCase();
 		let holdSelectedFiles = []
 
@@ -43,7 +45,7 @@ export function buildFileListByFilter(filterName, masterFileList ) {
 			console.log("inside Images")
 			let definedIT = '';
 		for (let index = 0; index < IMAGES.length; index++) {
-			definedIT += masterFileList.filter(data => {
+		    definedIT += masterFileList.filter(data => {
 				return data.indexOf(IMAGES[index]) !== -1 && data != null && data != "" && data != ",";
 			});		
 		}
@@ -79,13 +81,13 @@ export function buildFileListByFilter(filterName, masterFileList ) {
 	}
 	holdSelectedFiles.push(definedAU);
 	}
-		// console.log("images are " + holdImagesFiles + " " + holdImagesFiles.length);
+	  console.log("images are " + holdSelectedFiles + " " + holdSelectedFiles.length);
 	  
 		let splitItems = '';
-		splitItems = holdSelectedFiles[0]
+        splitItems = holdSelectedFiles[0];
 		//console.log("allDotedFiles is " + allDotedFiles + " " +  allDotedFiles.length);
-        //console.log("allDotedFiles[0] is " + splitItems.toString());
-		//console.log("splitItems is " +  (splitItems.toString().split(',')).length)
+        console.log("holdSelectedFiles[0] is " + splitItems.toString());
+		console.log("splitItems is " +  (splitItems.toString().split(',')).length);
 		return (splitItems.toString().split(','));
 	}
 export function CheckCategories(filter) {
