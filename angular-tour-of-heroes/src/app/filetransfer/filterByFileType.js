@@ -16,8 +16,7 @@ const IMAGES = [
 	'jpeg',
     'tiff',
     'svg',
-	'png',
-	'url'
+	'png'
 ]
 const AUDIO = [
 	'au',
@@ -36,60 +35,33 @@ const VIDEO = [
 	'mov',
 	'wmv'	
 ]
-export function buildFileListByFilter(filterName, masterFileList ) {
-	console.log(" masterFileList is " + masterFileList);
-	let newFilterName = filterName.toUpperCase();
-		let holdSelectedFiles = []
+let holdSelectedFiles = [];
+let definedIT = '';
 
-		if(newFilterName === "IMAGES"){
-			console.log("inside Images")
-			let definedIT = '';
-		for (let index = 0; index < IMAGES.length; index++) {
-		    definedIT += masterFileList.filter(data => {
-				return data.indexOf(IMAGES[index]) !== -1 && data != null && data != "" && data != ",";
-			});		
-		}
-		holdSelectedFiles.push(definedIT);
-	   }
-	   if(newFilterName === "DOCUMENTS"){
-		console.log("inside docs")
-		let definedDC = '';
-       	for (let index = 0; index < DOCS.length; index++) {
-	   definedDC += masterFileList.filter(data => {
-			return data.indexOf(DOCS[index]) !== -1 && data != null && data != "" && data != ",";
-		});		
+export function buildFileListByFilter(filterName, masterFileList ) {
+	let newFilterName = filterName.toUpperCase();
+		
+		findFileExtension(newFilterName,"IMAGES",IMAGES,masterFileList);
+		findFileExtension(newFilterName,"DOCS",DOCS,masterFileList);
+		findFileExtension(newFilterName,"VIDEO",VIDEO,masterFileList);
+		findFileExtension(newFilterName,"AUDIO",AUDIO,masterFileList);
+		
+		console.log("holdSelectedFiles " + holdSelectedFiles);
+		return (holdSelectedFiles);
 	}
-	 holdSelectedFiles.push(definedDC);
-	}
-    if(newFilterName === "VIDEOS"){
-	console.log("inside video")
-	let definedVD = '';
-	for (let index = 0; index < VIDEO.length; index++) {
-		definedVD += masterFileList.filter(data => {
-			return data.indexOf(VIDEO[index]) !== -1 && data != null && data != "" && data != ",";
-		});		
-	}
-       holdSelectedFiles.push(definedVD);
-    }
-	if(newFilterName === "AUDIO"){
-		console.log("inside Audio")
-		let definedAU = '';
-	for (let index = 0; index < AUDIO.length; index++) {
-		definedAU += masterFileList.filter(data => {
-			return data.indexOf(AUDIO[index]) !== -1 && data != null && data != "" && data != ",";
-		});		
-	}
-	holdSelectedFiles.push(definedAU);
-	}
-	  console.log("images are " + holdSelectedFiles + " " + holdSelectedFiles.length);
-	  
-		let splitItems = '';
-        splitItems = holdSelectedFiles[0];
-		//console.log("allDotedFiles is " + allDotedFiles + " " +  allDotedFiles.length);
-        console.log("holdSelectedFiles[0] is " + splitItems.toString());
-		console.log("splitItems is " +  (splitItems.toString().split(',')).length);
-		return (splitItems.toString().split(','));
-	}
+function findFileExtension(fltName,str,ExtArray,masterArray){
+
+	if(fltName === str){
+		console.log(`inside ${str}`)
+		
+	for (let index = 0; index < ExtArray.length; index++) {
+		 definedIT += masterArray.filter(data => 
+			data.indexOf(ExtArray[index]) !== -1 && data != null && data != "" && data != ",") + ',';
+	 }
+	 holdSelectedFiles = definedIT.split(',').filter(Boolean);
+	 return holdSelectedFiles;
+   }
+}
 export function CheckCategories(filter) {
 	if(DOCS.includes(filter))
 		return true;

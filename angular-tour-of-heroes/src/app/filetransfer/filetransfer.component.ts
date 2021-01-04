@@ -8,6 +8,7 @@ import { GDClientCredentials } from '../gdClientCredentials';
 import { BxCloudService } from '../bx-cloud.service';
 import { OdCloudService } from '../od-cloud.service';
 import { get } from 'https';
+import { BOOL_TYPE } from '@angular/compiler/src/output/output_ast';
 let clFile: string[];
 let showData: string;
 let bxCode:any;
@@ -861,23 +862,38 @@ findMatch(firstArray:string[], itemToFound:string ){
   }
   // display files from Google Drive
   async displayClientFiles(){
-      holdClientFilesToDisplay = await this.getFiles()
-  
+      holdClientFilesToDisplay = await this.getFiles();
+      let filterName = this.filterList(this.filters, this.service1);
+      console.log("googledrive filter " + filterName);
+      if(filterName === null || filterName === ""){
+      console.log("there is not google drive filter");
+
        let keys = Object.keys(holdClientFilesToDisplay);
        for(let i = 0; i < keys.length; i++){
             this.files1.push((holdClientFilesToDisplay[i].gdClName));
       };
-       return this.files1
+    }else{
+      console.log("there is google drive filter");
+      let storedGdFiles = [];
+      let keys = Object.keys(holdClientFilesToDisplay);
+       for(let i = 0; i < keys.length; i++){
+        storedGdFiles.push((holdClientFilesToDisplay[i].gdClName));
+      };
+      let newDpFilteredFiles = buildFileListByFilter(filterName, storedGdFiles )
+      
+    for(let i = 0; i < newDpFilteredFiles.length; i++){
+         this.files1.push((newDpFilteredFiles[i]));
+      };
+    }
+       return this.files1;
    } 
   async dpProcessFiles(side){
   
   let displayResult:string = localStorage.getItem("dpAccessToken");
   this.dpService.dpGetClientInfo(displayResult)
   retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult);
-  console.log("retreiveDpFiles is" + JSON.stringify(retreiveDpFiles));
-  // work on getting filters
 
- let filterName = this.filterList(this.filters, this.service1);
+  let filterName = this.filterList(this.filters, this.service1);
   console.log("filterName is" + filterName);
   let holdArrayRetrieved = []
 
@@ -885,39 +901,36 @@ findMatch(firstArray:string[], itemToFound:string ){
   let keys = Object.keys(retreiveDpFiles);
   for(let i = 0; i < keys.length; i++){   
     holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
-    if(side === "left")
+    if(side === "left"){
       this.files1.push((holdArrayRetrieved[i]));
-    if(side === "right")
-      this.files2.push((holdArrayRetrieved[i]));
-  }
+     }
+    }
    }
   else{
     let keys = Object.keys(retreiveDpFiles);
     for(let i = 0; i < keys.length; i++){   
       holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
     }
-      let newFilteredFiles = buildFileListByFilter(filterName, holdArrayRetrieved )
-    console.log("newFilteredFiles " + newFilteredFiles)
-      let storedFiles = holdArrayRetrieved.filter(
-        element => element.indexOf('.') != -1
-      )
-    for(let i = 0; i < newFilteredFiles.length; i++){
-      if(side === "left")
-        this.files1.push((newFilteredFiles[i])); 
-      if(side === "right")
-        this.files2.push((newFilteredFiles[i])); 
+    let storedFiles = holdArrayRetrieved.filter(
+      element => element.indexOf('.') !== -1
+    )
+      let newDpFilteredFiles = buildFileListByFilter(filterName, storedFiles )
+      
+    for(let i = 0; i < newDpFilteredFiles.length; i++){
+      if(side === "left"){
+        this.files1.push((newDpFilteredFiles[i]));
+      } 
+     
     };
     let intersection: string[] = holdArrayRetrieved.filter(
-      element => !newFilteredFiles.includes(element) && !storedFiles.includes(element)  
+      element => !newDpFilteredFiles.includes(element) && !storedFiles.includes(element)  
       );
       console.log("intersection " + intersection)
     for (let index = 0; index < intersection.length; index++) {
       this.folders.push(intersection[index]);   
     }
+    } 
   }
-   
-  }
-
   // TODO: get the file id to pass into request
   async removeGDFile() {
     return await new Promise((resolve,reject) => {
@@ -935,7 +948,6 @@ findMatch(firstArray:string[], itemToFound:string ){
     return window.history.replaceState(null, null, window.location.pathname);
   }
   async boxProcessFiles(){
-
       let storeBxInfo:any = await this.bxService.getBoxClientInfo();
       let hlBxClName:string = storeBxInfo[0];
       let hlBxClEmail:string = storeBxInfo[1];
@@ -949,47 +961,93 @@ findMatch(firstArray:string[], itemToFound:string ){
 
   }
   boxDisplayFoldersFiles(){
+    let filterName = this.filterList(this.filters, this.service1);
     let savedFlsFolders = JSON.parse(holdBoxAllFlsFl);
     let storeFlsFolders:any = savedFlsFolders.item_collection.entries;
-    for (let index = 0; index < storeFlsFolders.length; index++) {
-      let holdBoxItems = {};
-      if(storeFlsFolders[index].type === "folder"){
-        this.folders.push(storeFlsFolders[index].name);
-      }
-      else{
-        holdBoxItems["bxFileName"] = storeFlsFolders[index].name;
-        holdBoxItems["bxFileId"] = storeFlsFolders[index].id;
-        console.log("holdBoxItems bxFileId " + holdBoxItems["bxFileId"]);
-        
-        boxFiles.push(holdBoxItems);
-        this.files1.push(storeFlsFolders[index].name);
-      }
-      } 
+    
+    if(filterName === null || filterName === ""){
+        for (let index = 0; index < storeFlsFolders.length; index++) {
+          let holdBoxItems = {};
+          if(storeFlsFolders[index].type === "folder"){
+            this.folders.push(storeFlsFolders[index].name);
+          }
+          else{
+            holdBoxItems["bxFileName"] = storeFlsFolders[index].name;
+            holdBoxItems["bxFileId"] = storeFlsFolders[index].id;
+            console.log("holdBoxItems bxFileId " + holdBoxItems["bxFileId"]);
+            
+            boxFiles.push(holdBoxItems);
+            this.files1.push(storeFlsFolders[index].name);
+            }
+          }
+        }else{
+          for (let index = 0; index < storeFlsFolders.length; index++) {
+            let holdBoxItems = {};
+            if(storeFlsFolders[index].type === "folder"){
+              this.folders.push(storeFlsFolders[index].name);
+            }
+            else{
+              holdBoxItems["bxFileName"] = storeFlsFolders[index].name;
+              holdBoxItems["bxFileId"] = storeFlsFolders[index].id;
+              let holdStoredBoxNames = []; 
+              holdStoredBoxNames.push(storeFlsFolders[index].name);
+              boxFiles.push(holdBoxItems);
+
+              let newBxFilteredFiles = buildFileListByFilter(filterName, holdStoredBoxNames );
+              for(let i = 0; i < newBxFilteredFiles.length; i++){
+                  this.files1.push(newBxFilteredFiles[i]);
+                } 
+              }
+            }
+        }  
   }
   async odDisplayFiles(){
     let showAllOdFlsFiles:any = await this.odService.odDisplayFilesFlsProcess();
     let runAllOdFlsFiles:any = await this.odFilesFls(showAllOdFlsFiles);
   }
   async odFilesFls(odFlsFiles:any){
+    let filterName = this.filterList(this.filters, this.service1);
     return await new Promise((resolve,reject) =>{
       let storeOdItemsInArray:string[] = [];
+      if(filterName === null || filterName === ""){
+        let key = Object.values(odFlsFiles);
+
+        for (let index = 0; index < key.length; index++) {
+          odFile.push(odFlsFiles[index]);
+          storeOdItemsInArray.push(odFlsFiles[index].odFileName); 
+        }
+  
+        let odFilesStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') != -1);
+        let odFolderStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') === -1);
+        
+        console.log("odFilesStored is " + odFilesStored + "odFolderStored " + odFolderStored );
+        for (let index = 0; index < odFilesStored.length; index++) {
+          this.files1.push(odFilesStored[index]);
+        }
+        for (let index = 0; index < odFolderStored.length; index++) {
+          this.folders.push(odFolderStored[index])
+        }
+     }else{
       let key = Object.values(odFlsFiles);
 
       for (let index = 0; index < key.length; index++) {
         odFile.push(odFlsFiles[index]);
         storeOdItemsInArray.push(odFlsFiles[index].odFileName); 
       }
- 
+
       let odFilesStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') != -1);
       let odFolderStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') === -1);
-      
-      console.log("odFilesStored is " + odFilesStored + "odFolderStored " + odFolderStored );
-      for (let index = 0; index < odFilesStored.length; index++) {
-        this.files1.push(odFilesStored[index]);
+      let newOdFilteredFiles = buildFileListByFilter(filterName, odFilesStored )
+      let uniqueArray = newOdFilteredFiles.filter(function(item, pos) {
+        return newOdFilteredFiles.indexOf(item) == pos;
+      });
+      for (let index = 0; index < uniqueArray.length; index++) {
+        this.files1.push(uniqueArray[index]);
       }
       for (let index = 0; index < odFolderStored.length; index++) {
-        this.folders.push(odFolderStored[index])
-      }  
+        this.folders.push(odFolderStored[index]);
+      }
+     }  
       return resolve(this.files1);
     })
   }
