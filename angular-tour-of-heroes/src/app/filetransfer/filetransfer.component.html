@@ -1,7 +1,7 @@
 <div class="trBar">
-<div style="position: absolute; margin-left: 535px; margin-top: 200px; float: left">
-  <p>Drag Files to Transfer</p>
-  <img src="assets/images/arrow.png" width="150" height="40">
+<div style="position: absolute; margin-left: 515px; margin-top: 200px; float: left">
+  <p style="font-size: 15px;font-weight: bold;">Drag and Drop Files</p>
+  <img src="https://www.freeiconspng.com/uploads/arrow-icon-jpg-arrow-58-icon-free-orange-arrow-icons-arrow-right-icon--9.png" width="200" height="60" alt="icon-arrow" />
 </div>
 <div style="margin-top: 40px; margin-left: 100px; width: 100%; overflow: hidden; align-content: center;">
     <div style="width: 600px; float: left;">
@@ -9,15 +9,15 @@
         <button *ngIf="!leftServiceForm" class="services-button" (click)="leftServiceForm = true; apiMatch();">{{serviceNames[service1]}}<br>{{serviceAccounts[service1]}}<br></button>
         <div *ngIf="leftServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
-          <button [disabled]="!dpApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles('left');">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
+          <button [disabled]="!dpApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles();">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
-          <button [disabled]="!gdApiSelected" class="services-button" (click)="files1=[]; displayClientFiles(); leftServiceForm = false; service1 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
+          <button [disabled]="!gdApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 1; gdProcessFiles();">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
-          <button [disabled]="!odApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 2; odDisplayFiles();">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
+          <button [disabled]="!odApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 2; odProcessFiles();">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">
-          <button [disabled]="!bxApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 3; boxProcessFiles();">{{serviceNames[3]}}<br>{{serviceAccounts[3]}}</button><br>
+          <button [disabled]="!bxApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 3; bxProcessFiles();">{{serviceNames[3]}}<br>{{serviceAccounts[3]}}</button><br>
           <img src="{{serviceIcons[4]}}" width="64" height="64">
-          <button [disabled]="!flApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; getLocalFiles('left'); service1 = 4;">{{serviceNames[4]}}<br>{{serviceAccounts[4]}}</button>
+          <button [disabled]="!flApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 4; lfProcessFiles();">{{serviceNames[4]}}<br>{{serviceAccounts[4]}}</button>
         </div>
         <br>
         <label class="services">Filters: </label>
@@ -53,15 +53,15 @@
         <button *ngIf="!rightServiceForm" class="services-button" (click)="rightServiceForm = true">{{serviceNames[service2]}}<br>{{serviceAccounts[service2]}}</button>
         <div *ngIf="rightServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
-          <button [disabled]="!dpApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 0;  dpProcessFiles('right')">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
+          <button [disabled]="!dpApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 0;">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
           <img src="{{serviceIcons[1]}}" width="64" height="64">
           <button [disabled]="!gdApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 1;">{{serviceNames[1]}}<br>{{serviceAccounts[1]}}</button><br>
           <img src="{{serviceIcons[2]}}" width="64" height="64">
           <button [disabled]="!odApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 2;">{{serviceNames[2]}}<br>{{serviceAccounts[2]}}</button><br>
           <img src="{{serviceIcons[3]}}" width="64" height="64">
-          <button [disabled]="!bxApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 3; ">{{serviceNames[3]}}<br>{{serviceAccounts[3]}}</button><br>
+          <button [disabled]="!bxApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 3;">{{serviceNames[3]}}<br>{{serviceAccounts[3]}}</button><br>
           <img src="{{serviceIcons[4]}}" width="64" height="64">
-          <button [disabled]="!flApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; getLocalFiles('right'); service2 = 4;">{{serviceNames[4]}}<br>{{serviceAccounts[4]}}</button>
+          <button [disabled]="!flApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 4;">{{serviceNames[4]}}<br>{{serviceAccounts[4]}}</button>
         </div>
       <br>
       <label class="services">Filters: </label>

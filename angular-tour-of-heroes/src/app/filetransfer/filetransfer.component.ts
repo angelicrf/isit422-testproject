@@ -84,7 +84,10 @@ export class FiletransferComponent implements OnInit {
     private odService: OdCloudService) {this.filters = [];}
 
 async ngOnInit(){
-     this.getFilters();
+  if("apiFileFilter" in localStorage){
+     console.log("inside OnInt filetransfer");
+    this.getFilters();
+  }
      this.serviceAccounts[0] = localStorage.getItem('dpEmail');
     
   }
@@ -124,50 +127,6 @@ findMatch(firstArray:string[], itemToFound:string ){
   }
   removeLocalStorageValue(str:string){
     localStorage.removeItem(str);
-  }
-
-  async getLocalFiles(side) {
-    let filePath = this.serviceAccounts[4];
-    const files = await fetch('/api/Files', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        path: filePath
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if(side === 'left') {
-        data.names.forEach((name) => {
-          if(this.service1 === 4) {
-            this.files1.push(name);
-            console.log(this.files1)
-          }
-        });
-        data.files.forEach((file) => {
-          if(this.service1 === 4) {
-            this.files1Data.push(file);
-          }
-        });
-      }
-      else if(side === 'right') {
-        data.names.forEach((name) => {
-          if(this.service2 === 4) {
-            this.files2.push(name);
-          }
-        });
-        data.files.forEach((file) => {
-          if(this.service2 === 4) {
-            this.files2Data.push(file);
-          }
-        });
-      }
-      console.log(data)
-    })
-    .catch(err => console.log(err))
   }
 
   filterList(fil: string[], srv: number): string {
@@ -853,15 +812,14 @@ findMatch(firstArray:string[], itemToFound:string ){
   // }
 
   async getFiles() {
-    console.log("getFiles called")
+    console.log("getFiles called");
     return await new Promise(async(resolve,reject) => {
-        console.log("getFiles called two")
+        console.log("getFiles called two");
         let displayItems:any = await this.gdService.listGoogleDriveFiles();           
         return resolve(displayItems);
     });
   }
-  // display files from Google Drive
-  async displayClientFiles(){
+  async gdProcessFiles(){
       holdClientFilesToDisplay = await this.getFiles();
       let filterName = this.filterList(this.filters, this.service1);
       console.log("googledrive filter " + filterName);
@@ -887,7 +845,7 @@ findMatch(firstArray:string[], itemToFound:string ){
     }
        return this.files1;
    } 
-  async dpProcessFiles(side){
+  async dpProcessFiles(){
   
   let displayResult:string = localStorage.getItem("dpAccessToken");
   this.dpService.dpGetClientInfo(displayResult)
@@ -901,9 +859,7 @@ findMatch(firstArray:string[], itemToFound:string ){
   let keys = Object.keys(retreiveDpFiles);
   for(let i = 0; i < keys.length; i++){   
     holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
-    if(side === "left"){
-      this.files1.push((holdArrayRetrieved[i]));
-     }
+      this.files1.push((holdArrayRetrieved[i]));  
     }
    }
   else{
@@ -917,10 +873,7 @@ findMatch(firstArray:string[], itemToFound:string ){
       let newDpFilteredFiles = buildFileListByFilter(filterName, storedFiles )
       
     for(let i = 0; i < newDpFilteredFiles.length; i++){
-      if(side === "left"){
-        this.files1.push((newDpFilteredFiles[i]));
-      } 
-     
+        this.files1.push((newDpFilteredFiles[i])); 
     };
     let intersection: string[] = holdArrayRetrieved.filter(
       element => !newDpFilteredFiles.includes(element) && !storedFiles.includes(element)  
@@ -928,7 +881,7 @@ findMatch(firstArray:string[], itemToFound:string ){
       console.log("intersection " + intersection)
     for (let index = 0; index < intersection.length; index++) {
       this.folders.push(intersection[index]);   
-    }
+     }
     } 
   }
   // TODO: get the file id to pass into request
@@ -947,7 +900,7 @@ findMatch(firstArray:string[], itemToFound:string ){
   removeUrlParams(){
     return window.history.replaceState(null, null, window.location.pathname);
   }
-  async boxProcessFiles(){
+  async bxProcessFiles(){
       let storeBxInfo:any = await this.bxService.getBoxClientInfo();
       let hlBxClName:string = storeBxInfo[0];
       let hlBxClEmail:string = storeBxInfo[1];
@@ -1001,7 +954,7 @@ findMatch(firstArray:string[], itemToFound:string ){
             }
         }  
   }
-  async odDisplayFiles(){
+  async odProcessFiles(){
     let showAllOdFlsFiles:any = await this.odService.odDisplayFilesFlsProcess();
     let runAllOdFlsFiles:any = await this.odFilesFls(showAllOdFlsFiles);
   }
@@ -1051,6 +1004,35 @@ findMatch(firstArray:string[], itemToFound:string ){
       return resolve(this.files1);
     })
   }
-
+  async lfProcessFiles() {
+    let filePath:string = localStorage.getItem("localFilePath");
+    console.log("filePath is " + filePath);
+    const files = await fetch('/api/Files', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({
+        path: filePath
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("data " + data);
+        data.names.forEach((name) => {
+          if(this.service1 === 4) {
+            this.files1.push(name);
+            console.log(this.files1)
+          }
+        });
+        data.files.forEach((file) => {
+          if(this.service1 === 4) {
+            this.files1Data.push(file);
+          }
+        });
+    })
+    .catch(err => console.log(err))
+  }
 }
 

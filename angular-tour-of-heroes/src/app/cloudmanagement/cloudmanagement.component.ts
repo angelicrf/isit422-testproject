@@ -73,7 +73,7 @@ export class CloudmanagementComponent {
     'GoogleDrive',
     'OneDrive',
     'Box',
-    'LocalFileSystem'
+    'LocalFiles'
   ]
   service: String;
 
@@ -116,7 +116,7 @@ export class CloudmanagementComponent {
       }
       if(localStorage.getItem("lfSelected") === "lfSelected"){
         this.removeSelectedCloud("lfSelected");
-        alert("lf under construction :((");  
+        this.readLocalStorageValue('localFilePath'); 
       }
     }
     if(uriLink.includes('code') && !uriLink.includes('code=MdDdy')){
@@ -142,7 +142,7 @@ export class CloudmanagementComponent {
       }
       if(localStorage.getItem("lfSelected") === "lfSelected"){
         this.removeSelectedCloud("lfSelected");
-        alert("lf under construction :(("); 
+        this.readLocalStorageValue('localFilePath');
       }
     }
     if(uriLink.includes('access_token')){
@@ -158,7 +158,7 @@ export class CloudmanagementComponent {
       }
       if(localStorage.getItem("lfSelected") === "lfSelected"){
         this.removeSelectedCloud("lfSelected");
-        alert("lf under construction :(("); 
+        this.readLocalStorageValue('localFilePath');
       }
     } 
   }

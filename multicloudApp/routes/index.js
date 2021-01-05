@@ -443,7 +443,6 @@ router.post('/Files', function(req, res) {
   console.log('Files called');
 
   fs.readdir(req.body.path, 'buffer', function (err, files) {
-    //handling error
     if (err) {
       res.status(500).send(err);
       console.log('Unable to scan directory: ' + err);
@@ -451,17 +450,11 @@ router.post('/Files', function(req, res) {
     else {
       let names = [];
       let fileData = [];
-      //listing all files using forEach
       files.forEach(function (file) {
         names.push(file.toString());
         console.log(file.toString()); 
-        // fs.readFile(req.body.path + '/' + file, (err, data) => {
-        //   if (err) throw err;
-        //   fileData.push(data)
-        //   console.log(data);
-        // });
       });
-      res.status(201).json({files, names: names});
+      res.status(201).json({files, names});
     }
   });
 });
@@ -479,8 +472,8 @@ router.post('/AddFiles', function(req, res) {
         if (err) throw 'error writing file: ' + err;
         fs.close(fd, function() {
             console.log(buf.toString())
-            console.log('file written');
-        })
+            res.status(201).send('Local file written');
+        });
     });
 });
 });
@@ -490,7 +483,7 @@ router.post('/DeleteFiles', function(req, res) {
   console.log('DeleteFiles called');
   try {
     fs.unlinkSync(req.body.filePath + "/" + req.body.fileName);
-    console.log('successfully deleted ' + req.body.fileName);
+    res.status(201).json({"success_MSG": 'Local File successfully deleted', "response": req.body.fileName});
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
@@ -503,7 +496,7 @@ router.post('/MoveFile', function(req, res) {
   try {
     setTimeout(async () => {
       let moveFileResule = await tpMoveFilestoAllFiles(req.body.fileName);
-      console.log('successfully moved ' + req.body.fileName);
+      res.status(201).json({"success_MSG":'Local File successfully moved', "respponse": req.body.fileName});
     },10000);
   } catch (err) {
     console.log(err);
