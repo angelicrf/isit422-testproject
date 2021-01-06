@@ -1,7 +1,11 @@
 .multicloudImg {
   margin-left: 150px;
-  margin-top: 150px;
+  margin-top: 50px;
+  width: 250px;
   float: left;
+}
+.sI-class{
+  margin-bottom: -20px;
 }
 .signIn {
   float: left;

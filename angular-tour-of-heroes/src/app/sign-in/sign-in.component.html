@@ -3,7 +3,7 @@
 <div class="signIn">
     <div [(ngModel)]="sInisSingedIn" ngDefaultControl [ngModelOptions]="{standalone: true}"></div>
     <h3 *ngIf="readLocalStorageValue('userSignedIn') == 'SignedUser'">{{signedInName}}</h3>
-    <h3 *ngIf="readLocalStorageValue('userSignedIn') === null">{{signInName}}</h3>
+    <h3 class="sI-class" *ngIf="readLocalStorageValue('userSignedIn') === null">{{signInName}}</h3>
     <h4 *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'">Dear customer, you are already logged in</h4>
     <button *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerLogOut()">Log Out</button>
     <br />
