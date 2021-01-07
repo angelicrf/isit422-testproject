@@ -7,8 +7,8 @@ import { CheckCategories, buildFileListByFilter } from '../filetransfer/filterBy
 import { GDClientCredentials } from '../gdClientCredentials';
 import { BxCloudService } from '../bx-cloud.service';
 import { OdCloudService } from '../od-cloud.service';
-import { get } from 'https';
-import { BOOL_TYPE } from '@angular/compiler/src/output/output_ast';
+import { LocalFilesService } from '../local-files.service';
+
 let clFile: string[];
 let showData: string;
 let bxCode:any;
@@ -81,7 +81,8 @@ export class FiletransferComponent implements OnInit {
     private dpService: DpCloudService,
     private gdcl:GDClientCredentials,
     private bxService: BxCloudService, 
-    private odService: OdCloudService) {this.filters = [];}
+    private odService: OdCloudService,
+    private lfService: LocalFilesService) {this.filters = [];}
 
 async ngOnInit(){
   if("apiFileFilter" in localStorage){
@@ -306,7 +307,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
           await this.dpService.dPDownloadFromNode();
-          await this.dpService.dPUploadLocalFromNode(storePath);
+          await this.lfService.lfDownlodToLocalPath();
         }
         // if right is dropbox and left is google drive
          if(this.service1 === 1 && this.service2 === 0 ) {
@@ -357,8 +358,20 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.bxService.boxUpload(gdStoreName);
         }
         if( this.service1 === 1 && this.service2 === 4 ) {
-          await this.gdService.gDUploadLocal(this.files1[0]);
-          setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
+          console.log("this.files2[0] " + this.files2[0])
+          let gdStoreName = (this.files2[0]).toString();
+          let holdGdIdFiles = [];
+          let keys = Object.keys(holdClientFilesToDisplay);
+          for (let index = 0; index < keys.length; index++) {
+            if(holdClientFilesToDisplay[index].gdClName === gdStoreName.toString() ) {
+              console.log( "inside the loop");
+              holdGdIdFiles.push(holdClientFilesToDisplay[index].gdClId)
+            }   
+          }
+          await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
+          let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          await this.lfService.lfDownlodToLocalPath();
+        
         }
         // if right is dropbox and left is local
       
@@ -414,7 +427,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdOdSelectedFile " + holdOdSelectedFile);
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
-          await this.dpService.dPUploadLocalFromNode(holdOdFile); 
+          await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 3 && this.service2 === 0){
           let holdBoxFile = this.files2[0];
@@ -470,10 +483,11 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
-          await this.dpService.dPUploadLocalFromNode(holdBoxFile); 
+          await this.lfService.lfDownlodToLocalPath();
         }
         // if right is google drive and left is local
         if(this.service1 === 4 && this.service2 === 0) {
+          
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
         // if left is local and right is Google Drive
@@ -565,7 +579,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
           await this.dpService.dPDownloadFromNode();
-          await this.dpService.dPUploadLocalFromNode(storePath);
+          await this.lfService.lfDownlodToLocalPath();
         }
 
         // if left is google drive and right is drop box
@@ -632,7 +646,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
           let gdDownloadResult:any = await this.gdService.gDDownloadLocalFromNode();
           console.log("gdDownloadResult " + gdDownloadResult);
-          await this.dpService.dPUploadLocalFromNode(gdStoreName);
+          await this.lfService.lfDownlodToLocalPath();
         }
        
         if(this.service1 === 2 && this.service2 === 0){
@@ -687,7 +701,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdOdSelectedFile " + holdOdSelectedFile);
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
-          await this.dpService.dPUploadLocalFromNode(holdOdFile); 
+          await this.lfService.lfDownlodToLocalPath(); 
         }
         if(this.service1 === 3 && this.service2 === 0){
           let holdBoxFile = this.files2[0];
@@ -743,7 +757,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
-          await this.dpService.dPUploadLocalFromNode(holdBoxFile); 
+          await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 4 && this.service2 === 0) {
           await this.dpService.dPUploadLocalFromNode(this.files2[0])

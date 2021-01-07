@@ -46,7 +46,7 @@
       <span *ngIf="!localForm" class="services-button">Local File System<br>{{readLocalStorageValue('localFilePath')}}</span>
       <label *ngIf="lfChecked" class="services">Specify a local file path:</label>
       <div *ngIf="lfChecked">
-        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="Local files" [(ngModel)]="localFilePath">
+        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="/home/bcuser/Documents" [(ngModel)]="localFilePath">
         
         <button class="service-input" (click)="setLocalStorageFilePath()">Submit</button>
         <button class="service-input" (click)="localForm = false">Cancel</button>

@@ -477,7 +477,23 @@ router.post('/AddFiles', function(req, res) {
     });
 });
 });
+//lfDownload
+router.post('/LfDownload', function(req, res) {
+  console.log('LfDownload called');
+  try {
+    let getlfPath = req.body.lfStorePath;
+    console.log('getlfPath ' + getlfPath);
 
+    setTimeout(async() => {
+      await tpMoveFiletoLocalPath(downloadedFileName,getlfPath);
+    },4000);
+    
+    res.status(201).json({"success_MSG": 'File successfully stored to the local path', "response": req.body.lfStorePath});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
 /* POST delete local files */
 router.post('/DeleteFiles', function(req, res) {
   console.log('DeleteFiles called');
@@ -1275,6 +1291,27 @@ function toDeleteAllFiles(){
     }
     console.log(`stdout of files ${stdout}`);
    });
+}
+async function tpMoveFiletoLocalPath(filename,flPath){
+  return await new Promise((resolve,reject) => {
+    console.log("tpMoveFiletoLocalPath called")
+    console.log('the filename is ' + filename )
+ 
+  let singlepathAp = `${flPath}`
+  console.log('the singlepathAp is ' + singlepathAp );
+
+  return child.exec(`cd ./routes/AllFiles && mv "${filename}" ${singlepathAp} && cd .. && cd ..`,   
+  (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      reject(err);
+      throw err;
+    }
+    console.log("stdout of files" +  stdout)
+    console.log("stderr of files" +  stderr)
+    return resolve(stdout);
+    });
+  });
 }
 
 module.exports = router;
