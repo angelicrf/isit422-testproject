@@ -18,7 +18,7 @@ export class LocalFilesService {
           'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({
-          lfStorePlace: localFilePath
+          lfStorePath: localFilePath
         })
       })
          .then((result) => {

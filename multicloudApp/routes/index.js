@@ -1002,7 +1002,7 @@ router.get('/DownloadGdLocal', function (req, res)
          console.log("the stdErr is " + stderr)            
      } 
      console.log("the stdOut is " + JSON.stringify(sendToGd)) 
-     tpMoveFilestoAllFiles(GdrecivedName)
+     //tpMoveFilestoAllFiles(GdrecivedName)
      res.send("Response from Node: File downloaded from Google drive")   
    }) 
 })
@@ -1300,7 +1300,7 @@ async function tpMoveFiletoLocalPath(filename,flPath){
   let singlepathAp = `${flPath}`
   console.log('the singlepathAp is ' + singlepathAp );
 
-  return child.exec(`cd ./routes/AllFiles && mv "${filename}" ${singlepathAp} && cd .. && cd ..`,   
+  return child.exec(`mv "${filename}" ${singlepathAp} && cd .. && cd ..`,   
   (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);

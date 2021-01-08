@@ -301,8 +301,9 @@ export class CloudmanagementComponent {
     if(this.lfChecked && this.gdChecked){
       this.selectedApi.push(this.services[4],this.services[1]);
       this.selected = true;
-      localStorage.setItem("gdSelected","gdSelected"); 
+
       localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+      this.googleDriveInit();
     }
     if(this.selected == false){
       alert("Dear customer, please at least check two of the checkboxes");
