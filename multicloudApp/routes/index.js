@@ -17,6 +17,7 @@ let holdBoxCode = '';
 let boxAccessToken = '';
 let boxRetreivedName = '';
 let odAccessToken = '';
+let getlfPath = '';
 let boxFile = {};
 let boxFolders = {};
 let odFiles = {};
@@ -477,18 +478,43 @@ router.post('/AddFiles', function(req, res) {
     });
 });
 });
-//lfDownload
-router.post('/LfDownload', function(req, res) {
+router.post('/LfFilePath', function(req, res) {
+  console.log('LfFilePath called');
+  try {
+    getlfPath = req.body.lfStorePath;
+    console.log('getlfPath ' + getlfPath);
+    res.status(201).json({"success_MSG": 'File path received', "response": getlfPath});
+    return getlfPath;
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
+router.get('/LfDownload', function(req, res) {
   console.log('LfDownload called');
   try {
-    let getlfPath = req.body.lfStorePath;
+    getlfPath = req.body.lfStorePath;
     console.log('getlfPath ' + getlfPath);
-
-    setTimeout(async() => {
-      await tpMoveFiletoLocalPath(downloadedFileName,getlfPath);
-    },4000);
-    
+     setTimeout(async() => {
+       await tpMoveFiletoLocalPath(downloadedFileName,getlfPath);
+      },4000);
     res.status(201).json({"success_MSG": 'File successfully stored to the local path', "response": req.body.lfStorePath});
+    return getlfPath;
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
+router.post('/LfileServer', function(req, res) {
+  console.log('LfileServer called');
+  let lfToTransfer = req.body.lfTranfer;
+  try {
+    console.log('getlfPath ' + getlfPath);
+     setTimeout(async() => {
+       await tpMoveFilefromLocalPath(lfToTransfer,getlfPath);
+      },4000);
+    res.status(201).json({"success_MSG": 'File successfully stored in AllFile', "response": req.body.lfStorePath});
+    return getlfPath;
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
@@ -1002,33 +1028,9 @@ router.get('/DownloadGdLocal', function (req, res)
          console.log("the stdErr is " + stderr)            
      } 
      console.log("the stdOut is " + JSON.stringify(sendToGd)) 
-     //tpMoveFilestoAllFiles(GdrecivedName)
      res.send("Response from Node: File downloaded from Google drive")   
    }) 
-})
-async function tpMoveFilestoAllFiles(filename){
-  return await new Promise((resolve,reject) => {
-    console.log("tpMoveFilestoAllFiles called")
-  
-  console.log('the filename is ' + filename )
-  let newAppDir = appDir.toString().substring(0, appDir.toString().lastIndexOf("/") + 1);
-  console.log('the newAppDir is ' + newAppDir );
-  let singlepathAp = `${newAppDir}routes/AllFiles`
-  console.log('the singlepathAp is ' + singlepathAp );
-
-  return child.exec(`mv "${filename}" ${singlepathAp}`,   
-  (err, stdout, stderr) => {
-    if (err) {
-      console.error(`exec error: ${err}`);
-      reject(err);
-      throw err;
-    }
-    console.log("stdout of files" +  stdout)
-    console.log("stderr of files" +  stderr)
-    return resolve(stdout);
-    });
-  });
-}
+});
 router.post('/BoxCode', function (req,res) {
   console.log("BoxCode called");
   holdBoxCode = req.body.saveCode;
@@ -1173,6 +1175,40 @@ router.post('/BxUpload', (req,res) => {
   },55000);
 
 });
+router.post('/BxLocalUpload', (req,res) => {
+  let boxUploadFileName = req.body.boxUpFileName;
+  console.log("BxLocalUpload called");
+  console.log("boxUploadFileName from bxLocalUpload " + boxUploadFileName);
+ 
+  setTimeout(( ) => {
+    let boxConcatFile = '';
+    fs.readdirSync( folder ).forEach( file => {
+      if(file === boxUploadFileName) {
+        console.log("inside the folderOne ")
+        const extname = path.extname( file );
+        const filename = path.basename( file, extname );
+        const absolutePath = path.resolve( folder, file );
+        boxConcatFile = (filename + extname);
+      }
+      }); 
+      return child.exec(
+        `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
+        -H "Authorization: Bearer ${boxAccessToken}" \
+        -H "Content-Type: multipart/form-data" \
+        -F attributes='{"name":"MTC${boxUploadFileName}", "parent":{"id":"0"}}' \
+        -F file=@./routes/AllFiles/${boxConcatFile}`,
+        (err,stdout,stderr) => {
+          if(err){
+            console.log("err from BxUpload " + err)
+          }
+          console.log("the BxLocalUpload stdout is " + stdout);
+          console.log("the BxLocalUpload stderr is " + stderr);
+          res.status(200).json({"BxLocalUploadMSG": "BoxFile_LocalUploaded"});
+          toDeleteAllFiles();
+        }); 
+  },55000);
+
+});
 router.post('/OdAccessToken', (req,res) => {
   console.log("OdAccessToken called");
   res.header('Access-Control-Allow-Origin', '*');
@@ -1282,6 +1318,40 @@ router.post('/OdUpload', (req,res) => {
      
   },35000); 
 });
+router.post('/OdLocalUpload', (req,res) => {
+  console.log("OdLocalUpload called");
+  let odUploadFileName = req.body.odUpFileName;
+  console.log("odLocalUpFileName is " + odUploadFileName);
+
+  setTimeout(( ) => {
+    let odConcatFile = '';
+    fs.readdirSync( folder ).forEach( file => {
+        if(file === odUploadFileName) {
+        console.log("inside the folderOne ")
+        const extname = path.extname( file );
+        const filename = path.basename( file, extname );
+        const absolutePath = path.resolve( folder, file );
+        odConcatFile = (filename + extname);
+      } 
+    });
+      return child.exec(
+        `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
+        -H "Authorization: Bearer ${odAccessToken}" \
+        --data-binary @./routes/AllFiles/${odConcatFile} \
+        -H "Content-Type: application/json"`,
+        (err,stdout,stderr) => {
+          if(err){
+            console.log("err from OdUpload " + err)
+          }
+          console.log("the OdLocalUpload stdout is " + stdout);
+          console.log("the OdLocalUpload stderr is " + stderr);
+          odFileUpload = stdout;
+          res.status(200).json({"odLocalUploadMSG": "odFile_LocalUploaded", "OdLocalUpload": odFileUpload});
+          toDeleteAllFiles();
+        }); 
+     
+  },35000); 
+});
 
 function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
@@ -1291,6 +1361,29 @@ function toDeleteAllFiles(){
     }
     console.log(`stdout of files ${stdout}`);
    });
+}
+async function tpMoveFilestoAllFiles(filename){
+  return await new Promise((resolve,reject) => {
+    console.log("tpMoveFilestoAllFiles called")
+  
+  console.log('the filename is ' + filename )
+  let newAppDir = appDir.toString().substring(0, appDir.toString().lastIndexOf("/") + 1);
+  console.log('the newAppDir is ' + newAppDir );
+  let singlepathAp = `${newAppDir}routes/AllFiles`
+  console.log('the singlepathAp is ' + singlepathAp );
+
+  return child.exec(`mv "${filename}" ${singlepathAp}`,   
+  (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      reject(err);
+      throw err;
+    }
+    console.log("stdout of files" +  stdout)
+    console.log("stderr of files" +  stderr)
+    return resolve(stdout);
+    });
+  });
 }
 async function tpMoveFiletoLocalPath(filename,flPath){
   return await new Promise((resolve,reject) => {
@@ -1313,5 +1406,51 @@ async function tpMoveFiletoLocalPath(filename,flPath){
     });
   });
 }
+async function tpMoveFilefromLocalPath(filename,flPath){
+  return await new Promise(async(resolve,reject) => {
+    console.log("tpMoveFilefromLocalPath called")
+    console.log('the filename is ' + filename );
 
+    let newAppDir = appDir.toString().substring(0, appDir.toString().lastIndexOf("/") + 1);
+    console.log('the newAppDir is ' + newAppDir );
+    let appFileLocalPath = `${newAppDir}routes/AllFiles`
+   
+    let singlepathAp = `${flPath}`
+    let mdOriginFlPath = singlepathAp.split('/');
+    console.log('the mdOriginFlPath is ' +  + mdOriginFlPath.length);
+    
+    let mdAppDir = newAppDir.split('/');
+    console.log('the mdAppDir is ' + mdAppDir + mdAppDir.length);
+    let displayFound = await findSpecialPath(mdAppDir,mdOriginFlPath);
+    console.log("displayFound " + displayFound);
+    let searchLFPath = singlepathAp.split(`${displayFound}`).pop();
+    console.log('the searchLFPath is ' + searchLFPath );
+
+  return child.exec(`cd && cd .${searchLFPath} && mv "${filename}" ${appFileLocalPath}`,   
+  (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      reject(err);
+      throw err;
+    }
+    console.log("stdout of files" +  stdout)
+    console.log("stderr of files" +  stderr)
+    return resolve(stdout);
+    });
+  });
+}
+async function findSpecialPath(arrayOne,arrayTwo){
+  return await new Promise((resolve,reject) => {
+  let findCommonPath = '';
+    for (let index = 0; index < arrayOne.length; index++) {
+      if(arrayOne.includes(arrayTwo[index])){
+        if(arrayTwo[index] !== "home"){
+          findCommonPath = arrayTwo[index];   
+        }  
+      } 
+    };
+    console.log("findCommonPath is " + findCommonPath);
+    return resolve(findCommonPath);
+  })
+}
 module.exports = router;

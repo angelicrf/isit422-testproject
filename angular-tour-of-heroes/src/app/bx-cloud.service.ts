@@ -191,6 +191,31 @@ export class BxCloudService {
       });   
     });
   }
+  async boxLocalUpload(bxFlName:string){
+    return await  new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      let raw = JSON.stringify({
+        title: 'codefromAngular',
+        boxUpFileName: bxFlName
+      });
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body:raw
+      };
+
+      fetch('/api/BxLocalUpload', requestOptions)
+        .then((response) => {
+          return response.json();
+        })
+        .then((result) => {
+          let msgDisplay:any = result[Object.keys(result)[0]];
+          console.log("boxUpload form BoxService " + msgDisplay);
+          resolve(msgDisplay);
+      });   
+    });
+  }
   sendBoxClientInfo(getBxName:string,getBxEmail:string,getUserMongoId:string){
     let bxClientValue = JSON.stringify({
       bxname: getBxName,

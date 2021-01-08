@@ -6,12 +6,12 @@ import { Injectable } from '@angular/core';
 export class LocalFilesService {
 
   constructor() { }
-  
-  async lfDownlodToLocalPath(){
+
+  async sendLfFilePath(){
     let localFilePath:string = localStorage.getItem("localFilePath");
     console.log(localFilePath);
     return await new Promise((resolve,reject) => {
-      fetch('/api/LfDownload', {
+      fetch('/api/LfFilePath', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,6 +31,48 @@ export class LocalFilesService {
         .catch((err) => console.log(err));
     })
    }
+   async lfDownlodToLocalPath(){
+    return await new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+  
+        let requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          
+        };
+        fetch('/api/LfDownload', requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            let holdResult:any = result[Object.keys(result)[1]];
+            resolve(holdResult);
+        });  
+    })
+  }
+  async lfFromLocalPathToServer(lfTrs:string){
+    return await new Promise((resolve,reject) => {
+      let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+       
+        let requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: JSON.stringify({
+            lfTranfer: lfTrs
+          })
+        };
+        fetch('/api/LfileServer', requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            let holdResult:any = result[Object.keys(result)[1]];
+            resolve(holdResult);
+        });  
+    })
+  }
 
 }
 

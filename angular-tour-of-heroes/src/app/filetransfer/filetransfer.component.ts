@@ -307,6 +307,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
           await this.dpService.dPDownloadFromNode();
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
         // if right is dropbox and left is google drive
@@ -370,11 +371,10 @@ findMatch(firstArray:string[], itemToFound:string ){
           }
           await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
           let gdDownloadResult:any = await this.gdService.gDDownloadFromNode();
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         
-        }
-        // if right is dropbox and left is local
-      
+        }      
         if(this.service1 === 2 && this.service2 === 0){
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
@@ -388,7 +388,6 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
           await this.dpService.dPUploadFromNode();
         }
-        // if left is local and right is Dropbox
         if(this.service1 === 2 && this.service2 === 1){
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
@@ -427,6 +426,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdOdSelectedFile " + holdOdSelectedFile);
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 3 && this.service2 === 0){
@@ -483,33 +483,37 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
-        // if right is google drive and left is local
         if(this.service1 === 4 && this.service2 === 0) {
-          
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
-        // if left is local and right is Google Drive
         if(this.service1 === 4 && this.service2 === 1) {
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.gdService.gDUploadLocal(this.files2[0]);
           setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
         }
         if(this.service1 === 4 && this.service2 === 2) {
-          await this.odService.odUploadFile(this.files2[0]);
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
+          await this.odService.odUploadLocalFile(this.files2[0]);
         }
         if(this.service1 === 4 && this.service2 === 3) {
-          await this.bxService.boxUpload(this.files2[0]);
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
+          await this.bxService.boxLocalUpload(this.files2[0]);
         }
  
       }
 
-      // if coming from right container
       if(event.previousContainer.id === "right") {
 
       }
 
-      // if going to right container
       if(event.container.id === 'right') {
 
         if(this.service1 === 0 && this.service2 === 1) {
@@ -530,7 +534,6 @@ findMatch(firstArray:string[], itemToFound:string ){
           setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
         }
         if(this.service1 === 0 && this.service2 === 2) {
-          //Download
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -579,10 +582,9 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dpPathFiles(holdLowerpath[0]);
           console.log( "inside the loop");
           await this.dpService.dPDownloadFromNode();
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
-
-        // if left is google drive and right is drop box
         if(this.service1 === 1 && this.service2 === 0) {
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
@@ -631,7 +633,6 @@ findMatch(firstArray:string[], itemToFound:string ){
           console.log("gdDownloadResult " + gdDownloadResult); 
           await this.bxService.boxUpload(gdStoreName);
         }
-        // if left is google drive and right is local
         if(this.service1 === 1 && this.service2 === 4) {
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
@@ -646,9 +647,9 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.gdService.getGdId(holdGdIdFiles[0],gdStoreName );
           let gdDownloadResult:any = await this.gdService.gDDownloadLocalFromNode();
           console.log("gdDownloadResult " + gdDownloadResult);
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
-       
         if(this.service1 === 2 && this.service2 === 0){
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
@@ -662,7 +663,6 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
           await this.dpService.dPUploadFromNode();
         }
-        // if left is local and right is Dropbox
         if(this.service1 === 2 && this.service2 === 1){
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
@@ -701,6 +701,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdOdSelectedFile " + holdOdSelectedFile);
           await this.odService.odDownloadFile(holdOdSelectedFile[0],holdOdSelectedFile[1]);
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath(); 
         }
         if(this.service1 === 3 && this.service2 === 0){
@@ -757,21 +758,30 @@ findMatch(firstArray:string[], itemToFound:string ){
           } 
           console.log("holdBoxSelectedFile " + holdBoxSelectedFile);
           await this.bxService.boxDownload(holdBoxSelectedFile[0],holdBoxSelectedFile[1]);
+          await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 4 && this.service2 === 0) {
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
-        // if left is local and right is Google Drive
+      
         if(this.service1 === 4 && this.service2 === 1) {
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.gdService.gDUploadLocal(this.files2[0]);
           setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
         }
         if(this.service1 === 4 && this.service2 === 2) {
-          await this.odService.odUploadFile(this.files2[0]);
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
+          await this.odService.odUploadLocalFile(this.files2[0]);
         }
         if(this.service1 === 4 && this.service2 === 3) {
-          await this.bxService.boxUpload(this.files2[0]);
+          await this.lfService.sendLfFilePath();
+          await this.lfService.lfFromLocalPathToServer(this.files2[0]);
+          await this.bxService.boxLocalUpload(this.files2[0]);
         }
         
       }

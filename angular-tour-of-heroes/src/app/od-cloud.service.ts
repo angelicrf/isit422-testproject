@@ -124,6 +124,28 @@ async odUploadFile(odFl:string) {
       .catch((err) => console.log(err));
   })
 }
+async odUploadLocalFile(odFl:string) {
+  return await new Promise((resolve,reject) => {
+    fetch('/api/OdLocalUpload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({
+        odUpFileName: odFl 
+      })
+    })
+       .then((result) => {
+        return result.json();
+       }) 
+       .then(response => {
+        let msgDisplay:any = response[Object.keys(response)[1]];
+        resolve(msgDisplay)
+      })
+      .catch((err) => console.log(err));
+  })
+}
 async odAccessToken(odToken:string) {
   return await new Promise((resolve,reject) => {
     fetch('/api/OdAccessToken', {
