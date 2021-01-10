@@ -1,4 +1,4 @@
-<div class="siBar">
+<div class="siBar container-fluid">
 <img class="multicloudImg" src="../../assets/images/multicloud.png" alt="multicloud Logo">
 <div class="signIn">
     <div [(ngModel)]="sInisSingedIn" ngDefaultControl [ngModelOptions]="{standalone: true}"></div>
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <br />  
-                <button type="submit" class="btn btn-info" [disabled]="!userNameSiInput.valid || !pswSiInput.valid " (click)="sendUserInfo()">Sign in to Account</button> 
+                <button type="submit" class="btn btn-info sbSubmit" [disabled]="!userNameSiInput.valid || !pswSiInput.valid " (click)="sendUserInfo()">Sign in to Account</button> 
             </form> 
             <!-- <p>First name value: {{ userNameSiInput.value }}</p>
             <p>First name valid: {{ userNameSiInput.valid }}</p> -->

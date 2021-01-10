@@ -31,7 +31,8 @@ export class FiletransferComponent implements OnInit {
   rightServiceForm = false;
   gdEmail:string = this.readLocalStorageValue('gdUserEmail');
   storedApi = JSON.parse(localStorage.getItem("apiSelected"));
-  
+  apiFound:boolean = false;
+
   gdApiSelected:boolean = false;
   dpApiSelected:boolean = false;
   odApiSelected:boolean = false;
@@ -233,17 +234,14 @@ findMatch(firstArray:string[], itemToFound:string ){
       
       let itemName = event.container.data[event.currentIndex];
       
-      // if coming from left container
       if(event.previousContainer.id === "left") {
-          // if left container is set to local files
         if(this.service1 === 4) {
           //this.moveLocalFile(this.serviceAccounts[4] + '/' + this.files2[0]);
         }
       }
-      // if going to left container
       if(event.container.id === 'left') {
         if(this.service1 === 0 && this.service2 === 1) {
-          
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -262,6 +260,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
         } 
         if(this.service1 === 0 && this.service2 === 2 ) {
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -278,7 +277,8 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.odService.odUploadFile(storePath);
         }
         if(this.service1 === 0 && this.service2 === 3) {
-            let storePath = (this.files2[0]).toString();
+          this.apiFound = true; 
+          let storePath = (this.files2[0]).toString();
             console.log( "this.files2 " + this.files2)
             let holdLowerpath = []
             let keys = Object.keys(retreiveDpFiles);
@@ -294,6 +294,7 @@ findMatch(firstArray:string[], itemToFound:string ){
             await this.bxService.boxUpload(storePath);
         }
         if(this.service1 === 0 && this.service2 === 4) {
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -310,8 +311,8 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.sendLfFilePath();
           await this.lfService.lfDownlodToLocalPath();
         }
-        // if right is dropbox and left is google drive
          if(this.service1 === 1 && this.service2 === 0 ) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -327,6 +328,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dPUploadFromNode();
         }
         if(this.service1 === 1 && this.service2 === 2) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -343,6 +345,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.odService.odUploadFile(gdStoreName); 
         }
         if(this.service1 === 1 && this.service2 === 3) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -359,6 +362,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.bxService.boxUpload(gdStoreName);
         }
         if( this.service1 === 1 && this.service2 === 4 ) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -376,6 +380,7 @@ findMatch(firstArray:string[], itemToFound:string ){
         
         }      
         if(this.service1 === 2 && this.service2 === 0){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -389,6 +394,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dPUploadFromNode();
         }
         if(this.service1 === 2 && this.service2 === 1){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -403,6 +409,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
         }
         if(this.service1 === 2 && this.service2 === 3){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -416,6 +423,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.bxService.boxUpload(holdOdFile);
         }
         if(this.service1 === 2 && this.service2 === 4){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -430,6 +438,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 3 && this.service2 === 0){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -444,6 +453,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           
         }
         if(this.service1 === 3 && this.service2 === 1){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -459,6 +469,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           
         }
         if(this.service1 === 3 && this.service2 === 2){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -473,6 +484,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           
         }
         if(this.service1 === 3 && this.service2 === 4){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -487,26 +499,33 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 4 && this.service2 === 0) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
         if(this.service1 === 4 && this.service2 === 1) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.gdService.gDUploadLocal(this.files2[0]);
           setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
         }
         if(this.service1 === 4 && this.service2 === 2) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.odService.odUploadLocalFile(this.files2[0]);
         }
         if(this.service1 === 4 && this.service2 === 3) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.bxService.boxLocalUpload(this.files2[0]);
         }
+        if(this.apiFound == false){
+          alert("Please choose a right api to drop & transfer your file")
+         }
  
       }
 
@@ -517,6 +536,7 @@ findMatch(firstArray:string[], itemToFound:string ){
       if(event.container.id === 'right') {
 
         if(this.service1 === 0 && this.service2 === 1) {
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -534,6 +554,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
         }
         if(this.service1 === 0 && this.service2 === 2) {
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -550,7 +571,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.odService.odUploadFile(storePath);
         }
         if(this.service1 === 0 && this.service2 === 3) {
-     
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -568,7 +589,7 @@ findMatch(firstArray:string[], itemToFound:string ){
         }
         // if left is dropbox and right is local
         if(this.service1 === 0 && this.service2 === 4) {
-          //Download
+          this.apiFound = true;
           let storePath = (this.files2[0]).toString();
           console.log( "this.files2 " + this.files2)
           let holdLowerpath = []
@@ -586,6 +607,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 1 && this.service2 === 0) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -602,6 +624,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dPUploadFromNode()  
         }
         if(this.service1 === 1 && this.service2 === 2) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -618,6 +641,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.odService.odUploadFile(gdStoreName); 
         }
         if(this.service1 === 1 && this.service2 === 3) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -634,6 +658,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.bxService.boxUpload(gdStoreName);
         }
         if(this.service1 === 1 && this.service2 === 4) {
+          this.apiFound = true;
           console.log("this.files2[0] " + this.files2[0])
           let gdStoreName = (this.files2[0]).toString();
           let holdGdIdFiles = [];
@@ -651,6 +676,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 2 && this.service2 === 0){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -664,6 +690,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.dpService.dPUploadFromNode();
         }
         if(this.service1 === 2 && this.service2 === 1){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -678,6 +705,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           setTimeout(async() => {await this.gdService.gDUpdateFileName()}, 5000);
         }
         if(this.service1 === 2 && this.service2 === 3){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -691,6 +719,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.bxService.boxUpload(holdOdFile);
         }
         if(this.service1 === 2 && this.service2 === 4){
+          this.apiFound = true;
           let holdOdFile = this.files2[0];
           console.log("holdodFile " + holdOdFile);
           let keys = Object.keys(odFile);
@@ -705,6 +734,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.lfDownlodToLocalPath(); 
         }
         if(this.service1 === 3 && this.service2 === 0){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -719,6 +749,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           
         }
         if(this.service1 === 3 && this.service2 === 1){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -734,6 +765,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           
         }
         if(this.service1 === 3 && this.service2 === 2){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -748,6 +780,7 @@ findMatch(firstArray:string[], itemToFound:string ){
           
         }
         if(this.service1 === 3 && this.service2 === 4){
+          this.apiFound = true;
           let holdBoxFile = this.files2[0];
           console.log("holdBoxFile " + holdBoxFile);
           let keys = Object.keys(boxFiles);
@@ -762,28 +795,34 @@ findMatch(firstArray:string[], itemToFound:string ){
           await this.lfService.lfDownlodToLocalPath();
         }
         if(this.service1 === 4 && this.service2 === 0) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.dpService.dPUploadLocalFromNode(this.files2[0])
         }
       
         if(this.service1 === 4 && this.service2 === 1) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.gdService.gDUploadLocal(this.files2[0]);
           setTimeout(async() => {await this.gdService.gDUpdateLocalFileName()}, 5000);
         }
         if(this.service1 === 4 && this.service2 === 2) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.odService.odUploadLocalFile(this.files2[0]);
         }
         if(this.service1 === 4 && this.service2 === 3) {
+          this.apiFound = true;
           await this.lfService.sendLfFilePath();
           await this.lfService.lfFromLocalPathToServer(this.files2[0]);
           await this.bxService.boxLocalUpload(this.files2[0]);
         }
-        
+        if(this.apiFound == false){
+         alert("Please choose a right api to drop & transfer your file")
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-<div class="spBar">
+<div class="spBar container-fluid">
 <img class="multicloudImg" src="../../assets/images/multicloud.png" alt="multicloud Logo">
 <div class="signUp">
   <div [(ngModel)]="sUpisSingedUp" ngDefaultControl [ngModelOptions]="{standalone: true}"></div>
@@ -50,7 +50,7 @@
               </div>
               </div>
               <br />
-              <button type="submit" class="btn btn-danger" [disabled]="!nameInput.valid || !lastNameInput.valid || !userNameInput.valid || !emailInput.valid || !pswInput.valid" (click)="signedup()">Create Account</button>  
+              <button type="submit" class="btn btn-danger sbSubmit" [disabled]="!nameInput.valid || !lastNameInput.valid || !userNameInput.valid || !emailInput.valid || !pswInput.valid" (click)="signedup()">Create Account</button>  
           </form>
           <br />   
       </div>

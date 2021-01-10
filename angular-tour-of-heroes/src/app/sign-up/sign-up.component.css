@@ -1,7 +1,7 @@
 .multicloudImg {
   margin-left: 150px;
   margin-top: 50px;
-  width: 250px;
+  width: 180px;
   float: left;
 }
 .signUp {
@@ -14,7 +14,19 @@
     margin-left: 50px;
     margin-top: 50px;
   }
-  
+  .container-fluid {
+    background-color: hsla(219, 69%, 35%, 0.884);
+    width:150%;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    right:0;
+    overflow: hidden;
+    margin-right:0;
+    margin-left:0;
+    padding-right:0;
+    padding-left:0;
+}
   .column {
     flex: 20%;
   }
@@ -26,4 +38,8 @@
   }
   .spBar{
     margin-top: 100px;
+    margin-bottom: 50px; 
+  }
+  .sbSubmit{
+    margin-bottom: 50px; 
   }
