@@ -1,15 +1,15 @@
-<div class="stBkImage">
+<div class="stBkImage container-fluid">
 <div class="hmBar">
 <img class="centerImg" src="../../assets/images/multicloud.png" alt="multicloud Logo">
-<div class="homeMsm">
+<div *ngIf="textToAppear" class="homeMsm">
   <div *ngIf="readLocalStorageValue('userSignedUp') == 'SignedUpUser'">
-    <h1>Welcome to our team the Multicloud App dear new customer! Hope you enjoy our app</h1>
+    <h1>Welcome to our team, Multicloud  dear new customer! Hope you enjoy our app</h1>
   </div>
   <div *ngIf="readLocalStorageValue('userSignedIn') == 'SignedUser'">
-    <h3>Welcome back to the Multicloud App, dear customer! Hope you enjoy our app</h3>
+    <h3>Welcome back to Multicloud, dear customer! Hope you enjoy our app</h3>
   </div>
   <div *ngIf="readLocalStorageValue('userSignedIn') !== 'SignedUser' && readLocalStorageValue('userSignedUp') !== 'SignedUpUser'">
-    <h2>Welcome to the Multicloud App</h2>
+    <h2>Welcome to Multicloud</h2>
   </div>
 <div class="homeTxt">
   <p><mat-icon class="mtIcon">label_important</mat-icon>With Multicloud, you can manage files between multiple cloud storage services, such as DropBox, Google Drive, OneDrive, and Box</p>
