@@ -1,13 +1,58 @@
-.centerImg {
-  margin-top: 10px;
-  margin-left: 500px;
-  width: 200px;
-}
 .homeMsm{
     margin-left: 100px;
     width: 1000px;
-    margin-top: 40px;
+    height: 750px;
+    margin-top: 160px;
     text-align: center;
+    position: absolute;
+    animation-name: textAnime;
+    animation-duration: 7s;
+    animation-iteration-count: 1; 
+}
+.centerImg::before,.centerImg::after{
+      transform-origin:center bottom;
+      transform-style:preserve-3d;
+      position:absolute; 
+      content: url('../../assets/images/multicloud.png');  
+      display:block; 
+      border-radius:50%;
+}  
+ .centerImg::before {
+      background-image: url('../../assets/images/multicloud.png');
+      background-size: contain;
+      display: block;
+      background-repeat: no-repeat;
+      width: 250px;
+      height: 250px;
+      margin-top: 10px;
+      margin-left: 500px;
+      border-radius:50%;
+      transform-style:preserve-3d;
+      transform-origin:center bottom;
+      animation:f 10s both; 
+      content: '';
+}     
+  .centerImg::after {
+      background-image: url('../../assets/images/multicloud.png');
+      background-size: contain;
+      display: block;
+      background-repeat: no-repeat;
+      width: 250px;
+      height: 250px; 
+      margin-top: 10px;
+      margin-left: 500px; 
+      filter:brightness(0.2);
+      transform:rotateY(-180deg);
+      animation:g 10s both;  
+      content: '';
+}  
+@keyframes f {
+  from {clip-path:inset(0 80% 0 0);}
+  50%, to {clip-path:inset(0 0% 0 0);}
+}  
+@keyframes g {
+  from {clip-path:inset(0 0 0 20%);transform-origin:20% 0;}
+  50%, to {clip-path:inset(0 0 0 100%);transform-origin:100% 0;}
 }
 .homeTxt{
     width: 100%;
@@ -47,4 +92,14 @@ h2{
   font-size: 35px;
   color: rgb(30, 61, 121);
   margin-bottom: 30px;
+}
+@keyframes textAnime {
+  from {
+    margin-left: 100%;
+    width: 300%;
+  }
+  to {
+      margin-left: 100px;
+      width: 100%;
+  }
 }
