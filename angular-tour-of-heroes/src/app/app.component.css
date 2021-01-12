@@ -24,7 +24,7 @@
 .card{
     width: 250px;
 }
- .fixed-header{
+.fixed-header{
     background-color: rgba(8, 22, 83, 0.952);
     width:100%;
     position: fixed;
@@ -41,8 +41,8 @@
   /*    background: #354c8bc0; */        
  }
 
- .container-fluid {
-     width:180%;
+.container-fluid {
+     width:180%; 
      z-index: 2;
      bottom: 0;
      left: 0;
@@ -50,6 +50,7 @@
      overflow: hidden;
      margin-right:0;
      margin-left:0;
+     margin-bottom: 0;
      padding-right:0;
      padding-left:0;
  }

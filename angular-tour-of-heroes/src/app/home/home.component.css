@@ -46,14 +46,6 @@
       animation:g 10s both;  
       content: '';
 }  
-@keyframes f {
-  from {clip-path:inset(0 80% 0 0);}
-  50%, to {clip-path:inset(0 0% 0 0);}
-}  
-@keyframes g {
-  from {clip-path:inset(0 0 0 20%);transform-origin:20% 0;}
-  50%, to {clip-path:inset(0 0 0 100%);transform-origin:100% 0;}
-}
 .homeTxt{
     width: 100%;
     border-radius: 15px;
@@ -102,4 +94,12 @@ h2{
       margin-left: 100px;
       width: 100%;
   }
+}
+@keyframes f {
+  from {clip-path:inset(0 80% 0 0);}
+  50%, to {clip-path:inset(0 0% 0 0);}
+}  
+@keyframes g {
+  from {clip-path:inset(0 0 0 20%);transform-origin:20% 0;}
+  50%, to {clip-path:inset(0 0 0 100%);transform-origin:100% 0;}
 }
