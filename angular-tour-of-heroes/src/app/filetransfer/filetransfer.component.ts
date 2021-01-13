@@ -8,6 +8,7 @@ import { GDClientCredentials } from '../gdClientCredentials';
 import { BxCloudService } from '../bx-cloud.service';
 import { OdCloudService } from '../od-cloud.service';
 import { LocalFilesService } from '../local-files.service';
+import { ErrorHandelersService } from '../error-handelers.service';
 
 let clFile: string[];
 let showData: string;
@@ -83,147 +84,209 @@ export class FiletransferComponent implements OnInit {
     private gdcl:GDClientCredentials,
     private bxService: BxCloudService, 
     private odService: OdCloudService,
-    private lfService: LocalFilesService) {this.filters = [];}
+    private lfService: LocalFilesService,
+    private errorService:ErrorHandelersService) {this.filters = [];}
 
 async ngOnInit(){
-  if("apiFileFilter" in localStorage){
-     console.log("inside OnInt filetransfer");
-    this.getFilters();
-  }
-     this.serviceAccounts[0] = localStorage.getItem('dpEmail');
-    
-  }
+  try {
+    if("apiFileFilter" in localStorage){
+      console.log("inside OnInt filetransfer");
+      this.getFilters();
+   }
+      this.serviceAccounts[0] = localStorage.getItem('dpEmail');
+  } catch (error) {
+    this.errorService.handleError(error);
+  } 
+}
 findMatch(firstArray:string[], itemToFound:string ){
-   const ARRAYLENGTH = firstArray.length;
-   for (let index = 0; index < ARRAYLENGTH; index++) {
-     if(firstArray.includes(itemToFound)){
-         if(itemToFound === "Dropbox"){
-          this.dpApiSelected = true;
-         }
-         if(itemToFound === "GoogleDrive"){
-          this.gdApiSelected = true;
-         }
-         if(itemToFound === "OneDrive"){
-          this.odApiSelected = true;
-         }
-         if(itemToFound === "Box"){
-          this.bxApiSelected = true;
-         }
-         if(itemToFound === "LocalFiles"){
-          this.flApiSelected = true;
-         }
-     }
+   try {
+     if(firstArray.length !== 0 || firstArray !== undefined
+      || itemToFound !== undefined || itemToFound !== null || itemToFound !== ""){
+        
+        const ARRAYLENGTH = firstArray.length;
+        for (let index = 0; index < ARRAYLENGTH; index++) {
+          if(firstArray.includes(itemToFound)){
+              if(itemToFound === "Dropbox"){
+                this.dpApiSelected = true;
+              }
+              if(itemToFound === "GoogleDrive"){
+                this.gdApiSelected = true;
+              }
+              if(itemToFound === "OneDrive"){
+                this.odApiSelected = true;
+              }
+              if(itemToFound === "Box"){
+                this.bxApiSelected = true;
+              }
+              if(itemToFound === "LocalFiles"){
+                this.flApiSelected = true;
+              }
+            }
+          }
+      }
+   } catch (error) {
+    this.errorService.handleError(error);
    }
   }
   apiMatch(){
-    let holdApiSelected = [];
-    holdApiSelected = this.storedApi;   
-    for (let index = 0; index < this.serviceNames.length; index++) {
-      console.log("inside storeApi if " + holdApiSelected  );
-      this.findMatch(holdApiSelected,this.serviceNames[index]);     
+    try {
+      if(this.storedApi !== undefined || this.storedApi !== null 
+        || this.storedApi !== ""){
+        
+        let holdApiSelected = [];
+        holdApiSelected = this.storedApi;   
+        for (let index = 0; index < this.serviceNames.length; index++) {
+          console.log("inside storeApi if " + holdApiSelected  );
+          this.findMatch(holdApiSelected,this.serviceNames[index]);     
+        }
+        this.removeLocalStorageValue("apiSelected");
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
     }
-    this.removeLocalStorageValue("apiSelected");
   } 
   readLocalStorageValue(key) {
-    return localStorage.getItem(key)
+    try {
+      if(key !== undefined || key !== null || key !== ""){
+        return localStorage.getItem(key)
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    } 
   }
   removeLocalStorageValue(str:string){
-    localStorage.removeItem(str);
+    try {
+      if(str !== undefined || str !== null || str !== ""){
+        localStorage.removeItem(str);
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
-
   filterList(fil: string[], srv: number): string {
-    let fList = "";
-    let cnt = 0;
-    fil.forEach((value, index) => {
-      if(value.includes(this.serviceNames[srv])) {
-        if(cnt != 0) {
-          fList += ", " + value.substr(0, value.indexOf(" "));
-        }
-        else
-          fList += value.substr(0, value.indexOf(" "));
-        cnt++;
-      }
-    });
-    //console.log("fList is " + fList);
-    return fList;
+    try {
+      if(fil.length !== 0 || fil !== undefined
+        || srv !== undefined || srv !== null){
+        
+          let fList = "";
+          let cnt = 0;
+          fil.forEach((value, index) => {
+            if(value.includes(this.serviceNames[srv])) {
+              if(cnt != 0) {
+                fList += ", " + value.substr(0, value.indexOf(" "));
+              }
+              else
+                fList += value.substr(0, value.indexOf(" "));
+              cnt++;
+            }
+          });
+          return fList;
+            }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
-
   async addLocalFiles(fileName: string, fileData: Buffer) {
-    let filePath = this.serviceAccounts[4];
-    const files = await fetch('/api/AddFiles', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        filePath: filePath,
-        fileName: fileName,
-        fileData: fileData
-      })
-    })
-    .then(response => response.json())
-    .catch(err => console.log(err))
+    try {
+      if(fileName !== undefined || fileName !== null || fileName !== ""
+       || fileData !== undefined || fileData !== null){
+        
+        let filePath = this.serviceAccounts[4];
+        const files = await fetch('/api/AddFiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            filePath: filePath,
+            fileName: fileName,
+            fileData: fileData
+          })
+        })
+        .then(response => response.json())
+        .catch(err => this.errorService.handleError(err));
+          }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
-
   async deleteLocalFiles(fileName: string, fileData: Buffer) {
-    let filePath = this.serviceAccounts[4];
-    const files = await fetch('/api/DeleteFiles', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        filePath: filePath,
-        fileName: fileName,
-        fileData: fileData
-      })
-    })
-    .then(response => response.json())
-    .catch(err => console.log(err))
+    try {
+      if(fileName !== undefined || fileName !== null || fileName !== ""
+      || fileData !== undefined || fileData !== null){
+       
+        let filePath = this.serviceAccounts[4];
+        const files = await fetch('/api/DeleteFiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            filePath: filePath,
+            fileName: fileName,
+            fileData: fileData
+          })
+        })
+        .then(response => response.json())
+        .catch(err => this.errorService.handleError(err));
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
-
   async moveLocalFile(fileName: string) {
-    let filePath = this.serviceAccounts[4];
-    const files = await fetch('/api/MoveFile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        filePath: filePath,
-        fileName: fileName
-      })
-    })
-    .then(response => response.json())
-    .then(
-      
-    )
-    .catch(err => console.log(err))
+    try {
+      if(fileName !== undefined || fileName !== null || fileName !== ""){
+        
+        let filePath = this.serviceAccounts[4];
+        const files = await fetch('/api/MoveFile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            filePath: filePath,
+            fileName: fileName
+          })
+        })
+        .then(response => response.json())
+        .catch(err => this.errorService.handleError(err));
+          }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
-
   getFilters(): void {
-    let getFilterArray = [];
-    let getFilterStr =  localStorage.getItem("apiFileFilter");
-    
-    if(getFilterStr !== "" || getFilterStr !== null){
-      if(getFilterStr.includes(',')){
-        getFilterArray = getFilterStr.split(',');
+    try {
+      if("apiFileFilter" in localStorage){
+        
+        let getFilterArray = [];
+        let getFilterStr =  localStorage.getItem("apiFileFilter");
+        
+        if(getFilterStr !== "" || getFilterStr !== null){
+          if(getFilterStr.includes(',')){
+            getFilterArray = getFilterStr.split(',');
+          }
+          else{
+            getFilterArray.push(getFilterStr);
+          }
+          console.log("getFilterArray " + getFilterArray);
+          this.filters = getFilterArray;
+        }     
+          else{
+          this.filters = [];
+        }
       }
-      else{
-        getFilterArray.push(getFilterStr);
-      }
-      console.log("getFilterArray " + getFilterArray);
-      this.filters = getFilterArray;
-    }
-    else{
-      this.filters = [];
+    } catch (error) {
+      this.errorService.handleError(error);
     }
   }
-
   async drop(event: CdkDragDrop<string[]>) {
+   try {
+  
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -824,20 +887,32 @@ findMatch(firstArray:string[], itemToFound:string ){
          alert("Please choose a right api to drop & transfer your file")
         }
       }
-    }
+    }   
+   } catch (error) {
+    this.errorService.handleError(error);
+   } 
   }
 
   clientEmailValue(v: string) {
-    if(localStorage.getItem('gdUserEmail') == null){
-      this.gdEmail = v;
-    localStorage.setItem('gdUserEmail', this.gdEmail);
-    console.log('the value from set2 ' + this.gdEmail)
-    }else if(localStorage.getItem('gdUserEmail') !== v){
-      localStorage.removeItem('gdUserEmail')
-      this.gdEmail = v;
-      localStorage.setItem('gdUserEmail', this.gdEmail);
-    console.log('the value from set2 ' + this.gdEmail)
-    }else this.gdEmail = localStorage.getItem('gdUserEmail')
+    try {
+      if(v !== undefined || v !== null || v !== ""){
+        
+        if(localStorage.getItem('gdUserEmail') == null){
+          this.gdEmail = v;
+        localStorage.setItem('gdUserEmail', this.gdEmail);
+        console.log('the value from set2 ' + this.gdEmail)
+        }
+        else if(localStorage.getItem('gdUserEmail') !== v){
+          localStorage.removeItem('gdUserEmail')
+          this.gdEmail = v;
+          localStorage.setItem('gdUserEmail', this.gdEmail);
+        console.log('the value from set2 ' + this.gdEmail)
+        }
+        else this.gdEmail = localStorage.getItem('gdUserEmail')
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
 
   async getClientEmail(){
@@ -893,7 +968,8 @@ findMatch(firstArray:string[], itemToFound:string ){
        for(let i = 0; i < keys.length; i++){
             this.files1.push((holdClientFilesToDisplay[i].gdClName));
       };
-    }else{
+    }
+    else{
       console.log("there is google drive filter");
       let storedGdFiles = [];
       let keys = Object.keys(holdClientFilesToDisplay);
@@ -909,43 +985,49 @@ findMatch(firstArray:string[], itemToFound:string ){
        return this.files1;
    } 
   async dpProcessFiles(){
-  
-  let displayResult:string = localStorage.getItem("dpAccessToken");
-  this.dpService.dpGetClientInfo(displayResult)
-  retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult);
-
-  let filterName = this.filterList(this.filters, this.service1);
-  console.log("filterName is" + filterName);
-  let holdArrayRetrieved = []
-
- if(filterName === null || filterName === ""){
-  let keys = Object.keys(retreiveDpFiles);
-  for(let i = 0; i < keys.length; i++){   
-    holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
-      this.files1.push((holdArrayRetrieved[i]));  
-    }
-   }
-  else{
-    let keys = Object.keys(retreiveDpFiles);
-    for(let i = 0; i < keys.length; i++){   
-      holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
-    }
-    let storedFiles = holdArrayRetrieved.filter(
-      element => element.indexOf('.') !== -1
-    )
-      let newDpFilteredFiles = buildFileListByFilter(filterName, storedFiles )
+    try {
+      if("dpAccessToken" in localStorage){
+        
+        let displayResult:string = localStorage.getItem("dpAccessToken");
+        this.dpService.dpGetClientInfo(displayResult)
+        retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult);
       
-    for(let i = 0; i < newDpFilteredFiles.length; i++){
-        this.files1.push((newDpFilteredFiles[i])); 
-    };
-    let intersection: string[] = holdArrayRetrieved.filter(
-      element => !newDpFilteredFiles.includes(element) && !storedFiles.includes(element)  
-      );
-      console.log("intersection " + intersection)
-    for (let index = 0; index < intersection.length; index++) {
-      this.folders.push(intersection[index]);   
-     }
-    } 
+        let filterName = this.filterList(this.filters, this.service1);
+        console.log("filterName is" + filterName);
+        let holdArrayRetrieved = []
+      
+        if(filterName === null || filterName === ""){
+          let keys = Object.keys(retreiveDpFiles);
+          for(let i = 0; i < keys.length; i++){   
+            holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
+              this.files1.push((holdArrayRetrieved[i]));  
+            }
+          }
+          else{
+            let keys = Object.keys(retreiveDpFiles);
+            for(let i = 0; i < keys.length; i++){   
+              holdArrayRetrieved.push(retreiveDpFiles[i].dpClName)
+            }
+            let storedFiles = holdArrayRetrieved.filter(
+              element => element.indexOf('.') !== -1
+            )
+              let newDpFilteredFiles = buildFileListByFilter(filterName, storedFiles )
+              
+            for(let i = 0; i < newDpFilteredFiles.length; i++){
+                this.files1.push((newDpFilteredFiles[i])); 
+            };
+            let intersection: string[] = holdArrayRetrieved.filter(
+              element => !newDpFilteredFiles.includes(element) && !storedFiles.includes(element)  
+              );
+              console.log("intersection " + intersection)
+            for (let index = 0; index < intersection.length; index++) {
+              this.folders.push(intersection[index]);   
+            }
+            } 
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
   // TODO: get the file id to pass into request
   async removeGDFile() {
@@ -958,6 +1040,7 @@ findMatch(firstArray:string[], itemToFound:string ){
       .then(async () => {
         console.log('Removed')
       })
+      .catch(err => this.errorService.handleError(err));
     }) 
   }
   removeUrlParams(){
@@ -1043,59 +1126,67 @@ findMatch(firstArray:string[], itemToFound:string ){
         for (let index = 0; index < odFolderStored.length; index++) {
           this.folders.push(odFolderStored[index])
         }
-     }else{
-      let key = Object.values(odFlsFiles);
+     }
+      else{
+        let key = Object.values(odFlsFiles);
 
-      for (let index = 0; index < key.length; index++) {
-        odFile.push(odFlsFiles[index]);
-        storeOdItemsInArray.push(odFlsFiles[index].odFileName); 
-      }
+        for (let index = 0; index < key.length; index++) {
+          odFile.push(odFlsFiles[index]);
+          storeOdItemsInArray.push(odFlsFiles[index].odFileName); 
+        }
 
-      let odFilesStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') != -1);
-      let odFolderStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') === -1);
-      let newOdFilteredFiles = buildFileListByFilter(filterName, odFilesStored )
-      let uniqueArray = newOdFilteredFiles.filter(function(item, pos) {
-        return newOdFilteredFiles.indexOf(item) == pos;
-      });
-      for (let index = 0; index < uniqueArray.length; index++) {
-        this.files1.push(uniqueArray[index]);
-      }
-      for (let index = 0; index < odFolderStored.length; index++) {
-        this.folders.push(odFolderStored[index]);
-      }
-     }  
-      return resolve(this.files1);
-    })
+        let odFilesStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') != -1);
+        let odFolderStored:any = storeOdItemsInArray.filter(el => el.indexOf('.') === -1);
+        let newOdFilteredFiles = buildFileListByFilter(filterName, odFilesStored )
+        let uniqueArray = newOdFilteredFiles.filter(function(item, pos) {
+          return newOdFilteredFiles.indexOf(item) == pos;
+        });
+        for (let index = 0; index < uniqueArray.length; index++) {
+          this.files1.push(uniqueArray[index]);
+        }
+        for (let index = 0; index < odFolderStored.length; index++) {
+          this.folders.push(odFolderStored[index]);
+        }
+      }  
+        return resolve(this.files1);
+      })
   }
   async lfProcessFiles() {
-    let filePath:string = localStorage.getItem("localFilePath");
-    console.log("filePath is " + filePath);
-    const files = await fetch('/api/Files', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        path: filePath
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("data " + data);
-        data.names.forEach((name) => {
-          if(this.service1 === 4) {
-            this.files1.push(name);
-            console.log(this.files1)
+    try {
+      if("localFilePath" in localStorage){
+        
+        let filePath:string = localStorage.getItem("localFilePath");
+        console.log("filePath is " + filePath);
+        const files = await fetch('/api/Files', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            path: filePath
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("data " + data);
+            data.names.forEach((name) => {
+              if(this.service1 === 4) {
+                this.files1.push(name);
+                console.log(this.files1)
+              }
+            });
+            data.files.forEach((file) => {
+              if(this.service1 === 4) {
+                this.files1Data.push(file);
+              }
+            });
+        })
+        .catch(err => this.errorService.handleError(err))
           }
-        });
-        data.files.forEach((file) => {
-          if(this.service1 === 4) {
-            this.files1Data.push(file);
-          }
-        });
-    })
-    .catch(err => console.log(err))
-  }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }  
+  } 
 }
 

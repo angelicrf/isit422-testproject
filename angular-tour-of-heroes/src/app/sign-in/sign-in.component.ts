@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ErrorHandelersService } from '../error-handelers.service';
 import { UserLoginService } from '../user-login.service';
 let clientIdValue = []
 @Component({
@@ -13,16 +14,20 @@ export class SignInComponent implements OnInit {
   sInisSingedIn:boolean = false
   signInName = "Sign In"
   signedInName = "Logged In"
-  constructor(private usrLogin: UserLoginService) { }
+  constructor(private usrLogin: UserLoginService, private errorService: ErrorHandelersService) { }
 
   ngOnInit(): void {
   }
   readLocalStorageValue(key) {
-    return localStorage.getItem(key)
+    try {
+      if(key !== undefined || key !== null || key !== "")
+      return localStorage.getItem(key);
+    } catch (error) { 
+      this.errorService.handleError(error);    }   
   }
   customerLogOut(){
-    this.usrLogin.logOutMnCustomer() 
-    localStorage.removeItem('userSignedIn')
+    this.usrLogin.logOutMnCustomer(); 
+    localStorage.removeItem('userSignedIn');
   }
   sendUserInfo(){
     let userValue = JSON.stringify({
@@ -41,7 +46,7 @@ export class SignInComponent implements OnInit {
       console.log(data)
       this.signedin()
     })
-    .catch(err => console.log(err))
+    .catch(err => this.errorService.handleError(err))
   }
   signedin() {
     console.log('signedin');
@@ -98,7 +103,7 @@ export class SignInComponent implements OnInit {
           alert('user name doesnot match up, try again')
          }
       }) 
-      .catch(err => console.log('error from getting dataMongo ' + err))
+      .catch(err => this.errorService.handleError(err))
     } 
   }
   customerDelete(){

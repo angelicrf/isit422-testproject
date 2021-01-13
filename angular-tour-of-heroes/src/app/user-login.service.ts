@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ErrorHandelersService } from './error-handelers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ export class UserLoginService {
   isSingedUp:boolean = false
   isSingedIn:boolean = false
 
-  constructor() { }
+  constructor(private errorService:ErrorHandelersService) { }
   userSiginUp(userName:string,userlastName:string,userUserName:string,userEmail:string,userPassword:string){
    
     let userValue = JSON.stringify({
@@ -27,7 +28,7 @@ export class UserLoginService {
     })
     .then(response => response.json())
     .then(data => console.log(data))
-    .catch(err => console.log(err))
+    .catch(err => this.errorService.handleError(err))
   }
   userSignIn(){
     return new Promise((resolve, reject) => {
@@ -42,18 +43,17 @@ export class UserLoginService {
       .then(getdata => {
         console.log("getdata from Service " + JSON.stringify(getdata))
         let findAllMongoData = []
-        //Since there is only one data we do not need to loop
-        //getdata.forEach(element => {  
+      
           let newUserMongoData = {}
           newUserMongoData['clientUserName'] = getdata.username
           newUserMongoData['clientPassword'] = getdata.password
           newUserMongoData['clientId'] = getdata._id
           findAllMongoData.push(newUserMongoData) 
-        ///})
+ 
         console.log("elementEmail from Service " + JSON.stringify(findAllMongoData))
           resolve(findAllMongoData)
       })
-      .catch((err) => console.log("Error getdata from Service " + err))
+      .catch((err) => this.errorService.handleError(err))
   })
 }
 logOutMnCustomer() {
@@ -65,7 +65,7 @@ logOutMnCustomer() {
     },
   })
     .then((response) => {return console.log(response)})
-    .catch((err) => console.log(err));
+    .catch((err) => this.errorService.handleError(err));
 }
 deleteCustomer(){
   localStorage.clear();
@@ -77,7 +77,7 @@ deleteCustomer(){
     },
   })
     .then((response) => {return console.log(response)})
-    .catch((err) => console.log(err));
+    .catch((err) => this.errorService.handleError(err));
 }
   
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ErrorHandelersService } from '../error-handelers.service';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private errorService:ErrorHandelersService) { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -16,6 +17,12 @@ export class HomeComponent implements OnInit {
   }
   textToAppear:boolean = false;
   readLocalStorageValue(key) {
-    return localStorage.getItem(key)
+    try {
+      if(key !== undefined || key !== null || key !== ""){
+        return localStorage.getItem(key);
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }  
   }
 }

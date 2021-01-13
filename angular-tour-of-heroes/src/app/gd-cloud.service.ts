@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ErrorHandelersService } from './error-handelers.service';
 import { GDClientCredentials} from './gdClientCredentials';
 
 let holdClientEmail = []
@@ -12,7 +13,8 @@ let getEmailValue = false
 })
 export class GdCloudService {
 
-  constructor(private gdkh: GDClientCredentials) {
+  constructor(private gdkh: GDClientCredentials,
+    private errorService:ErrorHandelersService) {
     this.gdkh.holdDataClient = holdClientEmail;
     this.gdkh.holdFilesClient = holdClientFiles;
     console.log("gdkh.holdDataClient " + this.gdkh.holdDataClient)

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Dropbox } from 'dropbox';
+import { ErrorHandelersService } from './error-handelers.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DpCloudService {
 
-  constructor() { }
+  constructor(private errorService:ErrorHandelersService) { }
 
   accesToken: string;
   dropBoxClLogin(){

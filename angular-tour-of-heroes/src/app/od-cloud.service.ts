@@ -1,4 +1,6 @@
+import { TryCatchStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
+import { ErrorHandelersService } from './error-handelers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ export class OdCloudService {
   issuedOdAccessToken:any;
   storeOdFiles = [];
 
-constructor() { }
+constructor(private errorService:ErrorHandelersService) { }
   login() {
     let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/cloudmanagement/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
     let link = document.createElement('a');
@@ -20,8 +22,15 @@ async odCodeFromUri(){
   return await new Promise((resolve,reject) => {
     const uriLink:string = location.href;
     let findParam = uriLink.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
-    return resolve(findParam);
-  })
+    try {
+      if(findParam !== undefined || findParam !== null || findParam !== ""){
+        return resolve(findParam);
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+      return reject(error);
+    }
+  });
 }
  async odDisplayFilesFlsProcess(){
    return await new Promise(async(resolve,reject) => {
@@ -42,22 +51,37 @@ async odCodeFromUri(){
     
     let odAallFiles:any = await this.odGetFiles();
     let holdOdItems:any = this.storeOdFlsFiles(odAallFiles);
-    return resolve(holdOdItems);
+    
+    try {
+      if(holdOdItems != undefined || holdOdItems !== null || holdOdItems !== ""){
+        return resolve(holdOdItems);
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+       return reject(error);
+    } 
    });
 }
  storeOdFlsFiles(odFilesFls:any){
-  let savedOdFlsFolders = JSON.parse(odFilesFls);
-  let storeOdFlsFolders:any = savedOdFlsFolders.value;
-  
-  for (let index = 0; index < storeOdFlsFolders.length; index++) {
-    let holdOdItems = {};
-    let getOdUrl = "@microsoft.graph.downloadUrl";
-    holdOdItems["odFileName"] = storeOdFlsFolders[index].name;
-    holdOdItems["odFileUrl"] = storeOdFlsFolders[index]["@microsoft.graph.downloadUrl"];
+   try {
+     if(odFilesFls !== undefined || odFilesFls !== null){
       
-    this.storeOdFiles.push(holdOdItems);
-  }
-  return this.storeOdFiles;
+      let savedOdFlsFolders = JSON.parse(odFilesFls);
+      let storeOdFlsFolders:any = savedOdFlsFolders.value;
+      
+      for (let index = 0; index < storeOdFlsFolders.length; index++) {
+        let holdOdItems = {};
+        let getOdUrl = "@microsoft.graph.downloadUrl";
+        holdOdItems["odFileName"] = storeOdFlsFolders[index].name;
+        holdOdItems["odFileUrl"] = storeOdFlsFolders[index]["@microsoft.graph.downloadUrl"];
+          
+        this.storeOdFiles.push(holdOdItems);
+      }
+      return this.storeOdFiles;
+     }
+   } catch (error) {
+    this.errorService.handleError(error);
+   }
  }
  async odGetFiles(){
   return await new Promise((resolve,reject) => {
@@ -75,99 +99,144 @@ async odCodeFromUri(){
         .then((result) => {
           let holdOdAllFlsFils:any = result[Object.keys(result)[1]];
           resolve(holdOdAllFlsFils);
+      })
+      .catch(err => {
+        this.errorService.handleError(err);
+        reject(err);
       });  
   })
 }
 async odDownloadFile(odUrl:string,odFl:string) {
-  return await new Promise((resolve,reject) => {
-    fetch('/api/OdDownload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        odFileUrl: odUrl,
-        odFileName: odFl 
-      })
-    })
-       .then((result) => {
-        return result.json();
-       }) 
-       .then(response => {
-        let msgDisplay:any = response[Object.keys(response)[1]];
-     
-        resolve(msgDisplay);
-      })
-      .catch((err) => console.log(err));
-  })
+  try {
+    if(odUrl !== undefined || odUrl !== null || odUrl !== ""
+    || odFl !== undefined || odFl !== null || odFl !== ""){
+      
+      return await new Promise((resolve,reject) => {
+        fetch('/api/OdDownload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            odFileUrl: odUrl,
+            odFileName: odFl 
+          })
+        })
+           .then((result) => {
+            return result.json();
+           }) 
+           .then(response => {
+            let msgDisplay:any = response[Object.keys(response)[1]];
+         
+            resolve(msgDisplay);
+          })
+          .catch((err) => {
+            this.errorService.handleError(err);
+            reject(err);
+          });
+      });
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
 }
 async odUploadFile(odFl:string) {
-  return await new Promise((resolve,reject) => {
-    fetch('/api/OdUpload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        odUpFileName: odFl 
-      })
-    })
-       .then((result) => {
-        return result.json();
-       }) 
-       .then(response => {
-        let msgDisplay:any = response[Object.keys(response)[1]];
-        resolve(msgDisplay)
-      })
-      .catch((err) => console.log(err));
-  })
+  try {
+    if(odFl !== undefined || odFl !== null || odFl !== ""){
+      
+      return await new Promise((resolve,reject) => {
+        fetch('/api/OdUpload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            odUpFileName: odFl 
+          })
+        })
+           .then((result) => {
+            return result.json();
+           }) 
+           .then(response => {
+            let msgDisplay:any = response[Object.keys(response)[1]];
+            resolve(msgDisplay)
+          })
+          .catch((err) => {
+            this.errorService.handleError(err);
+            reject(err);
+          });
+      });
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  } 
 }
 async odUploadLocalFile(odFl:string) {
-  return await new Promise((resolve,reject) => {
-    fetch('/api/OdLocalUpload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        odUpFileName: odFl 
+  try {
+    if(odFl !== undefined || odFl !== null || odFl !== ""){
+      
+      return await new Promise((resolve,reject) => {
+        fetch('/api/OdLocalUpload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            odUpFileName: odFl 
+          })
+        })
+           .then((result) => {
+            return result.json();
+           }) 
+           .then(response => {
+            let msgDisplay:any = response[Object.keys(response)[1]];
+            resolve(msgDisplay)
+          })
+          .catch((err) => {
+            this.errorService.handleError(err);
+            reject(err);
+          });
       })
-    })
-       .then((result) => {
-        return result.json();
-       }) 
-       .then(response => {
-        let msgDisplay:any = response[Object.keys(response)[1]];
-        resolve(msgDisplay)
-      })
-      .catch((err) => console.log(err));
-  })
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
 }
 async odAccessToken(odToken:string) {
-  return await new Promise((resolve,reject) => {
-    fetch('/api/OdAccessToken', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        odCode: odToken
+  try {
+    if(odToken !== undefined || odToken !== null || odToken !== ""){
+      
+      return await new Promise((resolve,reject) => {
+        fetch('/api/OdAccessToken', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            odCode: odToken
+          })
+        })
+           .then((result) => {
+            return result.json();
+           }) 
+           .then(response => {
+            let msgDisplay:any = response[Object.keys(response)[1]];
+            resolve(msgDisplay)
+          })
+          .catch((err) => {
+            this.errorService.handleError(err);
+            reject(err);
+          });
       })
-    })
-       .then((result) => {
-        return result.json();
-       }) 
-       .then(response => {
-        let msgDisplay:any = response[Object.keys(response)[1]];
-        resolve(msgDisplay)
-      })
-      .catch((err) => console.log(err));
-  })
-}
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
+ }
 }
 
 async function getProfile() {
@@ -190,25 +259,36 @@ async function getProfile() {
           console.log("holdBxClInfo " + holdBxClInfo);
           resolve(holdBxClInfo)
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.errorService.handleError(err);
+          reject(err);
+        });
     })
 }
 function sendOdClientInfo(getOdName:string,getOdEmail:string,getUserMongoId:string){
-
-  let odClientValue = JSON.stringify({
-    odname: getOdName,
-    odemail: getOdEmail,
-    usermongoid: getUserMongoId, 
-  })
-  let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-  return fetch('/api/MCOdClient',{
-    method: 'POST',
-    headers: myHeaders,
-    body: odClientValue
-  })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(err => console.log(err))
+  try {
+    if(getOdName !== undefined || getOdName !== null || getOdName !== ""
+    || getOdEmail !== undefined || getOdEmail !== null || getOdEmail !== ""
+    || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== ""){
+      
+      let odClientValue = JSON.stringify({
+        odname: getOdName,
+        odemail: getOdEmail,
+        usermongoid: getUserMongoId, 
+      })
+      let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+      return fetch('/api/MCOdClient',{
+        method: 'POST',
+        headers: myHeaders,
+        body: odClientValue
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(err => this.errorService.handleError(err));
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
 }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BxCloudService } from '../bx-cloud.service';
 import { DpCloudService } from '../dp-cloud.service';
+import { ErrorHandelersService } from '../error-handelers.service';
 import { FilterService } from '../filter.service';
 import { GdCloudService } from '../gd-cloud.service';
 import { GDClientCredentials } from '../gdClientCredentials';
@@ -18,7 +19,8 @@ export class CloudmanagementComponent {
      private dpService: DpCloudService,
      private gdcl:GDClientCredentials,
      private bxService: BxCloudService,
-     private odService: OdCloudService) {}
+     private odService: OdCloudService,
+     private errorService:ErrorHandelersService) {}
   
   title = 'CloudManagementComponent';
   checked = false;
@@ -83,7 +85,7 @@ export class CloudmanagementComponent {
  
   async ngOnInit() {
     const uriLink:string = location.href;
-
+   try {
     if(uriLink.includes('code=MdDdy')){
       this.saveDpCode = await this.dpService.getCodefromUri();
       let stDpCode:string = this.saveDpCode;
@@ -161,13 +163,23 @@ export class CloudmanagementComponent {
         this.readLocalStorageValue('localFilePath');
       }
     } 
+   } catch (error) {
+    this.errorService.handleError(error);
+   } 
   }
 
   addFilter(filter: string): void {
-   // if(!this.filters.includes(filter) && !filter.includes("undefined")){
+    try {
+      if(filter !== undefined || filter !== null || filter !== ''){
+          // if(!this.filters.includes(filter) && !filter.includes("undefined")){
       this.filters.push(filter);
       localStorage.setItem("apiFileFilter", filter);
    // }
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
+ 
   }
 
   linkAccount(): void {
@@ -191,20 +203,33 @@ export class CloudmanagementComponent {
   }
 
   readLocalStorageValue(key) {
-    return localStorage.getItem(key)
+    try {
+      if(key !== undefined || key !== null || key !== ""){
+        return localStorage.getItem(key)
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    } 
   }
 
   clientEmailValue(v: string) {
-    if(localStorage.getItem('gdUserEmail') == null){
-      this.gdEmail = v;
-    localStorage.setItem('gdUserEmail', this.gdEmail);
-    console.log('the value from set2 ' + this.gdEmail)
-    }else if(localStorage.getItem('gdUserEmail') !== v){
-      localStorage.removeItem('gdUserEmail')
-      this.gdEmail = v;
-      localStorage.setItem('gdUserEmail', this.gdEmail);
-    console.log('the value from set2 ' + this.gdEmail)
-    }else this.gdEmail = localStorage.getItem('gdUserEmail')
+    try {
+      if(v !== undefined || v !== null || v !== ""){
+        if(localStorage.getItem('gdUserEmail') == null){
+          this.gdEmail = v;
+        localStorage.setItem('gdUserEmail', this.gdEmail);
+        console.log('the value from set2 ' + this.gdEmail)
+        }else if(localStorage.getItem('gdUserEmail') !== v){
+          localStorage.removeItem('gdUserEmail')
+          this.gdEmail = v;
+          localStorage.setItem('gdUserEmail', this.gdEmail);
+        console.log('the value from set2 ' + this.gdEmail)
+        }else this.gdEmail = localStorage.getItem('gdUserEmail')
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
+    
   }
 
   async getClientEmail(){
@@ -235,82 +260,92 @@ export class CloudmanagementComponent {
   }
 
   async handleClientLogin(){
-    if(this.dpChecked && this.gdChecked){
-      this.selectedApi.push(this.services[0],this.services[1]);
-      this.selected = true;
-      localStorage.setItem("gdSelected","gdSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.dropBoxClientLogin();   
-    }
-    if(this.dpChecked && this.odChecked){
-      this.selectedApi.push(this.services[0],this.services[2]);
-      this.selected = true;
-      localStorage.setItem("odSelected","odSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.dropBoxClientLogin();  
-    }
-    if(this.dpChecked && this.bxChecked){
-      this.selectedApi.push(this.services[0],this.services[3]);
-      this.selected = true;
-      localStorage.setItem("bxSelected","bxSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.dropBoxClientLogin();  
-    }
-    if(this.dpChecked && this.lfChecked){
-      this.selectedApi.push(this.services[0],this.services[4]);
-      this.selected = true;
-      localStorage.setItem("lfSelected","lfSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.dropBoxClientLogin();  
-    }
-    if(this.odChecked && this.gdChecked){
-      this.selectedApi.push(this.services[2],this.services[1]);
-      this.selected = true;
-      localStorage.setItem("gdSelected","gdSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.odService.login();  
-    }
-    if(this.odChecked && this.bxChecked){
-      this.selectedApi.push(this.services[2],this.services[3]);
-      this.selected = true;
-      localStorage.setItem("bxSelected","bxSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.odService.login();  
-    }
-    if(this.odChecked && this.lfChecked){
-      this.selectedApi.push(this.services[2],this.services[4]);
-      this.selected = true;
-      localStorage.setItem("lfSelected","lfSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.odService.login();  
-    }
-    if(this.bxChecked && this.gdChecked){
-      this.selectedApi.push(this.services[3],this.services[1]);
-      this.selected = true;
-      localStorage.setItem("gdSelected","gdSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.boxClientLogin();  
-    }
-    if(this.bxChecked && this.lfChecked){
-      this.selectedApi.push(this.services[3],this.services[4]);
-      this.selected = true;
-      localStorage.setItem("lfSelected","lfSelected");
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.boxClientLogin();  
-    }
-    if(this.lfChecked && this.gdChecked){
-      this.selectedApi.push(this.services[4],this.services[1]);
-      this.selected = true;
-
-      localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
-      this.googleDriveInit();
-    }
-    if(this.selected == false){
-      alert("Dear customer, please at least check two of the checkboxes");
+    try {
+      if(this.dpChecked && this.gdChecked){
+        this.selectedApi.push(this.services[0],this.services[1]);
+        this.selected = true;
+        localStorage.setItem("gdSelected","gdSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.dropBoxClientLogin();   
+      }
+      if(this.dpChecked && this.odChecked){
+        this.selectedApi.push(this.services[0],this.services[2]);
+        this.selected = true;
+        localStorage.setItem("odSelected","odSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.dropBoxClientLogin();  
+      }
+      if(this.dpChecked && this.bxChecked){
+        this.selectedApi.push(this.services[0],this.services[3]);
+        this.selected = true;
+        localStorage.setItem("bxSelected","bxSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.dropBoxClientLogin();  
+      }
+      if(this.dpChecked && this.lfChecked){
+        this.selectedApi.push(this.services[0],this.services[4]);
+        this.selected = true;
+        localStorage.setItem("lfSelected","lfSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.dropBoxClientLogin();  
+      }
+      if(this.odChecked && this.gdChecked){
+        this.selectedApi.push(this.services[2],this.services[1]);
+        this.selected = true;
+        localStorage.setItem("gdSelected","gdSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.odService.login();  
+      }
+      if(this.odChecked && this.bxChecked){
+        this.selectedApi.push(this.services[2],this.services[3]);
+        this.selected = true;
+        localStorage.setItem("bxSelected","bxSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.odService.login();  
+      }
+      if(this.odChecked && this.lfChecked){
+        this.selectedApi.push(this.services[2],this.services[4]);
+        this.selected = true;
+        localStorage.setItem("lfSelected","lfSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.odService.login();  
+      }
+      if(this.bxChecked && this.gdChecked){
+        this.selectedApi.push(this.services[3],this.services[1]);
+        this.selected = true;
+        localStorage.setItem("gdSelected","gdSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.boxClientLogin();  
+      }
+      if(this.bxChecked && this.lfChecked){
+        this.selectedApi.push(this.services[3],this.services[4]);
+        this.selected = true;
+        localStorage.setItem("lfSelected","lfSelected");
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.boxClientLogin();  
+      }
+      if(this.lfChecked && this.gdChecked){
+        this.selectedApi.push(this.services[4],this.services[1]);
+        this.selected = true;
+  
+        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        this.googleDriveInit();
+      }
+      if(this.selected == false){
+        alert("Dear customer, please at least check two of the checkboxes");
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
     }
   }
   removeSelectedCloud(slt:string){
-    localStorage.removeItem(slt);
+    try {
+      if(slt !== undefined || slt !== null || slt !== ""){
+        localStorage.removeItem(slt);
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }  
   }
 }
 

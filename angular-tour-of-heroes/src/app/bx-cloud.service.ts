@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AnyPtrRecord, AnySoaRecord } from 'dns';
+import { ErrorHandelersService } from './error-handelers.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BxCloudService {
 
-  constructor() { }
+  constructor(private errorService:ErrorHandelersService) { }
 
   accesToken:string = '';
   boxCodeStored:string = '';

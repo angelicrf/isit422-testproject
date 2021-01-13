@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -18,6 +18,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { HomeComponent } from './home/home.component';
 import { FiletransferComponent } from './filetransfer/filetransfer.component';
+import { ErrorHandelersService } from './error-handelers.service';
 
 @NgModule({
   imports: [
@@ -43,7 +44,10 @@ import { FiletransferComponent } from './filetransfer/filetransfer.component';
     HomeComponent,
     FiletransferComponent
   ],
-  providers: [],
+  providers: [{
+    provide: ErrorHandler,
+    useClass: ErrorHandelersService,
+   }],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }
