@@ -85,6 +85,20 @@ h2{
   color: rgb(30, 61, 121);
   margin-bottom: 30px;
 }
+.siHome{
+  margin-left: 400px;
+  margin-bottom: 30px;
+  font-size: 15px;
+  border-radius: 5px;
+  min-width: 150px;
+}
+.spHome{
+ margin-left: 70px;
+ margin-bottom: 30px;
+ font-size: 15px;
+ border-radius: 5px;
+ min-width: 150px;
+}
 @keyframes textAnime {
   from {
     margin-left: 100%;
