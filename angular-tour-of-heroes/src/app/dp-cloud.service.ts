@@ -1,3 +1,4 @@
+import { TryCatchStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { Dropbox } from 'dropbox';
 import { ErrorHandelersService } from './error-handelers.service';
@@ -21,39 +22,57 @@ export class DpCloudService {
       const uriLink = location.href;
       const newUri = new URL(uriLink);
       const findParam = newUri.searchParams.get('code'); 
-      return resolve(findParam);
+      try {
+        if(findParam !== undefined || findParam !== null || findParam !== ""){
+          return resolve(findParam);
+        }
+      } catch (error) {
+        this.errorService.handleError(error);
+        reject(error);
+      }    
     });
   }
   sendMessageToNode(sendCodeData: string) {
-    return new Promise((resolve, reject) => {
-      let myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-
-      let raw = JSON.stringify({
-        title: 'codefromAngular',
-        saveCode: sendCodeData,
-      });
-
-      let requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-      };
-
-      fetch('/api/showData', requestOptions)
-        .then((response) => {
-          return response.json();
-        })
-        .then((result) => {
-          //console.log('the acces_token is ', result[Object.keys(result)[0]]);
-          this.accesToken = result[Object.keys(result)[0]];
-          
-          resolve(this.accesToken);
-        })
-        .catch((error) => console.log('error', error));
-    });
+    try {
+      if(sendCodeData !== undefined || sendCodeData !== null || sendCodeData !== ""){
+         
+        return new Promise((resolve, reject) => {
+          let myHeaders = new Headers();
+          myHeaders.append('Content-Type', 'application/json');
+    
+          let raw = JSON.stringify({
+            title: 'codefromAngular',
+            saveCode: sendCodeData,
+          });
+    
+          let requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+          };
+    
+          fetch('/api/showData', requestOptions)
+            .then((response) => {
+              return response.json();
+            })
+            .then((result) => {
+              this.accesToken = result[Object.keys(result)[0]];
+              resolve(this.accesToken);
+            })
+            .catch((error) => {
+              this.errorService.handleError(error);
+              return reject(error);
+             });
+        });
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
 dpGetClientInfo(dpAccessToken:string){
+  try {
+    if(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== ""){
+      
       let dbx = new Dropbox({
         accessToken: dpAccessToken
       });
@@ -72,38 +91,47 @@ dpGetClientInfo(dpAccessToken:string){
            sendDpClientInfo(getDpName,getDpEmail,getUserMongoId)
            return (getDpEmail)
           })
-        .catch((err) => console.log(err))  
-    
+        .catch((err) => this.errorService.handleError(err));
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
   }
+}
   async dpGetFilesList(dpAccessToken:string){
-    //encoder.htmlEncode(response.name.display_name)
-    return await new Promise((resolve,reject) => {
-      let holdelement = [];
-      let dbx = new Dropbox({
-       accessToken: dpAccessToken
-     });
-     //"recursive\": false,\"include_media_info\": false,\"include_deleted\": false,\"include_has_explicit_shared_members\": false,\"include_mounted_folders\": true,\"include_non_downloadable_files\": true
-     console.log(JSON.stringify(dbx));
-     dbx
-     .filesListFolder({
-      path: '',
-      recursive: true
-     })
-       .then(response => {
-         let hpldDpFiles = response.result.entries
-         console.log( "hpldDpFiles " + JSON.stringify(hpldDpFiles[0].path_lower))
-         for (let index = 0; index < hpldDpFiles.length; index++) {
-           let holdObj = {};
-            holdObj["dpClName"] = hpldDpFiles[index].name;
-            holdObj["dpClPath"] = hpldDpFiles[index].path_display;
-            holdelement[index] = holdObj;  
-         } 
-         //console.log(JSON.stringify("Elements are " + JSON.stringify(holdelement)))
-         return resolve(holdelement) 
+    try {
+      if(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== ""){
+        
+        return await new Promise((resolve,reject) => {
+          let holdelement = [];
+          let dbx = new Dropbox({
+           accessToken: dpAccessToken
+         });
+         console.log(JSON.stringify(dbx));
+         dbx
+         .filesListFolder({
+          path: '',
+          recursive: true
          })
-       .catch((err) => console.log(err)) 
-         //console.log(JSON.stringify("Elements are " + holdelement))
-    })
+           .then(response => {
+             let hpldDpFiles = response.result.entries
+             console.log( "hpldDpFiles " + JSON.stringify(hpldDpFiles[0].path_lower))
+             for (let index = 0; index < hpldDpFiles.length; index++) {
+               let holdObj = {};
+                holdObj["dpClName"] = hpldDpFiles[index].name;
+                holdObj["dpClPath"] = hpldDpFiles[index].path_display;
+                holdelement[index] = holdObj;  
+             } 
+             return resolve(holdelement) 
+             })
+           .catch((err) => {
+            this.errorService.handleError(err);
+            return reject(err);
+           }); 
+        });
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
   async dPDownloadFromNode() {
     return await new Promise((resolve,reject) => {
@@ -118,7 +146,10 @@ dpGetClientInfo(dpAccessToken:string){
           console.log(response)
           return resolve(response)
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+         });
     })
   }   
   async dPDownloadLocalFromNode() {
@@ -134,7 +165,10 @@ dpGetClientInfo(dpAccessToken:string){
           console.log(response)
           return resolve(response)
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+         });
     })
   }   
 
@@ -152,76 +186,107 @@ dpGetClientInfo(dpAccessToken:string){
           console.log(response)
           return resolve(response);
         })
-        .catch((err) => console.log(err));
-    })
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+         });
+    });
   }
   async dPUploadLocalFromNode(fileName) {
-    return await new Promise((resolve,reject) => {
-      fetch('/api/DPUploadLocal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          fileName: fileName
-        })
-      })
-        .then((response) => {
-          alert("File is submitted to your Dropbox");
-          console.log(response)
-          return resolve(response);
-        })
-        .catch((err) => console.log(err));
-    })
+    try {
+      if(fileName !== undefined || fileName !== null || fileName !== ""){
+        return await new Promise((resolve,reject) => {
+          fetch('/api/DPUploadLocal', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({
+              fileName: fileName
+            })
+          })
+            .then((response) => {
+              alert("File is submitted to your Dropbox");
+              console.log(response)
+              return resolve(response);
+            })
+            .catch((err) => {
+              this.errorService.handleError(err);
+              return reject(err);
+             });
+        });
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   }
   async dpPathFiles(dpPathGiven){
-    console.log("dpPathFile is called" + dpPathGiven)
-    return await new Promise((resolve, reject) => {
-      let myHeaders = new Headers();
-              myHeaders.append('Accept', '/');
-              myHeaders.append('Origin', 'x-requested-with');
-              myHeaders.append('Content-Type', 'application/json');
-  
-              let raw = JSON.stringify({
-                title: 'dpPathfromAngular',
-                dpGetFPath: dpPathGiven,
-              });
-              let requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body:raw
-              }; 
-              fetch(
-                '/api/DpPath',
-                requestOptions
-              )
-                .then((response) =>
-                  {return response.text()
-                
-                  })//verify this part
-                .then(response => {return resolve(response)})
-                .catch((err) => console.log('from dpPath ' + err))
-    })
+    try {
+      if(dpPathGiven !== undefined || dpPathGiven !== null || dpPathGiven !== ""){
+        
+        console.log("dpPathFile is called" + dpPathGiven);
+        return await new Promise((resolve, reject) => {
+          let myHeaders = new Headers();
+                  myHeaders.append('Accept', '/');
+                  myHeaders.append('Origin', 'x-requested-with');
+                  myHeaders.append('Content-Type', 'application/json');
+      
+                  let raw = JSON.stringify({
+                    title: 'dpPathfromAngular',
+                    dpGetFPath: dpPathGiven,
+                  });
+                  let requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body:raw
+                  }; 
+                  fetch(
+                    '/api/DpPath',
+                    requestOptions
+                  )
+                    .then((response) =>
+                      {return response.text()
+                    
+                      })
+                    .then(response => {return resolve(response)})
+                    .catch((err) => {
+                      this.errorService.handleError(err);
+                      return reject(err);
+                     });
+        });
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
   } 
-  
 }
 function sendDpClientInfo(getDbName,getDbEmail,getUserMongoId){
   console.log("sendDpClientInfo called ")
-  let dbClientValue = JSON.stringify({
-    dbname: getDbName,
-    dbemail: getDbEmail,
-    usermongoid: getUserMongoId, 
-  })
-  let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-  return fetch('/api/MCDbClient',{
-    method: 'POST',
-    headers: myHeaders,
-    body: dbClientValue
-  })
-  .then(response => {return response.json()})
-  .then(data => console.log(data))
-  .catch(err => console.log(err))
+  try {
+    if(getDbName !== undefined || getDbName !== null || getDbName !== ""
+    || getDbEmail !== undefined || getDbEmail !== null || getDbEmail !== ""
+    || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== ""){
+      
+      let dbClientValue = JSON.stringify({
+        dbname: getDbName,
+        dbemail: getDbEmail,
+        usermongoid: getUserMongoId, 
+      })
+      let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+      return fetch('/api/MCDbClient',{
+        method: 'POST',
+        headers: myHeaders,
+        body: dbClientValue
+      })
+      .then(response => {return response.json()})
+      .then(data => console.log(data))
+      .catch(err => this.errorService.handleError(err));
+
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
 }
 

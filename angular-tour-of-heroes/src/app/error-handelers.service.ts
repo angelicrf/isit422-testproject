@@ -10,10 +10,16 @@ export class ErrorHandelersService extends ErrorHandler {
   }
   handleError(error:Error) {
     if (Error) {
+      if(error.message !== undefined){
      console.log(`Error Received ${error.message}`);
+      }
+      else{
+        console.log(`Error Received ${error}`);
+      }
     }
   }
   costumeCatchError(error:any){
+
     throw new Error(`Error Received ${error}`); 
   }
    

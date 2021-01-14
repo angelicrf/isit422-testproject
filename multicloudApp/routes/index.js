@@ -50,14 +50,14 @@ mongoose.connect(dbURI, options).then(
     console.log("Error connecting Database instance due to: ", err);
   }
 );
-router.get('/', function(req, res) {
+router.get('/', (req, res) => {
   console.log('Home Page route called');
   res.status(200).sendFile('index.html');
 });
 router.get('/AllMCUsers', function(req, res) {
   try {
-    if(req.body.id !== "undefined" || req.body.id !== null || req.body.id !== ""
-    || LoggedInUserID !== "undefined" || LoggedInUserID !== null || LoggedInUserID !== ""){
+    if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
+    || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""){
     
       if (LoggedInUserID === req.body.id) {
       console.log('AllMCUsers called');
@@ -80,10 +80,10 @@ router.get('/AllMCUsers', function(req, res) {
     throw error;
   }
 });
-router.get('/MCUserByID', function (req, res) {
+router.get('/MCUserByID', (req, res) => {
   try {
-    if(req.body.id !== "undefined" || req.body.id !== null || req.body.id !== ""
-    || LoggedInUserID !== "undefined" || LoggedInUserID !== null || LoggedInUserID !== ""){
+    if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
+    || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""){
       
       if (LoggedInUserID === req.body.id) {
         console.log('MCUserByID called');
@@ -107,13 +107,13 @@ router.get('/MCUserByID', function (req, res) {
     throw error;
   }
 });
-router.post('/MCUserInfo', function (req, res) {
+router.post('/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
   
   try {
     
-    if(req.body.username !== "undefined" || req.body.username !== null || req.body.username !== ""
-    || req.body.password !== "undefined" || req.body.password !== null || req.body.password !== ""){
+    if(req.body.username !== undefined || req.body.username !== null || req.body.username !== ""
+    || req.body.password !== undefined || req.body.password !== null || req.body.password !== ""){
       
       HoldUserData.splice(0, HoldUserData.length);
       let holdUserName = req.body.username;
@@ -128,13 +128,13 @@ router.post('/MCUserInfo', function (req, res) {
     throw error;
   }
 });
-router.get('/MCUserByUsrNmPwd', function (req, res) {
+router.get('/MCUserByUsrNmPwd', (req, res) => {
   console.log("MCUserByUsrNmPwd called");
  try {
   if(HoldUserData[0] !== "" || HoldUserData[0] !== null
     || HoldUserData[1] !== "" || ! HoldUserData[1] !== null
-    || req.body.username !== "undefined" || req.body.username !== null || req.body.username !== ""
-    || req.body.password !== "undefined" || req.body.password !== null || req.body.password !== ""){
+    || req.body.username !== undefined || req.body.username !== null || req.body.username !== ""
+    || req.body.password !== undefined || req.body.password !== null || req.body.password !== ""){
     
       console.log("username from node " + HoldUserData[0]);
     console.log("password from node " + HoldUserData[1]);
@@ -164,14 +164,14 @@ router.get('/MCUserByUsrNmPwd', function (req, res) {
   throw error;
  }  
 });
-router.post('/MCUser', function(req, res) {
+router.post('/MCUser', (req, res) => {
   console.log("MCUser called ");
  try {
-   if(req.body.password !== "undefined" || req.body.password !== null || req.body.password !== ""
-   || req.body.name !== "undefined" || req.body.name !== null || req.body.name !== ""
-   || req.body.lastname !== "undefined" || req.body.lastname !== null || req.body.lastname !== ""
-   || req.body.username !== "undefined" || req.body.username !== null || req.body.username !== ""
-   || req.body.email !== "undefined" || req.body.email !== null || req.body.email !== ""){
+   if(req.body.password !== undefined || req.body.password !== null || req.body.password !== ""
+   || req.body.name !== undefined || req.body.name !== null || req.body.name !== ""
+   || req.body.lastname !== undefined || req.body.lastname !== null || req.body.lastname !== ""
+   || req.body.username !== undefined || req.body.username !== null || req.body.username !== ""
+   || req.body.email !== undefined || req.body.email !== null || req.body.email !== ""){
     
     let oneNewMCUser = new MCUsers({
       name: req.body.name,
@@ -199,14 +199,14 @@ router.post('/MCUser', function(req, res) {
   throw error;
  } 
 });
-router.patch('/UpdateMCUser', function (req, res) {
+router.patch('/UpdateMCUser', (req, res) => {
  try {
-   if(req.body.id !== "undefined" || req.body.id !== null || req.body.id !== ""
-   || LoggedInUserID !== "undefined" || LoggedInUserID !== null || LoggedInUserID !== ""
-   || req.body.password !== "undefined" || req.body.password !== null || req.body.password !== ""
-   || req.body.email !== "undefined" || req.body.email !== null || req.body.email !== ""
-   || req.body.lastname !== "undefined" || req.body.lastname !== null || req.body.lastname !== ""
-   || req.body.name !== "undefined" || req.body.name !== null || req.body.name !== ""){
+   if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
+   || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""
+   || req.body.password !== undefined || req.body.password !== null || req.body.password !== ""
+   || req.body.email !== undefined || req.body.email !== null || req.body.email !== ""
+   || req.body.lastname !== undefined || req.body.lastname !== null || req.body.lastname !== ""
+   || req.body.name !== undefined || req.body.name !== null || req.body.name !== ""){
     
     if (LoggedInUserID === req.body.id) {
      
@@ -251,12 +251,12 @@ router.patch('/UpdateMCUser', function (req, res) {
   throw error;
  }
 });
-router.post('/MCGdClient', function(req, res) {
+router.post('/MCGdClient', (req, res) => {
   console.log("MCGdClient called ");
   try {
-    if(req.body.gdname !== "undefined" || req.body.gdname !== null || req.body.gdname !== ""
-    || req.body.gdemail !== "undefined" || req.body.gdemail !== null || req.body.gdemail !== ""
-    || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
+    || req.body.gdemail !== undefined || req.body.gdemail !== null || req.body.gdemail !== ""
+    || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
 
       let oneNewMCClient = new MCClient({
         gdname: req.body.gdname,
@@ -283,12 +283,12 @@ router.post('/MCGdClient', function(req, res) {
 
   
 });
-router.post('/MCBoxClient', function(req, res) {
+router.post('/MCBoxClient', (req, res) => {
   console.log("MCBoxClient called ");
  try {
-  if(req.body.bxname !== "undefined" || req.body.bxname !== null || req.body.bxname !== ""
-      || req.body.bxemail !== "undefined" || req.body.bxemail !== null || req.body.bxemail !== ""
-      || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+  if(req.body.bxname !== undefined || req.body.bxname !== null || req.body.bxname !== ""
+      || req.body.bxemail !== undefined || req.body.bxemail !== null || req.body.bxemail !== ""
+      || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
      
     let oneNewBoxClient = new BoxClient({
       bxname: req.body.bxname,
@@ -314,12 +314,12 @@ router.post('/MCBoxClient', function(req, res) {
  }
   
 });
-router.post('/MCOdClient', function(req, res) {
+router.post('/MCOdClient', (req, res) => {
   console.log("MCOdClient called ");
   try {
-    if(req.body.odname !== "undefined" || req.body.odname !== null || req.body.odname !== ""
-    || req.body.odemail !== "undefined" || req.body.odemail !== null || req.body.odemail !== ""
-    || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.odname !== undefined || req.body.odname !== null || req.body.odname !== ""
+    || req.body.odemail !== undefined || req.body.odemail !== null || req.body.odemail !== ""
+    || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
     
       let oneNewOdClient = new OdClient({
       odname: req.body.odname,
@@ -344,9 +344,9 @@ router.post('/MCOdClient', function(req, res) {
     throw error;
   }
 });
-router.delete('/DeleteMCUser', function (req, res) {
+router.delete('/DeleteMCUser', (req, res) => {
  try {
-  if (LoggedInUserID !== "undefined" || LoggedInUserID !== '' || LoggedInUserID !== null) {
+  if (LoggedInUserID !== undefined || LoggedInUserID !== '' || LoggedInUserID !== null) {
     console.log('DeleteMCUser called');
 
     MCUsers.findById({ _id: LoggedInUserID }, async (err, result) => {
@@ -377,10 +377,10 @@ router.delete('/DeleteMCUser', function (req, res) {
   throw error;
  }
 });
-router.get('/LogOutMCUser', function (req, res) {
+router.get('/LogOutMCUser', (req, res) => {
   console.log('LogOutMCUser called ');
   try {
-    if (LoggedInUserID !== "undefined" || LoggedInUserID !== null  || LoggedInUserID !== "") {
+    if (LoggedInUserID !== undefined || LoggedInUserID !== null  || LoggedInUserID !== "") {
       LoggedInUserID = "";
       HoldUserData.splice(0, HoldUserData.length);
       res.status(200).send('user logged out successfully');
@@ -393,12 +393,12 @@ router.get('/LogOutMCUser', function (req, res) {
     throw error;
   }
 });
-router.post('/MCGdClient', function(req, res) {
+router.post('/MCGdClient', (req, res) => {
   console.log("MCGdClient called ");
  try {
-   if(req.body.gdname !== "undefined" || req.body.gdname !== null || req.body.gdname !== ""
-   || req.body.gdemail !== "undefined" || req.body.gdemail !== null || req.body.gdemail !== ""
-   || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+   if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
+   || req.body.gdemail !== undefined || req.body.gdemail !== null || req.body.gdemail !== ""
+   || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
     
     MCClient.findOne({ usermongoid: req.body.usermongoid }, async (err, result) => {
       if (err) {
@@ -455,10 +455,10 @@ router.post('/MCGdClient', function(req, res) {
  }
   
 });
-router.get('/MCClientData', function(req, res) {
+router.get('/MCClientData', (req, res) => {
   console.log('MCClientData called');
  try {
-   if(req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+   if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
     MCClient.findOne({ usermongoid: req.body.usermongoid }, (err, result) => {
      if (err) {
       console.log(err);
@@ -478,10 +478,10 @@ router.get('/MCClientData', function(req, res) {
  }
   
 });
-router.delete('/MCClientDeleteData', function(req, res) {
+router.delete('/MCClientDeleteData', (req, res) => {
   console.log('MCClientDeleteData called ');
  try {
-  if(req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+  if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
     MCClient.findOne({ usermongoid: req.body.usermongoid }, async (err, result) => {
       if (err) {
         console.log(err);
@@ -510,12 +510,12 @@ router.delete('/MCClientDeleteData', function(req, res) {
   throw error;
  }
 });
-router.patch('/MCClientUpdateData', function (req, res) {
+router.patch('/MCClientUpdateData', (req, res) => {
   console.log('MCClientUpdateData called ');
   try {
-    if(req.body.gdname !== "undefined" || req.body.gdname !== null || req.body.gdname !== ""
-    || req.body.gdemail !== "undefined" || req.body.gdemail !== null || req.body.gdemail !== ""
-    || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
+    || req.body.gdemail !== undefined || req.body.gdemail !== null || req.body.gdemail !== ""
+    || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
       
       MCClient.findOne({ usermongoid: req.body.usermongoid }, async (err, result) => {
         if (err) {
@@ -551,10 +551,10 @@ router.patch('/MCClientUpdateData', function (req, res) {
     throw error;
   }
 });
-router.post('/Files', function(req, res) {
+router.post('/Files', (req, res) => {
   console.log('Files called');
   try {
-    if(req.body.path !== "undefined" || req.body.path !== null || req.body.path !== ""){
+    if(req.body.path !== undefined || req.body.path !== null || req.body.path !== ""){
       fs.readdir(req.body.path, 'buffer', function (err, files) {
         if (err) {
           console.log('Unable to scan directory: ' + err);
@@ -564,7 +564,7 @@ router.post('/Files', function(req, res) {
         else {
           let names = [];
           let fileData = [];
-          files.forEach(function (file) {
+          files.forEach(file => {
             names.push(file.toString());
             console.log(file.toString()); 
           });
@@ -578,14 +578,14 @@ router.post('/Files', function(req, res) {
     throw error;
   }  
 });
-router.post('/AddFiles', function(req, res) {
+router.post('/AddFiles', (req, res) => {
   console.log('AddFiles called');
   try {
-    if(req.body.filePath !== "undefined" || req.body.filePath !== null || req.body.filePath !== ""
-     || req.body.fileName !== "undefined" || req.body.fileName !== null || req.body.fileName !== ""){
+    if(req.body.filePath !== undefined || req.body.filePath !== null || req.body.filePath !== ""
+     || req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""){
     
     let path = req.body.filePath + '/' + req.body.fileName;
-    fs.open(path, 'w', function(err, fd) {
+    fs.open(path, 'w', (err, fd) => {
       if (err) {
           console.log(err);
           res.status(500).send(err);
@@ -594,7 +594,7 @@ router.post('/AddFiles', function(req, res) {
       buf = Buffer.from(req.body.fileData.data)
       fs.write(fd, buf.toString(), null, function(err) {
           if (err) throw 'error writing file: ' + err;
-          fs.close(fd, function() {
+          fs.close(fd, () => {
               console.log(buf.toString())
               res.status(201).send('Local file written');
           });
@@ -607,11 +607,11 @@ router.post('/AddFiles', function(req, res) {
     throw error;
   }  
 });
-router.post('/LfFilePath', function(req, res) {
+router.post('/LfFilePath', (req, res) => {
   console.log('LfFilePath called');
   try {
    
-    if(req.body.lfStorePath !== "undefined" || req.body.lfStorePath !== null || req.body.lfStorePath !== ""){
+    if(req.body.lfStorePath !== undefined || req.body.lfStorePath !== null || req.body.lfStorePath !== ""){
       
       getlfPath = req.body.lfStorePath;
       console.log('getlfPath ' + getlfPath);
@@ -624,32 +624,32 @@ router.post('/LfFilePath', function(req, res) {
     throw err;
   }
 });
-router.get('/LfDownload', function(req, res) {
+router.get('/LfDownload', (req, res) => {
   console.log('LfDownload called');
   try {
     
-    if(req.body.lfStorePath !== "undefined" || req.body.lfStorePath !== null || req.body.lfStorePath !== ""){
+    /* if(req.body.lfStorePath !== undefined || req.body.lfStorePath !== null || req.body.lfStorePath !== ""){
       
-      getlfPath = req.body.lfStorePath;
+      getlfPath = req.body.lfStorePath; */
       console.log('getlfPath ' + getlfPath);
       setTimeout(async() => {
         await tpMoveFiletoLocalPath(downloadedFileName,getlfPath);
        },4000);
      res.status(201).json({"success_MSG": 'File successfully stored to the local path', "response": req.body.lfStorePath});
      return getlfPath;
-    }
+   // }
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
     throw err;
   }
 });
-router.post('/LfileServer', function(req, res) {
+router.post('/LfileServer', (req, res) => {
   console.log('LfileServer called');
   try {
 
-    if(req.body.lfTranfer !== "undefined" || req.body.lfTranfer !== null || req.body.lfTranfer !== ""
-    || getlfPath !== "undefined" || getlfPath !== null || getlfPath !== "" ){
+    if(req.body.lfTranfer !== undefined || req.body.lfTranfer !== null || req.body.lfTranfer !== ""
+    || getlfPath !== undefined || getlfPath !== null || getlfPath !== "" ){
       
       let lfToTransfer = req.body.lfTranfer;
       console.log('getlfPath ' + getlfPath);
@@ -665,11 +665,11 @@ router.post('/LfileServer', function(req, res) {
     throw err;
   }
 });
-router.post('/DeleteFiles', function(req, res) {
+router.post('/DeleteFiles', (req, res) => {
   console.log('DeleteFiles called');
   try {
-    if(req.body.filePath !== "undefined" || req.body.filePath !== null || req.body.filePath !== ""
-    || req.body.fileName !== "undefined" || req.body.fileName !== null || req.body.fileName !== ""){
+    if(req.body.filePath !== undefined || req.body.filePath !== null || req.body.filePath !== ""
+    || req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""){
     
       fs.unlinkSync(req.body.filePath + "/" + req.body.fileName);
       res.status(201).json({"success_MSG": 'Local File successfully deleted', "response": req.body.fileName});
@@ -681,10 +681,10 @@ router.post('/DeleteFiles', function(req, res) {
   }
 
 });
-router.post('/MoveFile', function(req, res) {
+router.post('/MoveFile',(req, res) => {
   console.log('MoveFile called');
   try {
-    if(req.body.fileName !== "undefined" || req.body.fileName !== null || req.body.fileName !== ""){
+    if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""){
     setTimeout(async () => {
       let moveFileResule = await tpMoveFilestoAllFiles(req.body.fileName);
       res.status(201).json({"success_MSG":'Local File successfully moved', "respponse": req.body.fileName});
@@ -699,9 +699,9 @@ router.post('/MoveFile', function(req, res) {
 router.post('/MCDbClient', (req, res) => {
   console.log("MCDbClient calledOne ")
   try {
-    if(req.body.dbname !== "undefined" || req.body.dbname !== null || req.body.dbname !== ""
-    || req.body.dbemail !== "undefined" || req.body.dbemail !== null || req.body.dbemail !== ""
-    || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.dbname !== undefined || req.body.dbname !== null || req.body.dbname !== ""
+    || req.body.dbemail !== undefined || req.body.dbemail !== null || req.body.dbemail !== ""
+    || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
       
       DbClient.findOne({ usermongoid: req.body.usermongoid }, async (err, result) => {
         if (err) {
@@ -758,10 +758,10 @@ router.post('/MCDbClient', (req, res) => {
     throw err;
   }  
 });
-router.get('/DbClientData', function(req, res) {
+router.get('/DbClientData', (req, res) => {
   console.log('DbClientData called');
   try {
-    if(req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
       
       DbClient.findOne({ usermongoid: req.body.usermongoid }, (err, result) => {
         if (err) {
@@ -781,10 +781,10 @@ router.get('/DbClientData', function(req, res) {
     throw err;
   }
 });
-router.delete('/DbClientDeleteData', function(req, res) {
+router.delete('/DbClientDeleteData', (req, res) => {
   console.log('DbClientDeleteData called ' + JSON.stringify(req.body));
   try {
-    if(req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
      
       DbClient.findOne({ usermongoid: req.body.usermongoid }, async (err, result) => {
         if (err) {
@@ -814,12 +814,12 @@ router.delete('/DbClientDeleteData', function(req, res) {
     throw err;
   }
 });
-router.patch('/DbClientUpdateData', function (req, res) {
+router.patch('/DbClientUpdateData', (req, res) => {
   console.log('DbClientUpdateData called ');
   try {
-    if(req.body.dbname !== "undefined" || req.body.dbname !== null || req.body.dbname !== ""
-    || req.body.dbemail !== "undefined" || req.body.dbemail !== null || req.body.dbemail !== ""
-    || req.body.usermongoid !== "undefined" || req.body.usermongoid !== null || req.body.usermongoid !== ""){
+    if(req.body.dbname !== undefined || req.body.dbname !== null || req.body.dbname !== ""
+    || req.body.dbemail !== undefined || req.body.dbemail !== null || req.body.dbemail !== ""
+    || req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
       
       DbClient.findOne({ usermongoid: req.body.usermongoid }, async (err, result) => {
         if (err) {
@@ -853,11 +853,11 @@ router.patch('/DbClientUpdateData', function (req, res) {
   }
   
 });
-router.post('/ShowData', function (req, res) {
+router.post('/ShowData', (req, res) => {
   console.log("ShowData called ");
   res.header('Access-Control-Allow-Origin', '*');
   try {
-    if(req.body.saveCode !== "undefined" || req.body.saveCode !== null || req.body.saveCode !== ""){
+    if(req.body.saveCode !== undefined || req.body.saveCode !== null || req.body.saveCode !== ""){
       console.log("req body from node " + JSON.stringify(req.body.saveCode))
       let codeData = req.body.saveCode;
       
@@ -886,11 +886,11 @@ router.post('/ShowData', function (req, res) {
      throw err;
   }
 });
-router.post('/GDAcessToken', function (req, res)
+router.post('/GDAcessToken', (req, res) =>
 {
   console.log('GDAcessToken called ');
   try {
-   if(req.body.accessTokenDg !== "undefined" || req.body.accessTokenDg !== null || req.body.accessTokenDg !== ""){
+   if(req.body.accessTokenDg !== undefined || req.body.accessTokenDg !== null || req.body.accessTokenDg !== ""){
     let svAccess = req.body.accessTokenDg;
     
         saveGDAccessToken = svAccess;
@@ -903,11 +903,11 @@ router.post('/GDAcessToken', function (req, res)
      throw err;
   }
 });
-router.get('/UploadGd', function (req, res)
+router.get('/UploadGd', (req, res) =>
 {
   try {
-    if(downloadedFileName !== "" || downloadedFileName != "undefined" || downloadedFileName !== null
-    || saveGDAccessToken !== "" || saveGDAccessToken != "undefined" || saveGDAccessToken !== null){
+    if(downloadedFileName !== "" || downloadedFileName != undefined || downloadedFileName !== null
+    || saveGDAccessToken !== "" || saveGDAccessToken != undefined || saveGDAccessToken !== null){
       
       console.log("downloadedFileName is " + downloadedFileName);
         setTimeout(async () => {
@@ -955,11 +955,11 @@ router.get('/UploadGd', function (req, res)
     throw error;
   }
 });
-router.post('/UploadGdLocal', function (req, res)
+router.post('/UploadGdLocal', (req, res) =>
 {
   try {
-    if(req.body.fileName !== "undefined" || req.body.fileName !== null || req.body.fileName !== ""
-    || saveGDAccessToken !== "undefined" || saveGDAccessToken !== null || saveGDAccessToken !== ""){
+    if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""
+    || saveGDAccessToken !== undefined || saveGDAccessToken !== null || saveGDAccessToken !== ""){
       
       let svAccess = saveGDAccessToken
       let savefileId = '';
@@ -1008,8 +1008,8 @@ router.post('/UploadGdLocal', function (req, res)
 router.get('/GDUpdateLocalFile' , (req, res) => {
   console.log("GDUpdateLocalFile called ");
   try {
-    if(sendToGd !== "undefined" || sendToGd !== null || sendToGd !== ""
-     || saveGDAccessToken !== "undefined" || saveGDAccessToken !== null || saveGDAccessToken !== ""){
+    if(sendToGd !== undefined || sendToGd !== null || sendToGd !== ""
+     || saveGDAccessToken !== undefined || saveGDAccessToken !== null || saveGDAccessToken !== ""){
       
       console.log("saveGDAccessToken from GDUpdateFile " + saveGDAccessToken);
       let svAccess = saveGDAccessToken;
@@ -1041,8 +1041,8 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
  router.get('/GDUpdateFile' , (req, res) => {
    console.log("GDUpdateFile called " );
    try {
-     if(downloadedFileName !== "undefined" || downloadedFileName !== null || downloadedFileName !== ""
-     || saveGDAccessToken !== "undefined" || saveGDAccessToken !== null || saveGDAccessToken !== ""){
+     if(downloadedFileName !== undefined || downloadedFileName !== null || downloadedFileName !== ""
+     || saveGDAccessToken !== undefined || saveGDAccessToken !== null || saveGDAccessToken !== ""){
       
       console.log("saveGDAccessToken from GDUpdateFile " + saveGDAccessToken)
       console.log("storeLastPart is " + downloadedFileName);
@@ -1072,12 +1072,12 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
    }  
   });
- router.get('/DPUpload', function (req, res)
+ router.get('/DPUpload', (req, res) =>
 {
   console.log("DpUpload called ");
   try {
-    if(downloadedFileName !== "undefined" || downloadedFileName !== null || downloadedFileName !== ""
-    || sendToAngularAccessToken !== "undefined" || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
+    if(downloadedFileName !== undefined || downloadedFileName !== null || downloadedFileName !== ""
+    || sendToAngularAccessToken !== undefined || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
       setTimeout(async () => {
         let moveFileResule = await tpMoveFilestoAllFiles(downloadedFileName);
         console.log("moveFileResule " + moveFileResule);
@@ -1128,12 +1128,12 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
   }
 });
-router.post('/DPUploadLocal', function (req, res)
+router.post('/DPUploadLocal', (req, res) =>
 {
   console.log("DpUploadLocal called ");
   try {
-    if(req.body.fileName !== "undefined" || req.body.fileName !== null || req.body.fileName !== ""
-    || sendToAngularAccessToken !== "undefined" || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
+    if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""
+    || sendToAngularAccessToken !== undefined || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
       
       let gth = sendToAngularAccessToken;
       console.log("gth is " + gth)
@@ -1186,7 +1186,7 @@ router.post('/DpPath', function (req, res)
 {
   console.log("DpPath called"); 
   try {
-    if(req.body.dpGetFPath !== "undefined" || req.body.dpGetFPath !== "" || req.body.dpGetFPath !== null){
+    if(req.body.dpGetFPath !== undefined || req.body.dpGetFPath !== "" || req.body.dpGetFPath !== null){
       
       let saveDpFilePath = req.body.dpGetFPath;
       getDpFilePath = saveDpFilePath;
@@ -1200,12 +1200,12 @@ router.post('/DpPath', function (req, res)
   }
   
 });
-router.get('/DPDownload', async function (req, res)
+router.get('/DPDownload', async (req, res) =>
 {
   console.log("DPDownload called");
   try {
-    if(getDpFilePath !== "undefined" || getDpFilePath !== null || getDpFilePath !== ""
-    || sendToAngularAccessToken !== "undefined" || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
+    if(getDpFilePath !== undefined || getDpFilePath !== null || getDpFilePath !== ""
+    || sendToAngularAccessToken !== undefined || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
       
       console.log("getDPPath from DPDownload is " + getDpFilePath );
       let gth = sendToAngularAccessToken;
@@ -1248,12 +1248,12 @@ router.get('/DPDownload', async function (req, res)
     throw error;
   }   
 });
-router.get('/DPDownloadLocal', async function (req, res)
+router.get('/DPDownloadLocal', async (req, res) =>
 {
   console.log("DPDownloadLocal called");
   try {
-    if(getDpFilePath !== "undefined" || getDpFilePath !== null || getDpFilePath !== ""
-    || sendToAngularAccessToken !== "undefined" || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
+    if(getDpFilePath !== undefined || getDpFilePath !== null || getDpFilePath !== ""
+    || sendToAngularAccessToken !== undefined || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
       
       console.log("getDPPath from DPDownload is " + getDpFilePath )
       let gth = sendToAngularAccessToken;
@@ -1294,11 +1294,11 @@ router.get('/DPDownloadLocal', async function (req, res)
     throw error;
   } 
 });
-router.post('/GdId', function (req, res) {
+router.post('/GdId', (req, res) => {
   console.log("GdId called ");
   try {
-   if(req.body.gdSaveId !== 'undefined' || req.body.gdSaveId !== null || req.body.gdSaveId !== ""
-      || req.body.gdSaveFileName !== 'undefined' || req.body.gdSaveFileName !== null || req.body.gdSaveFileName !== ""){
+   if(req.body.gdSaveId !== undefined || req.body.gdSaveId !== null || req.body.gdSaveId !== ""
+      || req.body.gdSaveFileName !== undefined || req.body.gdSaveFileName !== null || req.body.gdSaveFileName !== ""){
         
         Gdrecivedid = req.body.gdSaveId;
         GdrecivedName = req.body.gdSaveFileName;
@@ -1312,13 +1312,13 @@ router.post('/GdId', function (req, res) {
       throw error;
   }
 });
-router.get('/DownloadGd', function (req, res)
+router.get('/DownloadGd', (req, res) =>
 {
   console.log("DownloadGd called ");
   try {
-    if(GdrecivedName !== 'undefined' || GdrecivedName !== null || GdrecivedName !== ""
-    || Gdrecivedid !== 'undefined' || Gdrecivedid !== null || Gdrecivedid !== ""
-    || saveGDAccessToken !== 'undefined' || saveGDAccessToken !== null || saveGDAccessToken !== ""){
+    if(GdrecivedName !== undefined || GdrecivedName !== null || GdrecivedName !== ""
+    || Gdrecivedid !== undefined || Gdrecivedid !== null || Gdrecivedid !== ""
+    || saveGDAccessToken !== undefined || saveGDAccessToken !== null || saveGDAccessToken !== ""){
       
       console.log("GdId from node " + Gdrecivedid);
       console.log("GdrecivedName from node " + GdrecivedName);
@@ -1347,13 +1347,13 @@ router.get('/DownloadGd', function (req, res)
       throw error;
   }
 });
-router.get('/DownloadGdLocal', function (req, res)
+router.get('/DownloadGdLocal', (req, res) =>
 {
   console.log("DownloadGdLocal called ");
   try {
-    if(GdrecivedName !== 'undefined' || GdrecivedName !== null || GdrecivedName !== ""
-    || Gdrecivedid !== 'undefined' || Gdrecivedid !== null || Gdrecivedid !== ""
-    || saveGDAccessToken !== 'undefined' || saveGDAccessToken !== null || saveGDAccessToken !== ""){
+    if(GdrecivedName !== undefined || GdrecivedName !== null || GdrecivedName !== ""
+    || Gdrecivedid !== undefined || Gdrecivedid !== null || Gdrecivedid !== ""
+    || saveGDAccessToken !== undefined || saveGDAccessToken !== null || saveGDAccessToken !== ""){
       
       console.log("GdId from node " + Gdrecivedid)
       console.log("GdrecivedName from node " + GdrecivedName)
@@ -1383,11 +1383,11 @@ router.get('/DownloadGdLocal', function (req, res)
       throw error;
   } 
 });
-router.post('/BoxCode', function (req,res) {
+router.post('/BoxCode', (req,res) => {
   console.log("BoxCode called");
  
   try {
-    if(req.body.saveCode !== 'undefined' || req.body.saveCode !== null || req.body.saveCode !== ""){
+    if(req.body.saveCode !== undefined || req.body.saveCode !== null || req.body.saveCode !== ""){
       holdBoxCode = req.body.saveCode;
       console.log("holdBoxCode is " + holdBoxCode);
       res.status(200).json({"issuedCode":`the code is received ${holdBoxCode}`});
@@ -1402,7 +1402,7 @@ router.post('/BoxCode', function (req,res) {
 router.get('/BoxOauth', (req,res) => {
   console.log("BoxOauth called");
   try {
-    if(holdBoxCode !== 'undefined' || holdBoxCode !== null || holdBoxCode !== ""){
+    if(holdBoxCode !== undefined || holdBoxCode !== null || holdBoxCode !== ""){
       
       console.log("holdBoxCode from BoxOath " + holdBoxCode);
       return child.exec(
@@ -1436,7 +1436,7 @@ router.get('/BoxOauth', (req,res) => {
 router.get('/BoxClientEmail', (req,res) => {
   console.log("BoxClientEmail called");
   try {
-    if(boxAccessToken !== 'undefined' || boxAccessToken !== null || boxAccessToken !== ""){
+    if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
       return child.exec(
         `curl GET "https://api.box.com/2.0/users/me" \
         -H "Authorization: Bearer ${boxAccessToken}"`
@@ -1467,7 +1467,7 @@ router.get('/BoxClientEmail', (req,res) => {
 router.get('/BoxGetFile', (req,res) => {
   console.log("BoxGetFile called");
   try {
-    if(boxAccessToken !== 'undefined' || boxAccessToken !== null || boxAccessToken !== ""){
+    if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
       return child.exec(
         `curl -X GET "https://api.box.com/2.0/files/12345" \
         -H "Authorization: Bearer ${boxAccessToken}"`,
@@ -1493,7 +1493,7 @@ router.get('/BoxGetFile', (req,res) => {
 router.get('/BoxGetFolders', (req,res) => {
   console.log("BoxGetFolders called");
   try {
-    if(boxAccessToken !== 'undefined' || boxAccessToken !== null || boxAccessToken !== ""){
+    if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
       return child.exec(
         `curl GET "https://api.box.com/2.0/folders/0" \
          -H "Authorization: Bearer ${boxAccessToken}"`,
@@ -1518,9 +1518,9 @@ router.get('/BoxGetFolders', (req,res) => {
 router.post('/BxDownload', (req,res) => {
   console.log("BxDownload called");
   try {
-    if(boxAccessToken !== 'undefined' || boxAccessToken !== null || boxAccessToken !== ""
-    || req.body.boxFileId !== 'undefined' || req.body.boxFileId !== null || req.body.boxFileId !== ""
-    || req.body.boxFileName !== 'undefined' || req.body.boxFileName !== null || req.body.boxFileName !== ""){
+    if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""
+    || req.body.boxFileId !== undefined || req.body.boxFileId !== null || req.body.boxFileId !== ""
+    || req.body.boxFileName !== undefined || req.body.boxFileName !== null || req.body.boxFileName !== ""){
       
       let boxRetreivedId = req.body.boxFileId;
       boxRetreivedName = req.body.boxFileName;
@@ -1552,8 +1552,8 @@ router.post('/BxUpload', (req,res) => {
 
   console.log("BxUpload called");
   try {
-    if(boxAccessToken !== 'undefined' || boxAccessToken !== null || boxAccessToken !== ""
-    || req.body.boxUpFileName !== 'undefined' || req.body.boxUpFileName !== null || req.body.boxUpFileName !== ""){
+    if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""
+    || req.body.boxUpFileName !== undefined || req.body.boxUpFileName !== null || req.body.boxUpFileName !== ""){
       
       let boxUploadFileName = req.body.boxUpFileName;
       console.log("boxUploadFileName from bxUpload " + boxUploadFileName);
@@ -1602,12 +1602,12 @@ router.post('/BxLocalUpload', (req,res) => {
 
   console.log("BxLocalUpload called");
   try {
-    if(boxAccessToken !== 'undefined' || boxAccessToken !== null || boxAccessToken !== ""
-    || req.body.boxUpFileName !== 'undefined' || req.body.boxUpFileName !== null || req.body.boxUpFileName !== ""){
+    if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""
+    || req.body.boxUpFileName !== undefined || req.body.boxUpFileName !== null || req.body.boxUpFileName !== ""){
       
       let boxUploadFileName = req.body.boxUpFileName;
       console.log("boxUploadFileName from bxLocalUpload " + boxUploadFileName);
-      
+
       setTimeout(( ) => {
         let boxConcatFile = '';
         fs.readdirSync( folder ).forEach( file => {
@@ -1649,7 +1649,7 @@ router.post('/OdAccessToken', (req,res) => {
   res.header('Access-Control-Allow-Origin', '*');
  
   try { 
-    if(req.body.odCode !== 'undefined' || req.body.odCode !== null || req.body.odCode !== ""){
+    if(req.body.odCode !== undefined || req.body.odCode !== null || req.body.odCode !== ""){
       odAccessToken = req.body.odCode;
       console.log("OdAccessToken is " + odAccessToken);
       res.status(200).json({"OdAccessTokenMSG": "OdAccessToken_Received", "OdAccessToken": odAccessToken});
@@ -1664,7 +1664,7 @@ router.post('/OdAccessToken', (req,res) => {
 router.get('/OdProfile', (req,res) => {
   console.log("OdProfile called");
   try {
-    if(odAccessToken !== 'undefined' || odAccessToken !== null || odAccessToken !== ""){
+    if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""){
       return child.exec(
         `curl GET "https://graph.microsoft.com/v1.0/me" \
          -H "Authorization: Bearer ${odAccessToken}"`,
@@ -1696,7 +1696,7 @@ router.get('/OdProfile', (req,res) => {
 router.get('/OdGetFiles', (req,res) => {
   console.log("OdGetFiles called");
   try {
-    if(odAccessToken !== 'undefined' || odAccessToken !== null || odAccessToken !== ""){
+    if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""){
       return child.exec(
         `curl GET "https://graph.microsoft.com/v1.0/me/drive/root/children" \
          -H "Authorization: Bearer ${odAccessToken}"`,
@@ -1721,9 +1721,9 @@ router.get('/OdGetFiles', (req,res) => {
 router.post('/OdDownload', (req,res) => {
   console.log("OdDownload called");
   try {
-    if(odAccessToken !== 'undefined' || odAccessToken !== null || odAccessToken !== ""
-    || req.body.odFileUrl !== 'undefined' || req.body.odFileUrl !== null || req.body.odFileUrl !== ""
-    || req.body.odFileName !== 'undefined' || req.body.odFileName !== null || req.body.odFileName !== ""){
+    if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
+    || req.body.odFileUrl !== undefined || req.body.odFileUrl !== null || req.body.odFileUrl !== ""
+    || req.body.odFileName !== undefined || req.body.odFileName !== null || req.body.odFileName !== ""){
       
       let odFileUrl = req.body.odFileUrl;
       let odFileName = req.body.odFileName;
@@ -1756,8 +1756,8 @@ router.post('/OdDownload', (req,res) => {
 router.post('/OdUpload', (req,res) => {
   console.log("OdUpload called");
   try {
-    if(odAccessToken !== 'undefined' || odAccessToken !== null || odAccessToken !== ""
-    || req.body.odUpFileName !== 'undefined' || req.body.odUpFileName !== null || req.body.odUpFileName !== ""){
+    if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
+    || req.body.odUpFileName !== undefined || req.body.odUpFileName !== null || req.body.odUpFileName !== ""){
        
       let odUploadFileName = req.body.odUpFileName;
       console.log("odUpFileName is " + odUploadFileName);
@@ -1807,8 +1807,8 @@ router.post('/OdUpload', (req,res) => {
 router.post('/OdLocalUpload', (req,res) => {
   console.log("OdLocalUpload called");
   try {
-    if(odAccessToken !== 'undefined' || odAccessToken !== null || odAccessToken !== ""
-    || req.body.odUpFileName !== 'undefined' || req.body.odUpFileName !== null || req.body.odUpFileName !== ""){
+    if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
+    || req.body.odUpFileName !== undefined || req.body.odUpFileName !== null || req.body.odUpFileName !== ""){
       
       let odUploadFileName = req.body.odUpFileName;
       console.log("odLocalUpFileName is " + odUploadFileName);
@@ -1863,7 +1863,7 @@ function toDeleteAllFiles(){
 }
 async function tpMoveFilestoAllFiles(filename){
  try {
-  if(filename !== 'undefined' || filename !== null || filename !== ""){
+  if(filename !== undefined || filename !== null || filename !== ""){
     
     return await new Promise((resolve,reject) => {
       console.log("tpMoveFilestoAllFiles called")
@@ -1888,13 +1888,14 @@ async function tpMoveFilestoAllFiles(filename){
     }
  } catch (error) {
     console.log(error);
+    reject(error);
     throw error;
  }
 }
 async function tpMoveFiletoLocalPath(filename,flPath){
   try {
-    if(filename !== 'undefined' || filename !== null || filename !== ""
-    || flPath !== 'undefined' || flPath !== null || flPath !== ""){
+    if(filename !== undefined || filename !== null || filename !== ""
+    || flPath !== undefined || flPath !== null || flPath !== ""){
       
       return await new Promise((resolve,reject) => {
         console.log("tpMoveFiletoLocalPath called")
@@ -1918,13 +1919,14 @@ async function tpMoveFiletoLocalPath(filename,flPath){
     }
   } catch (error) {
     console.log(error);
+    reject(error);
     throw error;
   } 
 }
 async function tpMoveFilefromLocalPath(filename,flPath){
   try {
-    if(filename !== 'undefined' || filename !== null || filename !== ""
-    || flPath !== 'undefined' || flPath !== null || flPath !== ""){
+    if(filename !== undefined || filename !== null || filename !== ""
+    || flPath !== undefined || flPath !== null || flPath !== ""){
      
       return await new Promise(async(resolve,reject) => {
         console.log("tpMoveFilefromLocalPath called")
@@ -1960,14 +1962,15 @@ async function tpMoveFilefromLocalPath(filename,flPath){
     }
   } catch (error) {
     console.log(error);
+    reject(error);
     throw error;
   }
   
 }
 async function findSpecialPath(arrayOne,arrayTwo){
   try {
-    if(arrayOne === undefined || arrayOne.length == 0
-      || arrayTwo === undefined || arrayTwo.length == 0){
+    if(arrayOne !== undefined || arrayOne.length !== 0
+      || arrayTwo !== undefined || arrayTwo.length !== 0){
       
         return await new Promise((resolve,reject) => {
         let findCommonPath = '';
@@ -1984,6 +1987,7 @@ async function findSpecialPath(arrayOne,arrayTwo){
     }
   } catch (error) {
     console.log(error);
+    reject(error);
     throw error;
   }
 }

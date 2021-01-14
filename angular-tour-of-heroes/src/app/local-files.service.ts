@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { ErrorHandelersService } from './error-handelers.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalFilesService {
 
-  constructor() { }
+  constructor(private errorService:ErrorHandelersService) { }
 
   async sendLfFilePath(){
     let localFilePath:string = localStorage.getItem("localFilePath");
@@ -28,8 +29,11 @@ export class LocalFilesService {
           let msgDisplay:any = response[Object.keys(response)[1]];
           resolve(msgDisplay)
         })
-        .catch((err) => console.log(err));
-    })
+        .catch((err) => {
+          this.errorService.handleError(err);
+          reject(err);
+        });
+    });
    }
    async lfDownlodToLocalPath(){
     return await new Promise((resolve,reject) => {
@@ -48,30 +52,45 @@ export class LocalFilesService {
           .then((result) => {
             let holdResult:any = result[Object.keys(result)[1]];
             resolve(holdResult);
+        })
+        .catch(err => {
+          this.errorService.handleError(err);
+          reject(err);
         });  
-    })
+    });
   }
   async lfFromLocalPathToServer(lfTrs:string){
-    return await new Promise((resolve,reject) => {
-      let myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/json');
-       
-        let requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: JSON.stringify({
-            lfTranfer: lfTrs
-          })
-        };
-        fetch('/api/LfileServer', requestOptions)
-          .then((response) => {
-            return response.json();
-          })
-          .then((result) => {
-            let holdResult:any = result[Object.keys(result)[1]];
-            resolve(holdResult);
-        });  
-    })
+    try {
+      if(lfTrs !== undefined || lfTrs !== null || lfTrs !== ""){
+        
+        return await new Promise((resolve,reject) => {
+          let myHeaders = new Headers();
+            myHeaders.append('Content-Type', 'application/json');
+           
+            let requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: JSON.stringify({
+                lfTranfer: lfTrs
+              })
+            };
+            fetch('/api/LfileServer', requestOptions)
+              .then((response) => {
+                return response.json();
+              })
+              .then((result) => {
+                let holdResult:any = result[Object.keys(result)[1]];
+                resolve(holdResult);
+            })
+            .catch(err => {
+              this.errorService.handleError(err);
+              reject(err);
+            });  
+        });
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }  
   }
 
 }

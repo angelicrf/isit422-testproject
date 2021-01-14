@@ -17,7 +17,7 @@ export class GdCloudService {
     private errorService:ErrorHandelersService) {
     this.gdkh.holdDataClient = holdClientEmail;
     this.gdkh.holdFilesClient = holdClientFiles;
-    console.log("gdkh.holdDataClient " + this.gdkh.holdDataClient)
+    console.log("gdkh.holdDataClient " + this.gdkh.holdDataClient);
    }
  
   async googleImplementCallBack(){
@@ -52,7 +52,11 @@ export class GdCloudService {
           return resolve(holdClientEmail)
          })
        })
-     })
+       .catch((err) => {
+         this.errorService.handleError(err);
+         return reject(err);
+        });
+     });
    }) 
   }
   async listGoogleDriveFiles() {
@@ -68,9 +72,6 @@ export class GdCloudService {
         console.log('listGoogleDriveFiles called2')
         let holdGdClientFiles = res.result.files;
             for (let index = 0; index < holdGdClientFiles.length; index++) { 
-            /*   if(holdGdClientFiles[index].mimeType == "application/octet-stream"){
-                allClientFiles.push((holdGdClientFiles[index].name + '.bin'));
-              }else */
                {
                  let holdDpObj = {};
                  holdDpObj["gdClId"] = holdGdClientFiles[index].id;
@@ -78,11 +79,13 @@ export class GdCloudService {
                  allClientFiles[index] = holdDpObj;    
                }  
             }  
-              //console.log('files from gd-cloud Services ' + JSON.stringify(allClientFiles))
             return resolve(allClientFiles);
           })
-        .catch((err) => console.log('err from listGoogleDriveFiles ' + err))
-     }) 
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+        });
+     }); 
   }
   async gDUploadFromNode() {
     return await new Promise((resolve,reject) => {
@@ -96,7 +99,10 @@ export class GdCloudService {
         .then((response) => {
           console.log(response)
           return resolve(response) })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+         });
     })
   }
  async gDUpdateFileName() {
@@ -111,27 +117,41 @@ export class GdCloudService {
       .then((response) => {
          console.log(response) 
         return (resolve(response))})
-      .catch((err) => console.log(err));
-   })
+      .catch((err) => {
+        this.errorService.handleError(err);
+        return reject(err);
+       });
+   });
   
   }
   async gDUploadLocal(fileName) {
-    return await new Promise((resolve,reject) => {
-      fetch('/api/UploadGdLocal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          fileName: fileName
-        })
-      })
-        .then((response) => {
-          console.log(response)
-          return resolve(response) })
-        .catch((err) => console.log(err));
-    })
+    try {
+      if(fileName !== undefined || fileName !== null || fileName !== ""){
+        
+        return await new Promise((resolve,reject) => {
+          fetch('/api/UploadGdLocal', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({
+              fileName: fileName
+            })
+          })
+            .then((response) => {
+              console.log(response)
+              return resolve(response) })
+            .catch((err) => {
+              this.errorService.handleError(err);
+              return reject(err);
+             });
+        });
+      }
+    } catch (error) {
+       this.errorService.handleError(error);
+    }
+    
   }
   async gDUpdateLocalFileName() {
     return await new Promise((resolve,reject) => {
@@ -145,39 +165,53 @@ export class GdCloudService {
        .then((response) => {
           console.log(response) 
          return (resolve(response))})
-       .catch((err) => console.log(err));
-    })
+       .catch((err) => {
+        this.errorService.handleError(err);
+        return reject(err);
+       });
+    });
    
    }
-  //Take care of the fileId
   async getGdId(fileId:string,fileGdName:string){
-    console.log("fileGdName from gd-service " + fileGdName);
-    return new Promise((resolve, reject) => {
-      let myHeaders = new Headers();
-          myHeaders.append('Accept', '/');
-          myHeaders.append('Origin', 'x-requested-with');
-          myHeaders.append('Content-Type', 'application/json');
+    try {
+      if(fileId !== undefined || fileId !== null || fileId !== ""
+      || fileGdName !== undefined || fileGdName !== null || fileGdName !== ""){
+
+        console.log("fileGdName from gd-service " + fileGdName);
+        return new Promise((resolve, reject) => {
+          let myHeaders = new Headers();
+              myHeaders.append('Accept', '/');
+              myHeaders.append('Origin', 'x-requested-with');
+              myHeaders.append('Content-Type', 'application/json');
+        
+              let raw = JSON.stringify({
+                title: 'codefromAngular',
+                gdSaveId: fileId,
+                gdSaveFileName: fileGdName
+              });
+              let requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body:raw
+              }; 
+              fetch(
+                '/api/GdId',
+                requestOptions
+              )
+                .then((response) =>
+                  {return response.text()}
+                      )
+                .then(response => {return resolve(response)})
+                .catch((err) => {
+                  this.errorService.handleError(err);
+                  return reject(err);
+                })
+        });
+      }
+    } catch (error) {
+      this.errorService.handleError(error);
+    }
     
-          let raw = JSON.stringify({
-            title: 'codefromAngular',
-            gdSaveId: fileId,
-            gdSaveFileName: fileGdName
-          });
-          let requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body:raw
-          }; 
-          fetch(
-            '/api/GdId',
-            requestOptions
-          )
-            .then((response) =>
-              {return response.text()}
-                  )//verify on this
-            .then(response => {return resolve(response)})
-            .catch((err) => console.log('Error from GDId ' + err))
-    })
   }
  async gDDownloadFromNode() {
     return await new Promise((resolve,reject) => {
@@ -191,7 +225,10 @@ export class GdCloudService {
         .then((response) => {
           console.log(response)
           return resolve(response) })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+        });
     })  
   }
   async gDDownloadLocalFromNode() {
@@ -206,55 +243,78 @@ export class GdCloudService {
         .then((response) => {
           console.log(response)
           return resolve(response) })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.errorService.handleError(err);
+          return reject(err);
+        });
     })  
   }
 }
 
 function sendGdClientInfo(getGdName,getgdEmail,getUserMongoId){
-  let gdClientValue = JSON.stringify({
-    gdname: getGdName,
-    gdemail: getgdEmail,
-    usermongoid: getUserMongoId, 
-  })
-  let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-  return fetch('/api/MCGdClient',{
-    method: 'POST',
-    headers: myHeaders,
-    body: gdClientValue
-  })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(err => console.log(err))
+  try {
+    if(getGdName !== undefined || getGdName !== null || getGdName !== ""
+    || getgdEmail !== undefined || getgdEmail !== null || getgdEmail !== ""
+    || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== ""){
+      
+      let gdClientValue = JSON.stringify({
+        gdname: getGdName,
+        gdemail: getgdEmail,
+        usermongoid: getUserMongoId, 
+      })
+      let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+      return fetch('/api/MCGdClient',{
+        method: 'POST',
+        headers: myHeaders,
+        body: gdClientValue
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(err => this.errorService.handleError(err));
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
 }
 function  accessTokenGoogleDrive(saveDg:string){
   console.log('I am in features GDAccessToken Post ' + saveDg)
-  return new Promise((resolve, reject) => {
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-
-    let raw = JSON.stringify({
-      title: 'accessTokenfromAngular',
-      accessTokenDg: saveDg
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-    };
-
-    fetch('/api/GDAcessToken', requestOptions)
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        console.log('the acces_token is ', result[Object.keys(result)[0]]);
-        let resultAccessToken = result[Object.keys(result)[0]];
-        resolve(resultAccessToken);
-      })
-      .catch((error) => console.log('error', error));
-  });
+  try {
+    if(saveDg !== undefined || saveDg !== null || saveDg !== ""){
+      
+      return new Promise((resolve, reject) => {
+        let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+    
+        let raw = JSON.stringify({
+          title: 'accessTokenfromAngular',
+          accessTokenDg: saveDg
+        });
+    
+        let requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+        };
+    
+        fetch('/api/GDAcessToken', requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            console.log('the acces_token is ', result[Object.keys(result)[0]]);
+            let resultAccessToken = result[Object.keys(result)[0]];
+            resolve(resultAccessToken);
+          })
+          .catch((error) => {
+            this.errorService.handleError(error);
+            return reject(error);
+          });
+      });
+    }
+  } catch (error) {
+    this.errorService.handleError(error);
+  }
+  
 }
 
