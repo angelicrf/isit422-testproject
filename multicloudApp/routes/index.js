@@ -22,6 +22,7 @@ let boxFile = {};
 let boxFolders = {};
 let odFiles = {};
 let localFile;
+let fileSize = 0;
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
 const child = require('child_process');
@@ -1078,6 +1079,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
   try {
     if(downloadedFileName !== undefined || downloadedFileName !== null || downloadedFileName !== ""
     || sendToAngularAccessToken !== undefined || sendToAngularAccessToken !== null || sendToAngularAccessToken !== ""){
+      
       setTimeout(async () => {
         let moveFileResule = await tpMoveFilestoAllFiles(downloadedFileName);
         console.log("moveFileResule " + moveFileResule);
@@ -1092,15 +1094,21 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
       let concatFile = '';
     
       if(saveAccess.charAt(0) == '"' || saveAccess.charAt(saveAccess.length - 1) == '"'){
-        setTimeout(( ) => {
+        setTimeout(async( ) => {
           fs.readdirSync( folder ).forEach( file => {
-            console.log("inside the folderOne ")
+            
+            console.log("inside the folderOne ");
+            fileSize = bytesToSize(file.size);
+            console.log("fileSize is " + fileSize);
+            
             const extname = path.extname( file );
             const filename = path.basename( file, extname );
             const absolutePath = path.resolve( folder, file );
-            concatFile = (filename + extname);   
+            concatFile = (filename + extname);
+              
             }); 
-            console.log("concatFile outside " + concatFile) 
+            if(fileSize < 150){
+            console.log("concatFile outside " + concatFile); 
             child.exec(
               `curl -X POST https://content.dropboxapi.com/2/files/upload \
                -H 'Authorization: Bearer ${saveAccess.substr(1,saveAccess.length - 3)}' \
@@ -1118,8 +1126,15 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
                 console.log("the stdOut is " + JSON.stringify(stdout)); 
                 toDeleteAllFiles()
                 res.status(200).send("Response from Node: file uploaded to Dropbox");   
-              })
-        },35000);  
+              });
+            }
+            else{
+              let holdDpSessionId = await dpUploadSessionStart();
+              await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile);
+              await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile);
+            }
+        },35000);
+       
       }
     }
   } catch (error) {
@@ -1990,6 +2005,86 @@ async function findSpecialPath(arrayOne,arrayTwo){
     reject(error);
     throw error;
   }
+}
+function bytesToSize(bytes) {
+  let convertedSize = (bytes / (1024*1024)).toFixed(2);
+  console.log(convertedSize);
+  return convertedSize;
+}
+async function dpUploadSessionStart(dpAccessToken,dpFile){
+  console.log("dpUploadSessionStart called ");
+  return await new Promise((resolve,reject) => {
+    return child.exec(
+      `curl -X POST https://content.dropboxapi.com/2/files/upload_session/start \
+      --header "Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)} " \
+      --header "Dropbox-API-Arg: {"close": false}" \
+      --header "Content-Type: application/octet-stream" \
+      --data-binary @./routes/AllFiles/${dpFile}`,
+      (err,stdout,stderr) => {
+        if(err){
+          console.log("err from dpLargeFileUpload " + err);
+          res.status(500).send(err);
+          reject(err);
+          throw err;
+        }
+        console.log("the dpLargeFile stdout is " + stdout);
+        console.log("the dpLargeFile stderr is " + stderr);
+        
+        res.status(200).json({"dpLargeFileMSG": "dpLargeFile_LocalUploaded", "dpLargeFileUpload": stdout.toString()});
+        resolve(stdout.toString());
+      });
+});
+}
+async function dpUploadLargeFileAppend(dpAccessToken,sessionId,dpFile){
+  console.log("dpUploadLargeFileAppend called ");
+  return await new Promise((resolve,reject) => {
+
+    return child.exec(
+      `curl -X POST https://content.dropboxapi.com/2/files/upload_session/append_v2 \
+      --header "Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)} " \
+      --header "Dropbox-API-Arg: {"cursor": {"session_id": ${sessionId},"offset": 0},"close": false}" \
+      --header "Content-Type: application/octet-stream" \
+      --data-binary @./routes/AllFiles/${dpFile}`,
+      (err,stdout,stderr) => {
+        if(err){
+          console.log("err from dpUploadLargeFileAppend " + err);
+          res.status(500).send(err);
+          reject(err);
+          throw err;
+        }
+        console.log("the dpUploadLargeFileAppend stdout is " + stdout);
+        console.log("the dpUploadLargeFileAppend stderr is " + stderr);
+        
+        res.status(200).json({"dpUploadLargeFileAppendMSG": "dpLargeFile_LocalUpload Appended", "dpLargeFileUploadAppend": stdout.toString()});
+        resolve(stdout.toString());
+      });
+  });
+}
+async function dpUploadSessionFinish(dpAccessToken,sessionId,dpFile){
+  console.log("dpUploadSessionFinish called ");
+
+  return await new Promise((resolve,reject) => {
+   /*  */
+    return child.exec(
+      `curl -X POST https://content.dropboxapi.com/2/files/upload_session/finish \
+      --header "Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}" \
+      --header "Dropbox-API-Arg: {"cursor": {"session_id": ${sessionId},"offset": 0},"commit": {"path": "/${dpFile}","mode": "add","autorename": true,"mute": false,"strict_conflict": false}}" \
+      --header "Content-Type: application/octet-stream" \
+      --data-binary @./routes/AllFiles/${dpFile}`,
+      (err,stdout,stderr) => {
+        if(err){
+          console.log("err from dpUploadSessionFinish " + err);
+          res.status(500).send(err);
+          reject(err);
+          throw err;
+        }
+        console.log("the dpUploadSessionFinish stdout is " + stdout);
+        console.log("the dpUploadSessionFinish stderr is " + stderr);
+        
+        res.status(200).json({"dpUploadSessionFinishMSG": "dpLargeFile_LocalUpload Finished", "dpUploadSessionFinish": stdout.toString()});
+        resolve(stdout.toString());
+      });
+  });
 }
 function User(name,lastname,username,email,password){
   this.name = name,
