@@ -1100,16 +1100,13 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
           fs.readdirSync( folder ).forEach( file => {
             
             console.log("inside the folderOne ");
-            fileSize = bytesToSize(file.size);
-            console.log("fileSize is " + fileSize);
-            
             const extname = path.extname( file );
             const filename = path.basename( file, extname );
             const absolutePath = path.resolve( folder, file );
             concatFile = (filename + extname);
               
             }); 
-            if(fileSize < 5){
+            if(bytesToSize(concatFile) < 5 && bytesToSize(concatFile) !== NaN){
             console.log("concatFile outside " + concatFile); 
             child.exec(
               `curl -X POST https://content.dropboxapi.com/2/files/upload \
@@ -1126,20 +1123,20 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
                 sendToGd = stdout; 
                 console.log("the stdErr is " + stderr);            
                 console.log("the stdOut is " + JSON.stringify(stdout)); 
-                toDeleteAllFiles()
+                toDeleteAllFiles();
                 res.status(200).send("Response from Node: file uploaded to Dropbox");   
               });
             }
             else{
               console.log("inside the largeFiles ");
-              //5554547
-              let holdDpSessionId = await dpUploadSessionStart(saveAccess,concatFile);
-              console.log("holdDpSessionId is" + holdDpSessionId);
-              //await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile);
-              //await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile);
+              
+              await dpUploadSessionStart(saveAccess,concatFile);              let calcFileActualSize = await getFileSize(concatFile);
+              await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
+              await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
+              toDeleteAllFiles();  
+              res.status(200).send("Response from Node: large file uploaded to Dropbox"); 
             }
-        },35000);
-       
+        },35000);    
       }
     }
   } catch (error) {
@@ -1160,7 +1157,7 @@ router.post('/DPUploadLocal', (req, res) =>
       let modifyGth = (gth.split(" "));
       let saveAccess = (modifyGth[1]);
       let sendToGd = '';
-      let newId = uuidv4()
+      let newId = uuidv4();
       let concatFile = '';
     
       if(saveAccess.charAt(0) == '"' || saveAccess.charAt(saveAccess.length - 1) == '"'){
@@ -1168,16 +1165,14 @@ router.post('/DPUploadLocal', (req, res) =>
           fs.readdirSync( folder ).forEach( file => {
             if(file === req.body.fileName) {
                 console.log("inside the folderOne ");
-                //do research
                 const extname = path.extname( file );
                 const filename = path.basename( file, extname );
                 const absolutePath = path.resolve( folder, file );
                 concatFile = (filename + extname);
-                console.log("concatFile " + concatFile);
-                
+                console.log("concatFile " + concatFile);    
             }            
             });
-            if(bytesToSize(concatFile) < 5){ 
+            if(bytesToSize(concatFile) < 5 && bytesToSize(concatFile) !== NaN){ 
             console.log("concatFile outside " + concatFile) 
             child.exec(
               `curl -X POST https://content.dropboxapi.com/2/files/upload \
@@ -1194,18 +1189,18 @@ router.post('/DPUploadLocal', (req, res) =>
                 sendToGd = stdout; 
                 console.log("the stdErr is " + stderr)            
                 console.log("the stdOut is " + JSON.stringify(stdout)) 
-                toDeleteAllFiles()
-                res.status(200).send("Response from Node: file uploaded to Dropbox")   
+                toDeleteAllFiles();
+                res.status(200).send("Response from Node: local file uploaded to Dropbox");   
               });
             }else{
               console.log("inside the largeFiles ");
-              //5554547
+             
               await dpUploadSessionStart(saveAccess,concatFile);
-              console.log("holdDpSessionId is" + holdDpSessionId);
               let calcFileActualSize = await getFileSize(concatFile);
               await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
-              
+              toDeleteAllFiles();
+              res.status(200).send("Response from Node: large local file uploaded to Dropbox") ;  
             }
         },35000);  
       }
@@ -1884,7 +1879,17 @@ router.post('/OdLocalUpload', (req,res) => {
     throw error;
   }
 });
-
+//One drive large file upload
+//PUT https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/createUploadSession
+// get UploadUrl
+/* PUT UploadUrl
+Content-Length: 26
+Content-Range: bytes 0-25/totalFileSize */
+//get nextExpectedRanges
+/* PUT UploadUrl
+Content-Length: 21
+Content-Range: bytes [101-(totalFileSize - 1)]/totalFileSize */
+// [] == should be the same as nextExpectedRanges
 function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
    , (err, stdout, stderr) => {
@@ -2035,109 +2040,150 @@ async function getFileSize(fileName){
  
 }
 async function bytesToSize(fileName) {
-
-  let fileSizeResult = await getFileSize(fileName);
-  console.log("fileSizeResult " + fileSizeResult);
-  let convertedSize = (fileSizeResult / (1024*1024)).toFixed(2);
-  
-  console.log("convertedSize " + convertedSize);
-  return convertedSize;
+  try {
+      if(fileName !== undefined || fileName !== null || fileName !== ""){
+        
+        let fileSizeResult = await getFileSize(fileName);
+        console.log("fileSizeResult " + fileSizeResult);
+        let convertedSize = (fileSizeResult / (1024*1024)).toFixed(2);
+        
+        console.log("convertedSize " + convertedSize);
+        return convertedSize;
+      }          
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  } 
 }
 async function dpUploadSessionStart(dpAccessToken,dpFile){
   console.log("dpUploadSessionStart called ");
-  return await new Promise((resolve,reject) => {
-    let gth = sendToAngularAccessToken;
-    let modifyGth = (gth.split(" "));
-    let saveAccess = (modifyGth[1]);
-    console.log("saveAccess is " + saveAccess);
-
-    child.exec(
-      `curl -X POST https://content.dropboxapi.com/2/files/upload_session/start \
-      --header 'Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}' \
-      --header 'Dropbox-API-Arg: {"close": false}' \
-      --header 'Content-Type: application/octet-stream' \
-      --data-binary @./routes/AllFiles/${dpFile}`,
-      (err,stdout,stderr) => {
-        if(err){
-          console.log("err from dpLargeFileUpload " + err);
-          res.status(500).send(err);
-          reject(err);
-          throw err;
-        }
-        console.log("the dpLargeFile stdout is " + stdout );
-        console.log("the dpLargeFile stderr is " + stderr);
-        
-        dpHoldSessionId = stdout.split(':')[1];
-        console.log("dpHoldSessionId " + dpHoldSessionId);
-        mdDpHoldSessionId = dpHoldSessionId.substr(1,dpHoldSessionId.length -2);
-        console.log("mdDpHoldSessionId " + mdDpHoldSessionId);
-        holdDpSessionId = mdDpHoldSessionId;
-        
-        resolve(mdDpHoldSessionId.toString());
-      });
-});
+  try {
+    if(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== ""
+    || dpFile !== undefined || dpFile !== null || dpFile !== ""){
+      
+      return await new Promise((resolve,reject) => {
+        let gth = sendToAngularAccessToken;
+        let modifyGth = (gth.split(" "));
+        let saveAccess = (modifyGth[1]);
+        console.log("saveAccess is " + saveAccess);
+    
+        child.exec(
+          `curl -X POST https://content.dropboxapi.com/2/files/upload_session/start \
+          --header 'Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}' \
+          --header 'Dropbox-API-Arg: {"close": false}' \
+          --header 'Content-Type: application/octet-stream' \
+          --data-binary @./routes/AllFiles/${dpFile}`,
+          (err,stdout,stderr) => {
+            if(err){
+              console.log("err from dpLargeFileUpload " + err);
+              res.status(500).send(err);
+              reject(err);
+              throw err;
+            }
+            console.log("the dpLargeFile stdout is " + stdout );
+            console.log("the dpLargeFile stderr is " + stderr);
+            
+            dpHoldSessionId = stdout.split(':')[1];
+            console.log("dpHoldSessionId " + dpHoldSessionId);
+            mdDpHoldSessionId = dpHoldSessionId.substr(1,dpHoldSessionId.length -2);
+            console.log("mdDpHoldSessionId " + mdDpHoldSessionId);
+            holdDpSessionId = mdDpHoldSessionId;
+            
+            resolve(mdDpHoldSessionId.toString());
+          });
+    });
+    }
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  }
 }
 async function dpUploadLargeFileAppend(dpAccessToken,sessionId,dpFile,actualSize){
   console.log("dpUploadLargeFileAppend called ");
-  return await new Promise((resolve,reject) => {
-    //offset can not be 0
-    let gth = sendToAngularAccessToken;
-   
-    let modifyGth = (gth.split(" "));
-    let saveAccess = (modifyGth[1]);
-    console.log("saveAccess is " + saveAccess);
-    let newSessionId = sessionId.substr(1,sessionId.length -2);
-
-    child.exec(
-      `curl -X POST https://content.dropboxapi.com/2/files/upload_session/append_v2 \
-      --header 'Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}' \
-      --header 'Dropbox-API-Arg: {"cursor": {"session_id": "${newSessionId}","offset": ${actualSize}},"close": false}' \
-      --header 'Content-Type: application/octet-stream' \
-      --data-binary @./routes/AllFiles/${dpFile}`,
-      (err,stdout,stderr) => {
-        if(err){
-          console.log("err from dpUploadLargeFileAppend " + err);
-          res.status(500).send(err);
-          reject(err);
-          throw err;
-        }
-        console.log("the dpUploadLargeFileAppend stdout is " + stdout);
-        console.log("the dpUploadLargeFileAppend stderr is " + stderr);
-        
-        resolve(stdout.toString());
+  try {
+    if(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== ""
+    || sessionId !== undefined || sessionId !== null || sessionId !== ""
+    || dpFile !== undefined || dpFile !== null || dpFile !== ""
+    || actualSize !== undefined || actualSize !== null || actualSize !== 0 || actualSize !== NaN){
+     
+      return await new Promise((resolve,reject) => {
+        let gth = sendToAngularAccessToken;
+       
+        let modifyGth = (gth.split(" "));
+        let saveAccess = (modifyGth[1]);
+        console.log("saveAccess is " + saveAccess);
+        let newSessionId = sessionId.substr(1,sessionId.length -2);
+    
+        child.exec(
+          `curl -X POST https://content.dropboxapi.com/2/files/upload_session/append_v2 \
+          --header 'Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}' \
+          --header 'Dropbox-API-Arg: {"cursor": {"session_id": "${newSessionId}","offset": ${actualSize}},"close": false}' \
+          --header 'Content-Type: application/octet-stream' \
+          --data-binary @./routes/AllFiles/${dpFile}`,
+          (err,stdout,stderr) => {
+            if(err){
+              console.log("err from dpUploadLargeFileAppend " + err);
+              res.status(500).send(err);
+              reject(err);
+              throw err;
+            }
+            console.log("the dpUploadLargeFileAppend stdout is " + stdout);
+            console.log("the dpUploadLargeFileAppend stderr is " + stderr);
+            
+            resolve(stdout.toString());
+          });
       });
-  });
+    }
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  }
 }
 async function dpUploadSessionFinish(dpAccessToken,sessionId,dpFile,actualSize){
   console.log("dpUploadSessionFinish called ");
-   //offset can not be 0
-  return await new Promise((resolve,reject) => {
-    let gth = sendToAngularAccessToken;
-    
-    let modifyGth = (gth.split(" "));
-    let saveAccess = (modifyGth[1]);
-    console.log("saveAccess is " + saveAccess);
-    let newSessionId = sessionId.substr(1,sessionId.length -2);
-    let secondOffset = actualSize * 2;
-   
-    child.exec(
-      `curl -X POST https://content.dropboxapi.com/2/files/upload_session/finish \
-      --header 'Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}' \
-      --header 'Dropbox-API-Arg: {"cursor": {"session_id": "${newSessionId}","offset": ${secondOffset}},"commit": {"path": "/MTC${dpFile}","mode": "add","autorename": true,"mute": false,"strict_conflict": false}}' \
-      --header 'Content-Type: application/octet-stream' \
-      --data-binary @./routes/AllFiles/${dpFile}`,
-      (err,stdout,stderr) => {
-        if(err){
-          console.log("err from dpUploadSessionFinish " + err);
-          res.status(500).send(err);
-          reject(err);
-          throw err;
-        }
-        console.log("the dpUploadSessionFinish stdout is " + stdout);
-        console.log("the dpUploadSessionFinish stderr is " + stderr);
-        resolve(stdout.toString());
+  try {
+    if(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== ""
+    || sessionId !== undefined || sessionId !== null || sessionId !== ""
+    || dpFile !== undefined || dpFile !== null || dpFile !== ""
+    || actualSize !== undefined || actualSize !== null || actualSize !== 0 || actualSize !== NaN){
+      
+      return await new Promise((resolve,reject) => {
+        let gth = sendToAngularAccessToken;
+        
+        let modifyGth = (gth.split(" "));
+        let saveAccess = (modifyGth[1]);
+        console.log("saveAccess is " + saveAccess);
+        let newSessionId = sessionId.substr(1,sessionId.length -2);
+        let secondOffset = actualSize * 2;
+       
+        child.exec(
+          `curl -X POST https://content.dropboxapi.com/2/files/upload_session/finish \
+          --header 'Authorization: Bearer ${dpAccessToken.substr(1,saveAccess.length - 3)}' \
+          --header 'Dropbox-API-Arg: {"cursor": {"session_id": "${newSessionId}","offset": ${secondOffset}},"commit": {"path": "/MTC${dpFile}","mode": "add","autorename": true,"mute": false,"strict_conflict": false}}' \
+          --header 'Content-Type: application/octet-stream' \
+          --data-binary @./routes/AllFiles/${dpFile}`,
+          (err,stdout,stderr) => {
+            if(err){
+              console.log("err from dpUploadSessionFinish " + err);
+              res.status(500).send(err);
+              reject(err);
+              throw err;
+            }
+            console.log("the dpUploadSessionFinish stdout is " + stdout);
+            console.log("the dpUploadSessionFinish stderr is " + stderr);
+            resolve(stdout.toString());
+            
+          });
       });
-  });
+    }
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  }
 }
 function User(name,lastname,username,email,password){
   this.name = name,
