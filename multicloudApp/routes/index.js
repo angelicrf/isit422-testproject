@@ -24,6 +24,8 @@ let odFiles = {};
 let localFile;
 let dpHoldSessionId = '';
 let holdDpSessionId = '';
+let odUploadUrl = '';
+let fileSizeInBytes = 0;
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
 const child = require('child_process');
@@ -1796,7 +1798,7 @@ router.post('/OdUpload', (req,res) => {
         console.log("moveFileResule after OdDownload " + moveFileResule);
       },30000 );  
 
-      setTimeout(( ) => {
+      setTimeout(async( ) => {
         let odConcatFile = '';
         fs.readdirSync( folder ).forEach( file => {
             if(file === odUploadFileName) {
@@ -1807,6 +1809,7 @@ router.post('/OdUpload', (req,res) => {
             odConcatFile = (filename + extname);
           } 
         });
+        if(getFileSize(odConcatFile) < 5){
           return child.exec(
             `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
             -H "Authorization: Bearer ${odAccessToken}" \
@@ -1824,7 +1827,13 @@ router.post('/OdUpload', (req,res) => {
               res.status(200).json({"odUploadMSG": "odFile_Uploaded", "OdUpload": odFileUpload});
               toDeleteAllFiles();
             }); 
-        
+          }
+          else{
+            await odUploadSessionStart(odAccessToken,odConcatFile);
+            //let saveActualSize = getFileSize(odConcatFile);
+            //await odUploadResumePartial(odAccessToken,odUploadUrl,saveActualSize);
+            //await odUploadResumeCompleted(odAccessToken,odUploadUrl,saveActualSize);
+          }
       },35000); 
     }
   } catch (error) {
@@ -1842,7 +1851,7 @@ router.post('/OdLocalUpload', (req,res) => {
       let odUploadFileName = req.body.odUpFileName;
       console.log("odLocalUpFileName is " + odUploadFileName);
     
-      setTimeout(( ) => {
+      setTimeout(async( ) => {
         let odConcatFile = '';
         fs.readdirSync( folder ).forEach( file => {
             if(file === odUploadFileName) {
@@ -1853,6 +1862,7 @@ router.post('/OdLocalUpload', (req,res) => {
             odConcatFile = (filename + extname);
           } 
         });
+        if(getFileSize(odConcatFile) < 5){
           return child.exec(
             `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
             -H "Authorization: Bearer ${odAccessToken}" \
@@ -1871,6 +1881,13 @@ router.post('/OdLocalUpload', (req,res) => {
               res.status(200).json({"odLocalUploadMSG": "odFile_LocalUploaded", "OdLocalUpload": odFileUpload});
               toDeleteAllFiles();
             });  
+          }else{
+            console.log("inside large file odUpload");
+              await odUploadSessionStart(odAccessToken,odConcatFile);
+              //let saveActualSize = getFileSize(odConcatFile);
+              //await odUploadResumePartial(odAccessToken,odUploadUrl,saveActualSize);
+              //await odUploadResumeCompleted(odAccessToken,odUploadUrl,saveActualSize);
+            }
       },35000); 
     }
   } catch (error) {
@@ -1879,17 +1896,6 @@ router.post('/OdLocalUpload', (req,res) => {
     throw error;
   }
 });
-//One drive large file upload
-//PUT https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/createUploadSession
-// get UploadUrl
-/* PUT UploadUrl
-Content-Length: 26
-Content-Range: bytes 0-25/totalFileSize */
-//get nextExpectedRanges
-/* PUT UploadUrl
-Content-Length: 21
-Content-Range: bytes [101-(totalFileSize - 1)]/totalFileSize */
-// [] == should be the same as nextExpectedRanges
 function toDeleteAllFiles(){
   return child.exec(`cd ./routes/AllFiles && rm -f * && cd .. && pwd`
    , (err, stdout, stderr) => {
@@ -2034,8 +2040,10 @@ async function getFileSize(fileName){
 
   return await new Promise((resolve,reject) => {
     let stats = fs.statSync('./routes/AllFiles/'+fileName);
-    let fileSizeInBytes = stats.size;
-    return resolve (fileSizeInBytes);
+    fileSizeInBytes = stats.size;
+    console.log(fileSizeInBytes)
+    resolve (fileSizeInBytes);
+    return fileSizeInBytes;
   });
  
 }
@@ -2185,6 +2193,134 @@ async function dpUploadSessionFinish(dpAccessToken,sessionId,dpFile,actualSize){
     throw error;
   }
 }
+
+//One drive large file upload
+//PUT https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/createUploadSession
+// get UploadUrl
+
+/* PUT UploadUrl
+Content-Length: 26
+Content-Range: bytes 0-25/totalFileSize */
+
+//get nextExpectedRanges
+/* PUT UploadUrl
+Content-Length: 21
+Content-Range: bytes [101-(totalFileSize - 1)]/totalFileSize */
+// [] == should be the same as nextExpectedRanges
+async function odUploadSessionStart(odAccToken,odFile){
+  console.log("odUploadSessionStart called ");
+  try {
+    if(odAccToken !== undefined || odAccToken !== null || dpAccessToken !== ""
+    || odFile !== undefined || odFile !== null || odFile !== ""){
+      
+      return await new Promise((resolve,reject) => {
+      // --header 'Content-Type: application/json'
+        child.exec(
+          `curl -X POST https://graph.microsoft.com/v1.0/me/drive/root:/${odFile}:/createUploadSession \
+          --header 'Authorization: Bearer ${odAccToken}' \
+          --header 'Content-Type: application/json' \
+          --header 'Content-Length: 0'`
+          ,(err,stdout,stderr) => {
+            if(err){
+              console.log("err from odUploadSessionStart " + err);
+              res.status(500).send(err);
+              reject(err);
+              throw err;
+            }
+            console.log("the odUploadSessionStart stdout is " + stdout);
+            console.log("the odUploadSessionStart stderr is " + stderr);
+            
+            let getOdResponse = stdout.toString();
+            let mdGetOdResponse = getOdResponse.split(':');
+            console.log("from mdGetOdResponse " + mdGetOdResponse + mdGetOdResponse.length );
+            console.log("from mdGetOdResponsetwo " + mdGetOdResponse[9]);
+
+            odUploadUrl = mdGetOdResponse[9].substr(1,mdGetOdResponse.length -3);
+            console.log("odUploadUrl " + odUploadUrl);
+
+            resolve(odUploadUrl);
+            return odUploadUrl;
+            
+          });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  }
+}
+async function odUploadResumePartial(odAccToken,uploadUrl,actualSize){
+  console.log("odUploadResumePartial called ");
+ 
+  try {
+    if(odAccToken !== undefined || odAccToken !== null || dpAccessToken !== ""
+    || uploadUrl !== undefined || uploadUrl !== null || uploadUrl !== ""
+    || actualSize !== undefined || actualSize !== null || actualSize !== 0 || actualSize !== NaN){
+      
+      return await new Promise((resolve,reject) => {
+      // --header 'Content-Type: application/json' \
+        child.exec(
+          `curl --location --request PUT ${uploadUrl} \
+          --header 'Authorization: Bearer ${odAccToken}' \
+          --header 'Content-Length: 26' \
+          --header 'Content-Range: bytes 0-25/${actualSize}`
+          ,
+          (err,stdout,stderr) => {
+            if(err){
+              console.log("err from odUploadResumePartial " + err);
+              res.status(500).send(err);
+              reject(err);
+              throw err;
+            }
+            console.log("the odUploadResumePartial stdout is " + stdout);
+            console.log("the odUploadResumePartial stderr is " + stderr);
+            resolve(stdout.toString());
+            
+          });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  }
+}
+async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize){
+  console.log("odUploadResumeCompleted called ");
+  try {
+    if(odAccToken !== undefined || odAccToken !== null || dpAccessToken !== ""
+    || uploadUrl !== undefined || uploadUrl !== null || uploadUrl !== ""
+    || actualSize !== undefined || actualSize !== null || actualSize !== 0 || actualSize !== NaN){
+      
+      return await new Promise((resolve,reject) => {
+
+        child.exec(
+          `curl curl --location --request PUT ${uploadUrl} \
+          --header 'Authorization: Bearer ${odAccToken}' \
+          --header 'Content-Length: 21' \
+          --header 'Content-Range: bytes 101-(${actualSize} - 1)/${actualSize}`,
+          (err,stdout,stderr) => {
+            if(err){
+              console.log("err from odUploadResumeCompleted " + err);
+              res.status(500).send(err);
+              reject(err);
+              throw err;
+            }
+            console.log("the odUploadResumeCompleted stdout is " + stdout);
+            console.log("the odUploadResumeCompleted stderr is " + stderr);
+            resolve(stdout.toString());
+            
+          });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    reject(error);
+    throw error;
+  }
+}
+getFileSize('jpegfile.jpeg');
 function User(name,lastname,username,email,password){
   this.name = name,
   this.lastname = lastname,
