@@ -1884,8 +1884,8 @@ router.post('/OdLocalUpload', (req,res) => {
           }else{
             console.log("inside large file odUpload");
               await odUploadSessionStart(odAccessToken,odConcatFile);
-              //let saveActualSize = getFileSize(odConcatFile);
-              //await odUploadResumePartial(odAccessToken,odUploadUrl,saveActualSize);
+              let saveActualSize = await getFileSize(odConcatFile);
+              await odUploadResumePartial(odAccessToken,odUploadUrl,saveActualSize);
               //await odUploadResumeCompleted(odAccessToken,odUploadUrl,saveActualSize);
             }
       },35000); 
@@ -2214,16 +2214,22 @@ async function odUploadSessionStart(odAccToken,odFile){
     || odFile !== undefined || odFile !== null || odFile !== ""){
       
       return await new Promise((resolve,reject) => {
-      // --header 'Content-Type: application/json'
+      //           --header 'Content-Length: 0' \
         child.exec(
           `curl -X POST https://graph.microsoft.com/v1.0/me/drive/root:/${odFile}:/createUploadSession \
           --header 'Authorization: Bearer ${odAccToken}' \
           --header 'Content-Type: application/json' \
-          --header 'Content-Length: 0'`
+          -d '{
+            "item": {
+              "@odata.type": "microsoft.graph.driveItemUploadableProperties",
+              "@microsoft.graph.conflictBehavior": "rename",
+              "name": "${odFile}"
+            }
+          }'`
           ,(err,stdout,stderr) => {
             if(err){
               console.log("err from odUploadSessionStart " + err);
-              res.status(500).send(err);
+              
               reject(err);
               throw err;
             }
@@ -2232,10 +2238,7 @@ async function odUploadSessionStart(odAccToken,odFile){
             
             let getOdResponse = stdout.toString();
             let mdGetOdResponse = getOdResponse.split(':');
-            console.log("from mdGetOdResponse " + mdGetOdResponse + mdGetOdResponse.length );
-            console.log("from mdGetOdResponsetwo " + mdGetOdResponse[9]);
-
-            odUploadUrl = mdGetOdResponse[9].substr(1,mdGetOdResponse.length -3);
+            odUploadUrl = "https:" + mdGetOdResponse[8].substr(0,mdGetOdResponse[8].length -2);
             console.log("odUploadUrl " + odUploadUrl);
 
             resolve(odUploadUrl);
@@ -2259,17 +2262,18 @@ async function odUploadResumePartial(odAccToken,uploadUrl,actualSize){
     || actualSize !== undefined || actualSize !== null || actualSize !== 0 || actualSize !== NaN){
       
       return await new Promise((resolve,reject) => {
-      // --header 'Content-Type: application/json' \
+      // 
         child.exec(
           `curl --location --request PUT ${uploadUrl} \
           --header 'Authorization: Bearer ${odAccToken}' \
-          --header 'Content-Length: 26' \
-          --header 'Content-Range: bytes 0-25/${actualSize}`
+          --header 'Content-Length: 1025' \
+          --header 'Content-Type: application/json' \
+          --header 'Content-Range: bytes 0-1024/${actualSize}'`
           ,
           (err,stdout,stderr) => {
             if(err){
               console.log("err from odUploadResumePartial " + err);
-              res.status(500).send(err);
+              
               reject(err);
               throw err;
             }
@@ -2298,12 +2302,13 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize){
         child.exec(
           `curl curl --location --request PUT ${uploadUrl} \
           --header 'Authorization: Bearer ${odAccToken}' \
-          --header 'Content-Length: 21' \
-          --header 'Content-Range: bytes 101-(${actualSize} - 1)/${actualSize}`,
+          --header 'Content-Length: 0' \
+          --header 'Content-Type: application/json' \
+          --header 'Content-Range: bytes 101-(${actualSize} - 1)/${actualSize}'`,
           (err,stdout,stderr) => {
             if(err){
               console.log("err from odUploadResumeCompleted " + err);
-              res.status(500).send(err);
+              
               reject(err);
               throw err;
             }
@@ -2320,7 +2325,12 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize){
     throw error;
   }
 }
-getFileSize('jpegfile.jpeg');
+//getFileSize('jpegfile.jpeg');
+function getTestSubstring(){
+  let strSubstr = "https"+'//api.onedrive.com/rup/ffcbc48920626bf2/eyJSZXNvdXJjZUlEIjoiRkZDQkM0ODkyMDYyNkJGMiExMDEiLCJSZWxhdGlvbnNoaXBOYW1lIjoianBlZ2ZpbGUuanBlZyJ9/4mYCSfoEkBpTw0cH0cPyy6r10f33x_prGPem8LxM6a_LPX4OC1FMft76kuHJNmzz8OUU-BxUFzol4XpDAw6AC6PQfEC3xyYX6bSwQ1FE_3qLk/eyJuYW1lIjoianBlZ2ZpbGUuanBlZyIsIkBuYW1lLmNvbmZsaWN0QmVoYXZpb3IiOiJyZXBsYWNlIn0/4wKBUcDNkLyeK6IUsm1wS__ip_-MsJADNp_0fxsC9GTmVqJlZiu7LqBQ7-OKxzv2Jf8ZyMpu3U1xyXfcS3508mEkMCp-XiOa1YrhsgXT1edgYe1LUoKLeLbRFw8Uu9g4Gj4U0C6n_FFYwG_mrQrDHv1wx9eBBzge7Gs7ED6Iaa-WQeInGWKN2XwjIgKCGtp_g8UK_SWk5yFyHVM33YY-uaMe9fNBVl6Sp8JrRYY5Vv0rdTtnCFTrQLiNvK2SbJy3c4MCBCkbvgWZ8zAZVB35Xfb3O5C99HLWodh_DyaB9wc-QwEVkkJFc1PJW7qJpzAzYuUehZbJC8YL6dRyk9ATAHTv3ShhkmwbWacRdvmJ0AHKZYmRyPoLDrPSfSgBTkWwe8L4s_F7vIrzpW3C2la9g0ZZdrUrCJvWgpPSuuXUjJcU-LLcpMB3u5BmLM9wcYaJYxLWW5UQwEyVwx0EZ4cL5lLZofPBDpZD0oVvMKW1MLC5krVh8NTNR-Nof8GRufVPhiVMJgykkINza2rgzpUanTz0XQEBW_ZWzOzdsXCwUgjLLrnCVcO_mDru8tAEG0Ef6z"}';
+  let afterTrim = strSubstr.substr(0, strSubstr.length -2);
+  console.log(afterTrim);
+}
 function User(name,lastname,username,email,password){
   this.name = name,
   this.lastname = lastname,
@@ -2328,5 +2338,5 @@ function User(name,lastname,username,email,password){
   this.email = email,
   this.password = password
 };
-
+//getTestSubstring();
 module.exports = router;
