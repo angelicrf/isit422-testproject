@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
+const fetch = require("node-fetch");
 const {v4 : uuidv4} = require('uuid');
 const folder = './routes/AllFiles';
 let HoldUserData = [];
@@ -2261,9 +2262,34 @@ async function odUploadResumePartial(odAccToken,uploadUrl,actualSize){
     || uploadUrl !== undefined || uploadUrl !== null || uploadUrl !== ""
     || actualSize !== undefined || actualSize !== null || actualSize !== 0 || actualSize !== NaN){
       
-      return await new Promise((resolve,reject) => {
-      // 
-        child.exec(
+  return await new Promise((resolve,reject) => {
+    let myHeaders = new fetch.Headers();
+         
+          myHeaders.append('access-control-allow-origin', '*');
+          myHeaders.append('Content-Type', 'application/json');
+          myHeaders.append('Authorization',  `Bearer ${odAccToken}`);
+          myHeaders.append('Content-Length', '1024');
+          myHeaders.append('Content-Range', `bytes 0-1024/${actualSize}`);
+
+          let requestOptions = {
+            method: 'PUT',
+            headers: myHeaders
+          };
+    
+          fetch(`${uploadUrl}`, requestOptions)
+            .then((response) => {
+              return response.json();
+            })
+            .then((result) => {
+              let msgDisplay = result[Object.keys(result)[0]];
+              console.log("odUploadResumePartial is " + JSON.stringify(msgDisplay));
+              resolve(msgDisplay);
+          })
+          .catch (err => {
+            this.errorService.handleError(err);
+            return reject(err);
+          }); 
+        /* child.exec(
           `curl --location --request PUT ${uploadUrl} \
           --header 'Authorization: Bearer ${odAccToken}' \
           --header 'Content-Length: 1025' \
@@ -2281,7 +2307,7 @@ async function odUploadResumePartial(odAccToken,uploadUrl,actualSize){
             console.log("the odUploadResumePartial stderr is " + stderr);
             resolve(stdout.toString());
             
-          });
+          }); */
       });
     }
   } catch (error) {
@@ -2325,12 +2351,7 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize){
     throw error;
   }
 }
-//getFileSize('jpegfile.jpeg');
-function getTestSubstring(){
-  let strSubstr = "https"+'//api.onedrive.com/rup/ffcbc48920626bf2/eyJSZXNvdXJjZUlEIjoiRkZDQkM0ODkyMDYyNkJGMiExMDEiLCJSZWxhdGlvbnNoaXBOYW1lIjoianBlZ2ZpbGUuanBlZyJ9/4mYCSfoEkBpTw0cH0cPyy6r10f33x_prGPem8LxM6a_LPX4OC1FMft76kuHJNmzz8OUU-BxUFzol4XpDAw6AC6PQfEC3xyYX6bSwQ1FE_3qLk/eyJuYW1lIjoianBlZ2ZpbGUuanBlZyIsIkBuYW1lLmNvbmZsaWN0QmVoYXZpb3IiOiJyZXBsYWNlIn0/4wKBUcDNkLyeK6IUsm1wS__ip_-MsJADNp_0fxsC9GTmVqJlZiu7LqBQ7-OKxzv2Jf8ZyMpu3U1xyXfcS3508mEkMCp-XiOa1YrhsgXT1edgYe1LUoKLeLbRFw8Uu9g4Gj4U0C6n_FFYwG_mrQrDHv1wx9eBBzge7Gs7ED6Iaa-WQeInGWKN2XwjIgKCGtp_g8UK_SWk5yFyHVM33YY-uaMe9fNBVl6Sp8JrRYY5Vv0rdTtnCFTrQLiNvK2SbJy3c4MCBCkbvgWZ8zAZVB35Xfb3O5C99HLWodh_DyaB9wc-QwEVkkJFc1PJW7qJpzAzYuUehZbJC8YL6dRyk9ATAHTv3ShhkmwbWacRdvmJ0AHKZYmRyPoLDrPSfSgBTkWwe8L4s_F7vIrzpW3C2la9g0ZZdrUrCJvWgpPSuuXUjJcU-LLcpMB3u5BmLM9wcYaJYxLWW5UQwEyVwx0EZ4cL5lLZofPBDpZD0oVvMKW1MLC5krVh8NTNR-Nof8GRufVPhiVMJgykkINza2rgzpUanTz0XQEBW_ZWzOzdsXCwUgjLLrnCVcO_mDru8tAEG0Ef6z"}';
-  let afterTrim = strSubstr.substr(0, strSubstr.length -2);
-  console.log(afterTrim);
-}
+
 function User(name,lastname,username,email,password){
   this.name = name,
   this.lastname = lastname,
@@ -2338,5 +2359,5 @@ function User(name,lastname,username,email,password){
   this.email = email,
   this.password = password
 };
-//getTestSubstring();
+
 module.exports = router;
