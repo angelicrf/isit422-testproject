@@ -2460,10 +2460,11 @@ async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
 }
 async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPart,bxFileName){
   return await new Promise((resolve,reject) => {
-    let bfFileId = bxFileId.substr(1,bxFileId.length-3);
-    console.log("bxFileIdLength " + bfFileId.length + "bxFileId " + bfFileId.split('"')[0] + "bxFileSize " + bxFileSize + "firstBxPart " + firstBxPart + "bxFileName " + bxFileName);
+  let bfFileId = bxFileId.substr(1,bxFileId.length-3);
+  console.log("bxFileIdLength " + bfFileId.length + "bxFileId " + bfFileId.split('"')[0] + "bxFileSize " + bxFileSize + "firstBxPart " + firstBxPart + "bxFileName " + bxFileName);
   let mdFirstBxPart = firstBxPart - 1;
   let mdBxFileId = bfFileId.split('"')[0];
+  //Find Digest
   child.exec(
       `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}" \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-3)}' \
@@ -2487,11 +2488,13 @@ async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPart,b
 }
 async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxfirstPrt){
   return await new Promise((resolve,reject) => {
-   
+    let bfFileId = bxFileId.substr(1,bxFileId.length-3);
+    let mdBxFileId = bfFileId.split('"')[0];
     let bxScStr = bxfirstPrt + 1;
     let bxSecondFilePart = bxFileSize - 1;
+    //Find Digest
     child.exec(
-      `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${bxFileId}" \
+      `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}" \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
       -H 'Content-Range: bytes ${bxScStr}-${bxSecondFilePart}/${bxFileSize}' \
@@ -2514,8 +2517,11 @@ async function bxCommitSession(bxAccToken,bxFileId,bxParts){
   return await new Promise((resolve,reject) => {
     let date = new Date();
     let currentDate = date.toTimeString();
+    let bfFileId = bxFileId.substr(1,bxFileId.length-3);
+    let mdBxFileId = bfFileId.split('"')[0];
+    //Find Digest
     child.exec(
-      `curl -i -X POST 'https://upload.box.com/api/2.0/files/upload_sessions/${bxFileId}/commit' \
+      `curl -i -X POST 'https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}/commit' \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
       -H 'Content-Type: application/json' \
