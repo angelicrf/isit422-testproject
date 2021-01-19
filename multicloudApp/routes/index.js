@@ -29,6 +29,8 @@ let odUploadUrl = '';
 let fileSizeInBytes = 0;
 let secondFragmentLength  = 0 ;
 let firstFragmentLength = 0;
+let bxParts = [];
+let firstBxPart = 0;
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
 const child = require('child_process');
@@ -1642,7 +1644,7 @@ router.post('/BxLocalUpload', (req,res) => {
       let boxUploadFileName = req.body.boxUpFileName;
       console.log("boxUploadFileName from bxLocalUpload " + boxUploadFileName);
 
-      setTimeout(( ) => {
+      setTimeout(async( ) => {
         let boxConcatFile = '';
         fs.readdirSync( folder ).forEach( file => {
           if(file === boxUploadFileName) {
@@ -1653,6 +1655,7 @@ router.post('/BxLocalUpload', (req,res) => {
             boxConcatFile = (filename + extname);
           }
           }); 
+          if(getFileSize(boxConcatFile) < 5 && getFileSize(boxConcatFile) !== NaN){
           return child.exec(
             `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
             -H "Authorization: Bearer ${boxAccessToken}" \
@@ -1670,6 +1673,18 @@ router.post('/BxLocalUpload', (req,res) => {
               res.status(200).json({"BxLocalUploadMSG": "BoxFile_LocalUploaded"});
               toDeleteAllFiles();
             }); 
+          }
+          else{
+            console.log("inside the large bxfile upload");
+            let bxFileActualSize = await getFileSize(boxConcatFile);
+            await bxUploadSessionStart(boxAccessToken,bxFileActualSize,boxConcatFile);
+            //get fileId
+            //await bxFirstLargeFilePart(boxAccessToken,bxFileId,bxFileActualSize,boxConcatFile);
+            //get fileId
+            //await bxSecondLargeFilePart(boxAccessToken,bxFileId,bxFileActualSize,boxConcatFile,firstBxPart);
+            //get fileId
+            //await bxCommitSession(boxAccessToken,bxFileId,bxParts);
+          }
       },55000); 
     }
   } catch (error) {
@@ -2366,7 +2381,151 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize,secondFrg
     throw error;
   }
 }
-
+//Box upload large file
+//-H "Content-Type: application/octet-stream" \
+// create upload session
+// https://upload.box.com/api/2.0/files/upload_sessions/${fileId}
+/* curl -i -X POST "https://upload.box.com/api/2.0/files/upload_sessions" \
+     -H "Authorization: Bearer <ACCESS_TOKEN>" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "folder_id": "0",
+       "file_size": 104857600,
+       "file_name": "Contract.pdf"
+     }' */
+ /*     curl -i -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/F971964745A5CD0C001BBE4E58196BFD" \
+     -H "Authorization: Bearer <ACCESS_TOKEN>" \
+     -H "Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=" \
+     -H "Content-Range: bytes 8388608-16777215/445856194" \
+     -H "Content-Type: application/octet-stream" \
+     --data-binary @<FILE_NAME></FILE_NAME> */
+/* curl -i -X POST "https://upload.box.com/api/2.0/files/upload_sessions/F971964745A5CD0C001BBE4E58196BFD/commit" \
+     -H "Authorization: Bearer <ACCESS_TOKEN>" \
+     -H "Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "parts": [
+         {
+           "part_id": "BFDF5379",
+           "offset": 0,
+           "size": 8388608,
+	     "sha1": "134b65991ed521fcfe4724b7d814ab8ded5185dc"
+         },
+		     {
+           "part_id": "E8A3ED8E",
+           "offset": 8388608,
+           "size": 1611392,
+	     "sha1": "234b65934ed521fcfe3424b7d814ab8ded5185dc"
+         }
+       ],
+       "attributes": {
+         "content_modified_at": "2017-04-08T00:58:08Z"
+       }
+     }' */
+//
+async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
+    return await new Promise((resolve,reject) => {
+     let minSize = 20000000;
+     let diffSize = 20000000 - bxFileSize;
+     let useSize = diffSize + bxFileSize;
+      
+     child.exec(
+        `curl -i -X POST "https://upload.box.com/api/2.0/files/upload_sessions" \
+        -H 'Authorization: Bearer ${bxAccToken}' \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "folder_id": "0",
+          "file_size": ${useSize},
+          "file_name": "${bxFileName}"
+           }'`,
+        (err,stdout,stderr) => {
+          if(err){
+            console.log("err from bxUploadSessionStart " + err);
+            reject(err);
+            throw err;
+          }
+          console.log("the bxUploadSessionStart stdout is " + stdout);
+          console.log("the bxUploadSessionStart stderr is " + stderr);
+          resolve(stderr);
+        });
+    });
+}
+async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName){
+  return await new Promise((resolve,reject) => {
+    firstBxPart = Math.round(bxFileName / 2);
+    child.exec(
+      `curl -i -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${bxFileId}" \
+      -H 'Authorization: Bearer ${bxAccToken}' \
+      -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
+      -H 'Content-Range: bytes 0-${firstBxPart}/${bxFileSize}' \
+      -H 'Content-Type: application/octet-stream' \
+      --data-binary @./routes/AllFiles/${bxFileName}`,
+      (err,stdout,stderr) => {
+        if(err){
+          console.log("err from bxFirstLargeFilePart " + err);
+          reject(err);
+          throw err;
+        }
+        console.log("the bxFirstLargeFilePart stdout is " + stdout);
+        console.log("the bxFirstLargeFilePart stderr is " + stderr);
+        //bxParts.push(stderr);
+        resolve(stderr);
+        return firstBxPart;
+      });
+  });
+}
+async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxfirstPrt){
+  return await new Promise((resolve,reject) => {
+   
+    let bxScStr = bxfirstPrt + 1;
+    let bxSecondFilePart = bxFileSize - 1;
+    child.exec(
+      `curl -i -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${bxFileId}" \
+      -H 'Authorization: Bearer ${bxAccToken}' \
+      -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
+      -H 'Content-Range: bytes ${bxScStr}-${bxSecondFilePart}/${bxFileSize}' \
+      -H 'Content-Type: application/octet-stream' \
+      --data-binary @./routes/AllFiles/${bxFileName}`,
+      (err,stdout,stderr) => {
+        if(err){
+          console.log("err from bxSecondLargeFilePart " + err);
+          reject(err);
+          throw err;
+        }
+        console.log("the bxSecondLargeFilePart stdout is " + stdout);
+        console.log("the bxSecondLargeFilePart stderr is " + stderr);
+        //bxParts.push(stderr);
+        resolve(stderr);
+      });
+  });
+}
+async function bxCommitSession(bxAccToken,bxFileId,bxParts){
+  return await new Promise((resolve,reject) => {
+    let date = new Date();
+    let currentDate = date.toTimeString();
+    child.exec(
+      `curl -i -X POST 'https://upload.box.com/api/2.0/files/upload_sessions/${bxFileId}/commit' \
+      -H 'Authorization: Bearer ${bxAccToken}' \
+      -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
+      -H 'Content-Type: application/json' \
+      -d '{
+        "parts": ${bxParts},
+        "attributes": {
+          "content_modified_at": "${currentDate}"
+        }
+      }'`,
+      (err,stdout,stderr) => {
+        if(err){
+          console.log("err from bxCommitSession " + err);
+          reject(err);
+          throw err;
+        }
+        console.log("the bxCommitSession stdout is " + stdout);
+        console.log("the bxCommitSession stderr is " + stderr);
+        resolve(stderr);
+      });
+  });
+}
 function User(name,lastname,username,email,password){
   this.name = name,
   this.lastname = lastname,
@@ -2375,10 +2534,9 @@ function User(name,lastname,username,email,password){
   this.password = password
 };
 function testCalcNumber(){
-  let findNum = Math.round(5554547/3);
-  let secNum = findNum * 2;
-  let lastNum = 5554547 - secNum;
-  console.log(findNum , lastNum);
+  let date = new Date();
+  let currentDate = date.toTimeString().split('(')[0];
+  console.log(currentDate);
 }
 testCalcNumber();
 module.exports = router;
