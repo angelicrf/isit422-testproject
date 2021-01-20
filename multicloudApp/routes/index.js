@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 const fetch = require("node-fetch");
+const crypto = require('crypto');
 const {v4 : uuidv4} = require('uuid');
 const folder = './routes/AllFiles';
 let HoldUserData = [];
@@ -1695,7 +1696,7 @@ router.post('/BxLocalUpload', (req,res) => {
             console.log("inside the large bxfile upload");
             
             await bxUploadSessionStart(boxAccessToken,findFileSize,boxConcatFile);
-            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,useSize,part_size,boxConcatFile);
+            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,part_size,boxConcatFile);
             //get fileId
             //await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,useSize,boxConcatFile,firstBxPart);
             //get fileId
@@ -2400,37 +2401,13 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize,secondFrg
   }
 }
 //Box upload large file
-//-H "Content-Type: application/octet-stream" \
-
-/* curl -i -X POST "https://upload.box.com/api/2.0/files/upload_sessions/F971964745A5CD0C001BBE4E58196BFD/commit" \
-     -H "Authorization: Bearer <ACCESS_TOKEN>" \
-     -H "Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "parts": [
-         {
-           "part_id": "BFDF5379",
-           "offset": 0,
-           "size": 8388608,
-	     "sha1": "134b65991ed521fcfe4724b7d814ab8ded5185dc"
-         },
-		     {
-           "part_id": "E8A3ED8E",
-           "offset": 8388608,
-           "size": 1611392,
-	     "sha1": "234b65934ed521fcfe3424b7d814ab8ded5185dc"
-         }
-       ],
-       "attributes": {
-         "content_modified_at": "2017-04-08T00:58:08Z"
-       }
-     }' */
-//
+//-H "Content-Type: application/octet-stream"
 async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
     return await new Promise((resolve,reject) => {
-     let minSize = 20000000;
-     let diffSize = minSize - bxFileSize;
-     useSize = diffSize + bxFileSize;
+     
+     //let minSize = 20000000;
+     //let diffSize = minSize - bxFileSize;
+     //useSize = diffSize + bxFileSize;
     
      child.exec(
         `curl -X POST "https://upload.box.com/api/2.0/files/upload_sessions" \
@@ -2438,7 +2415,7 @@ async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
         -H 'Content-Type: application/json' \
         -d '{
           "folder_id": "0",
-          "file_size": ${useSize},
+          "file_size": ${bxFileSize},
           "file_name": "${bxFileName}"
            }'`,
         (err,stdout,stderr) => {
@@ -2459,19 +2436,26 @@ async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
     });
 }
 async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPart,bxFileName){
-  return await new Promise((resolve,reject) => {
+  return await new Promise(async(resolve,reject) => {
   let bfFileId = bxFileId.substr(1,bxFileId.length-3);
   console.log("bxFileIdLength " + bfFileId.length + "bxFileId " + bfFileId.split('"')[0] + "bxFileSize " + bxFileSize + "firstBxPart " + firstBxPart + "bxFileName " + bxFileName);
   let mdFirstBxPart = firstBxPart - 1;
   let mdBxFileId = bfFileId.split('"')[0];
+  let mdIntFirstBxPart = parseInt(mdFirstBxPart);
+  let mdbxFileSize = parseInt(bxFileSize);
+  let mdIntFrst = parseInt(firstBxPart)
   //Find Digest
-  child.exec(
+    console.log("bxFileName " + bxFileName + " " + mdIntFirstBxPart + " " + mdbxFileSize);
+    //let shaOutput = await hashDigestFilePart(bxFileName,0,firstBxPart);
+    //console.log("shaOutput " + shaOutput);
+    child.exec(
       `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}" \
-      -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-3)}' \
-      -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
-      -H 'Content-Range: bytes 0-${mdFirstBxPart}/${bxFileSize}' \
-      -H 'Content-Type: application/octet-stream' \
-      --data-binary @./routes/AllFiles/${bxFileName}`,
+      -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
+      -H 'Content-Range: bytes 0-${mdIntFirstBxPart}/${mdbxFileSize}' \
+      --data-binary @./routes/AllFiles/testImage.jpg \
+      -H 'Content-Type: application/json' \
+      --header 'Digest: sha=xiZY/GfkxQRJbDFZa15XGqxWa0o=' \
+      -H 'Content-Length: ${mdIntFrst}'`,
       (err,stdout,stderr) => {
         if(err){
           console.log("err from bxFirstLargeFilePart " + err);
@@ -2480,7 +2464,7 @@ async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPart,b
         }
         console.log("the bxFirstLargeFilePart stdout is " + stdout);
         console.log("the bxFirstLargeFilePart stderr is " + stderr);
-        //bxParts.push(stdout);
+        bxParts.push(stdout);
         resolve(stdout);
         return firstBxPart;
       });
@@ -2513,17 +2497,20 @@ async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,b
       });
   });
 }
-async function bxCommitSession(bxAccToken,bxFileId,bxParts){
-  return await new Promise((resolve,reject) => {
+async function bxCommitSession(bxAccToken,bxFileId,bxParts,bxFlName,bxLastStart,bxFlTotalSize){
+  return await new Promise(async(resolve,reject) => {
     let date = new Date();
     let currentDate = date.toTimeString();
     let bfFileId = bxFileId.substr(1,bxFileId.length-3);
     let mdBxFileId = bfFileId.split('"')[0];
     //Find Digest
+    console.log("bxFlName " + bxFlName +  "bxFlTotalSize " + bxFlTotalSize);
+    let shaOutput = await hashDigestFilePart(bxFlName,bxLastStart,bxFlTotalSize);
+    
     child.exec(
       `curl -i -X POST 'https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}/commit' \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
-      -H 'Digest: sha=fpRyg5eVQletdZqEKaFlqwBXJzM=' \
+      -H 'Digest: sha=${shaOutput}' \
       -H 'Content-Type: application/json' \
       -d '{
         "parts": ${bxParts},
@@ -2550,15 +2537,37 @@ function User(name,lastname,username,email,password){
   this.email = email,
   this.password = password
 };
-function testCalcNumber(){
-  let ftGt = '{"total_parts":3,"part_size":8388608},"session_endpoints":{"list_parts":"https://upload.box.com/api/2.0/files/upload_sessions/72E275A0070A1CAA0F37DF65B33A2ED1/parts","commit":"https://upload.box.com/api/2.0/files/upload_sessions/72E275A0070A1CAA0F37DF65B33A2ED1/commit","log_event":"https://upload.box.com/api/2.0/files/upload_sessions/72E275A0070A1CAA0F37DF65B33A2ED1/log","upload_part":"https://upload.box.com/api/2.0/files/upload_sessions/72E275A0070A1CAA0F37DF65B33A2ED1","status":"https://upload.box.com/api/2.0/files/upload_sessions/72E275A0070A1CAA0F37DF65B33A2ED1","abort":"https://upload.box.com/api/2.0/files/upload_sessions/72E275A0070A1CAA0F37DF65B33A2ED1"},"session_expires_at":"2021-01-26T00:53:00Z","id":"72E275A0070A1CAA0F37DF65B33A2ED1","type":"upload_session","num_parts_processed":0}';
-  let storeStr = ftGt.toString();
-  let mdStr = storeStr.split(':');
-  //1 total_parts
-  //2 part_size
-  //19 id
-  let resFt = mdStr[1];
-  //console.log(resFt, mdStr.length, JSON.stringify(storeStr));
+async function hashDigestFilePart(fileToEncode,startingP,EndingP){
+   
+   let mdEndingP = parseInt(EndingP);
+   console.log(fileToEncode + "startingP " + startingP + "mdEndingP " + mdEndingP);
+    return await new Promise(async(resolve, reject) => {
+    let hash = crypto.createHash("md5");
+    let file = `./routes/AllFiles/${fileToEncode}`;
+    let stream = fs.createReadStream(file, { start: startingP, end: mdEndingP});
+    let data = '';
+    stream.on("error", err => reject(err));
+    stream.on("data", chunk => {
+      data += chunk;
+      hash.update(chunk);
+    });
+    stream.on("end", () => {
+      console.log(data);
+      let storeStr = hash.digest("hex");
+      console.log(storeStr);
+      let saveEncodedSha = encodeShaOne(storeStr);
+      console.log(saveEncodedSha);
+      resolve(saveEncodedSha);
+    });    
+  }); 
+  
 }
-//testCalcNumber();
+function encodeShaOne(strToEncode){
+    let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
+    return buff;
+}
+//getFileSize('testImage.jpg');
+//let resAn = hashDigestFilePart('testImage.jpg',0,3);
+//console.log(resAn);
+//encodeShaOne('25386257deff18b411f7edfa70980e09d730ef02');
 module.exports = router;
