@@ -1636,13 +1636,12 @@ router.post('/BxUpload', (req,res) => {
             }); 
           }else{
             console.log("inside large file bxUpload");
+
             await bxUploadSessionStart(boxAccessToken,findFileSize,boxConcatFile);
-            //get fileId
-            //await bxFirstLargeFilePart(boxAccessToken,bxFileId,findFileSize,boxConcatFile);
-            //get fileId
-            //await bxSecondLargeFilePart(boxAccessToken,bxFileId,findFileSize,boxConcatFile,firstBxPart);
-            //get fileId
-            //await bxCommitSession(boxAccessToken,bxFileId,bxParts);
+            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,part_size,boxConcatFile);  
+            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,boxConcatFile,firstBxPart);
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,boxConcatFile,secondBxPart);
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,boxConcatFile);
           }
       },55000);
     }
@@ -2400,8 +2399,6 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize,secondFrg
     throw error;
   }
 }
-//Box upload large file
-//-H "Content-Type: application/octet-stream"
 async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
     return await new Promise((resolve,reject) => {
      
