@@ -2540,30 +2540,26 @@ async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bx
 }
 async function bxCommitSession(bxAccToken,bxFileId,bxPrts,bxFlName){
   return await new Promise(async(resolve,reject) => {
-    //let date = new Date();
-    //let currentDate = date.toTimeString();
+    let dateToDisplay = formatDate();
+    console.log("dateToDisplay " + dateToDisplay);
     let bfFileId = bxFileId.substr(1,bxFileId.length-3);
     let mdBxFileId = bfFileId.split('"')[0];
-    //Find Digest
-    
+    //Find Digest  
     //let shaOutput = await hashDigestFilePart(bxFlName,bxLastStart,bxFlTotalSize);
     let newOut = [];
-    console.log(typeof(bxPrts));
+    bxPrts.filter(el => newOut.push(JSON.parse(el).part));
 
-    bxPrts.filter(el => {
-      console.log("inside bxPrts filter " + el);
-      newOut.push((el["part"]));
-    });
-    console.log("newOut " + newOut);
+    let arrayOfParts = JSON.stringify(newOut);
+
     child.exec(
       `curl -X POST 'https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}/commit' \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       -H 'Digest: sha=aDouGlmToXg4/S6oQwXudang7DU=' \
       -H 'Content-Type: application/json' \
       -d '{
-        "parts": ${newOut},
+        "parts": ${arrayOfParts},
         "attributes": {
-          "content_modified_at": "2021-01-08T00:58:08Z"
+          "content_modified_at": "${dateToDisplay}"
         }
       }'`,
       (err,stdout,stderr) => {
@@ -2614,22 +2610,12 @@ function encodeShaOne(strToEncode){
     let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
     return buff;
 }
-function allPartsprint(){
-  let allparts = [
-    {"part":{"part_id":"9E99AA05","offset":0,"size":8388608,"sha1":"c62658fc67e4c504496c31596b5e571aac566b4a"}}
-   ,{"part":{"part_id":"78CB29FF","offset":8388608,"size":8388608,"sha1":"c62658fc67e4c504496c31596b5e571aac566b4a"}}]
-/*   let secArray = ['{ "hello":"world" }'];
-  let kt = '{"example":"output"}';
-  secArray.push(kt);
-  console.log(secArray); */ 
-  let newOut = [];
-  allparts.filter(el => {
-   // let gy = JSON.parse((el));
-   newOut.push((el.part)); 
-    }); 
-    console.log(newOut)
+function formatDate(){
+  var date = new Date().toISOString().substr(0, 19);
+  let currentDate = date + "Z";
+  return currentDate
 }
-//allPartsprint();
+//formatDate();
 //getFileSize('testImage.jpg');
 //let resAn = hashDigestFilePart('testImage.jpg',0,3);
 //console.log(resAn);
