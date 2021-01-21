@@ -36,7 +36,7 @@ let secondBxPart = 0;
 let total_parts = 0;
 let part_size = 0;
 let bxUpFileId = '';
-
+let gdResumedUrl = '';
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
 const child = require('child_process');
@@ -933,7 +933,7 @@ router.get('/UploadGd', (req, res) =>
         let svAccess = saveGDAccessToken
         let savefileId = '';
         let concatFile = '';
-        setTimeout(() => {
+        setTimeout(async() => {
           console.log('google drive access token' + svAccess )
           fs.readdirSync( folder ).forEach( file => {
         console.log("inside the folderOne ")
@@ -943,7 +943,8 @@ router.get('/UploadGd', (req, res) =>
         const storeFile = file.toString()
         concatFile = (filename + extname)       
         })  
-
+        let findFileSize = bytesToSize(concatFile); 
+        if(findFileSize < 5 && findFileSize !== NaN){
         return child.exec(
           `curl --location --request POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id' \
             --header 'Authorization: Bearer ${svAccess}' \
@@ -963,6 +964,14 @@ router.get('/UploadGd', (req, res) =>
             toDeleteAllFiles();
             res.status(200).send("Response from Node: File uploaded to Google drive");
               });
+            }
+            else{
+              await gdUploadSessionStart(svAccess);
+              let gdActualFileSize = await getFileSize(concatFile);
+              await gdUploadlargeFileSingle(gdResumedUrl,svAccess,concatFile,gdActualFileSize);
+              res.status(200).json({"gdLargeUploadMSG": "gdFile_LargeUploaded", "gdLargeFileUpload": "gdUploadLargeFileComleted"});
+              toDeleteAllFiles();
+            }
             },35000);
      }
    } catch (error) {
@@ -980,7 +989,7 @@ router.post('/UploadGdLocal', (req, res) =>
       let svAccess = saveGDAccessToken
       let savefileId = '';
       let concatFile = '';
-      setTimeout(() => {
+      setTimeout(async() => {
         console.log('google drive access token' + svAccess )
         fs.readdirSync( folder ).forEach( file => {
           if(file === req.body.fileName) {
@@ -992,7 +1001,9 @@ router.post('/UploadGdLocal', (req, res) =>
             concatFile = (filename + extname)
             localFile = concatFile
           }   
-      })  
+      }) 
+      let findFileSize = bytesToSize(concatFile); 
+      if(findFileSize < 5 && findFileSize !== NaN){ 
       console.log("concatFile is " + concatFile)
       return child.exec(
         `curl --location --request POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id' \
@@ -1013,6 +1024,14 @@ router.post('/UploadGdLocal', (req, res) =>
           toDeleteAllFiles();
           res.status(200).send("Response from Node: File uploaded to Google drive");
           });
+        }
+        else{
+          await gdUploadSessionStart(svAccess);
+          //let gdActualFileSize = await getFileSize(concatFile);
+          //await gdUploadlargeFileSingle(gdResumedUrl,svAccess,concatFile,gdActualFileSize);
+          //res.status(200).json({"gdLocalUploadMSG": "gdFile_LocalUploaded", "gdLocalUpload": "gdLocalUploadLargeFileComleted"});
+          //toDeleteAllFiles();
+         }
           },35000);
     }
   } catch (error) {
@@ -1119,7 +1138,8 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
             concatFile = (filename + extname);
               
             }); 
-            if(bytesToSize(concatFile) < 5 && bytesToSize(concatFile) !== NaN){
+            let fileSizeBytes = bytesToSize(concatFile);
+            if(fileSizeBytes < 5 && fileSizeBytes !== NaN){
             console.log("concatFile outside " + concatFile); 
             child.exec(
               `curl -X POST https://content.dropboxapi.com/2/files/upload \
@@ -1143,7 +1163,8 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
             else{
               console.log("inside the largeFiles ");
               
-              await dpUploadSessionStart(saveAccess,concatFile);              let calcFileActualSize = await getFileSize(concatFile);
+              await dpUploadSessionStart(saveAccess,concatFile);              
+              let calcFileActualSize = await getFileSize(concatFile);
               await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               toDeleteAllFiles();  
@@ -1615,7 +1636,7 @@ router.post('/BxUpload', (req,res) => {
             boxConcatFile = (filename + extname);
           }
           }); 
-          let findFileSize = await getFileSize(boxConcatFile); 
+          let findFileSize = bytesToSize(boxConcatFile); 
           if(findFileSize < 5 && findFileSize !== NaN){
           return child.exec(
             `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
@@ -1636,12 +1657,14 @@ router.post('/BxUpload', (req,res) => {
             }); 
           }else{
             console.log("inside large file bxUpload");
-
-            await bxUploadSessionStart(boxAccessToken,findFileSize,boxConcatFile);
-            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,part_size,boxConcatFile);  
-            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,boxConcatFile,firstBxPart);
-            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,boxConcatFile,secondBxPart);
+            let bxActualFileSize = getFileSize(boxConcatFile);
+            await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
+            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile);  
+            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart);
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart);
             await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,boxConcatFile);
+            res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
+            toDeleteAllFiles();
           }
       },55000);
     }
@@ -1672,7 +1695,7 @@ router.post('/BxLocalUpload', (req,res) => {
             boxConcatFile = (filename + extname);
           }
           });
-          let findFileSize = await getFileSize(boxConcatFile); 
+          let findFileSize = bytesToSize(boxConcatFile); 
           if(findFileSize < 5 && findFileSize !== NaN){
           return child.exec(
             `curl --location --request POST "https://upload.box.com/api/2.0/files/content" \
@@ -1694,12 +1717,14 @@ router.post('/BxLocalUpload', (req,res) => {
           }
           else{
             console.log("inside the large bxfile upload");
-            
-            await bxUploadSessionStart(boxAccessToken,findFileSize,boxConcatFile);
-            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,part_size,boxConcatFile);  
-            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,boxConcatFile,firstBxPart);
-            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,findFileSize,boxConcatFile,secondBxPart);
+            let bxActualFileSize = getFileSize(boxConcatFile);
+            await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
+            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile);  
+            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart);
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart);
             await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,boxConcatFile);
+            res.status(200).json({"bxLocalUploadMSG": "bxFile_LocalUploaded", "bxLocalUpload": "bxLocalUploadLargeFileComleted"});
+            toDeleteAllFiles();
           }
       },55000); 
     }
@@ -1843,7 +1868,7 @@ router.post('/OdUpload', (req,res) => {
             odConcatFile = (filename + extname);
           } 
         });
-        let findFileSize = await getFileSize(odConcatFile);
+        let findFileSize = bytesToSize(odConcatFile);
         if(findFileSize < 5 && findFileSize !== NaN){
           return child.exec(
             `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
@@ -1902,7 +1927,7 @@ router.post('/OdLocalUpload', (req,res) => {
             odConcatFile = (filename + extname);
           } 
         });
-        let findFileSize = await getFileSize(odConcatFile);
+        let findFileSize = bytesToSize(odConcatFile);
         if(findFileSize < 5 && findFileSize !== NaN){
           return child.exec(
             `curl --location --request PUT https://graph.microsoft.com/v1.0/me/drive/root:/${odConcatFile}:/content \
@@ -2571,6 +2596,64 @@ async function bxCommitSession(bxAccToken,bxFileId,bxPrts,bxFlName){
       });
   });
 }
+async function gdUploadSessionStart(gdAccToken){
+  return await new Promise(async(resolve,reject) => {
+    //store Location
+    child.exec(
+      `curl -i -X POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable' \
+      --header 'Authorization: Bearer ${gdAccToken}' \
+      --header 'Content-Type: application/octet-stream' \
+      -H 'Content-Length: 0'`
+      ,(err,stdout,stderr) => {
+        if(err){
+          console.log("err from gdUploadSessionStart " + err);
+          reject(err);
+          throw err;
+        }
+        let gdResumedUrl = ''
+        console.log("the gdUploadSessionStart stdout is " + stdout);
+        console.log("the gdUploadSessionStart stderr is " + stderr);
+        resolve(stdout);
+        return gdResumedUrl;
+      });
+  });
+}
+async function gdUploadlargeFileSingle(resumableUrl,gdAccToken,gdFileName,gdFileSize){
+  return await new Promise(async(resolve,reject) => {
+
+    child.exec(
+      `curl --location --request PUT '${resumableUrl}' \
+      --header 'Authorization: Bearer ${gdAccToken}' \
+      --header 'Content-Type: application/octet-stream' \
+      --data-binary @./routes/AllFiles/${gdFileName} \
+      -H 'Content-Length: ${gdFileSize}'`
+      ,(err,stdout,stderr) => {
+        if(err){
+          console.log("err from gdUploadSessionStart " + err);
+          reject(err);
+          throw err;
+        }
+        console.log("the gdUploadSessionStart stdout is " + stdout);
+        console.log("the gdUploadSessionStart stderr is " + stderr);
+        resolve(stdout);
+      });
+  });
+}
+//Google drive large file upload
+
+//get sessionId
+//POST https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable
+//X-Upload-Content-Type: application/octet-stream
+//Content-Type:application/json; charset=UTF-8
+//Content-Length: bytes to send
+
+//send file data
+//PUT https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable
+//--data-binary @./routes/AllFiles/${gdFileName}
+//Content-Length: bytes to send
+
+
+
 function User(name,lastname,username,email,password){
   this.name = name,
   this.lastname = lastname,
@@ -2585,7 +2668,7 @@ async function hashDigestFilePart(fileToEncode,startingP,EndingP){
     return await new Promise(async(resolve, reject) => {
     let hash = crypto.createHash("md5");
     let file = `./routes/AllFiles/${fileToEncode}`;
-    let stream = fs.createReadStream(file, { start: startingP, end: mdEndingP});
+    let stream = fs.createReadStream(file, {encoding: 'binary', start: startingP, end: mdEndingP});
     let data = '';
     stream.on("error", err => reject(err));
     stream.on("data", chunk => {
@@ -2593,18 +2676,18 @@ async function hashDigestFilePart(fileToEncode,startingP,EndingP){
       hash.update(chunk);
     });
     stream.on("end", () => {
-      console.log(data);
-      let storeStr = hash.digest("hex");
+      //console.log("data " + data);
+      let storeStr = hash.digest();
       console.log(storeStr);
       let saveEncodedSha = encodeShaOne(storeStr);
       console.log(saveEncodedSha);
       resolve(saveEncodedSha);
-    });    
-  }); 
-  
+    });       
+  });  
 }
 function encodeShaOne(strToEncode){
     let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
+    console.log(buff)
     return buff;
 }
 function formatDate(){
@@ -2612,9 +2695,10 @@ function formatDate(){
   let currentDate = date + "Z";
   return currentDate
 }
+
 //formatDate();
 //getFileSize('testImage.jpg');
-//let resAn = hashDigestFilePart('testImage.jpg',0,3);
+//let resAn = hashDigestFilePart('testImage.jpg',0,8388608);
 //console.log(resAn);
-//encodeShaOne('25386257deff18b411f7edfa70980e09d730ef02');
+//encodeShaOne('21348301');
 module.exports = router;
