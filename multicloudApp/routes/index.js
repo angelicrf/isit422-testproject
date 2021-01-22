@@ -967,8 +967,7 @@ router.get('/UploadGd', (req, res) =>
             }
             else{
               await gdUploadSessionStart(svAccess);
-              let gdActualFileSize = await getFileSize(concatFile);
-              await gdUploadlargeFileSingle(gdResumedUrl,svAccess,concatFile,gdActualFileSize);
+              await gdUploadlargeFileSingle(gdResumedUrl,svAccess,concatFile);
               res.status(200).json({"gdLargeUploadMSG": "gdFile_LargeUploaded", "gdLargeFileUpload": "gdUploadLargeFileComleted"});
               toDeleteAllFiles();
             }
@@ -1027,10 +1026,9 @@ router.post('/UploadGdLocal', (req, res) =>
         }
         else{
           await gdUploadSessionStart(svAccess);
-          //let gdActualFileSize = await getFileSize(concatFile);
-          //await gdUploadlargeFileSingle(gdResumedUrl,svAccess,concatFile,gdActualFileSize);
-          //res.status(200).json({"gdLocalUploadMSG": "gdFile_LocalUploaded", "gdLocalUpload": "gdLocalUploadLargeFileComleted"});
-          //toDeleteAllFiles();
+          await gdUploadlargeFileSingle(gdResumedUrl,svAccess,concatFile);
+          res.status(200).json({"gdLocalUploadMSG": "gdFile_LocalUploaded", "gdLocalUpload": "gdLocalUploadLargeFileComleted"});
+          toDeleteAllFiles();
          }
           },35000);
     }
@@ -1206,7 +1204,8 @@ router.post('/DPUploadLocal', (req, res) =>
                 console.log("concatFile " + concatFile);    
             }            
             });
-            if(bytesToSize(concatFile) < 5 && bytesToSize(concatFile) !== NaN){ 
+            let fileSizeUp = bytesToSize(concatFile);
+            if(fileSizeUp < 5 && fileSizeUp !== NaN){ 
             console.log("concatFile outside " + concatFile) 
             child.exec(
               `curl -X POST https://content.dropboxapi.com/2/files/upload \
@@ -2599,7 +2598,7 @@ async function bxCommitSession(bxAccToken,bxFileId,bxPrts,bxFlName){
 async function gdUploadSessionStart(gdAccToken){
   return await new Promise(async(resolve,reject) => {
     //store Location
-    child.exec(
+    let ft = child.execSync(
       `curl -i -X POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable' \
       --header 'Authorization: Bearer ${gdAccToken}' \
       --header 'Content-Type: application/octet-stream' \
@@ -2610,23 +2609,27 @@ async function gdUploadSessionStart(gdAccToken){
           reject(err);
           throw err;
         }
-        let gdResumedUrl = ''
+       
         console.log("the gdUploadSessionStart stdout is " + stdout);
         console.log("the gdUploadSessionStart stderr is " + stderr);
-        resolve(stdout);
-        return gdResumedUrl;
+
       });
+      
+      let holdGdLocation = ft.toString().split('\n')[3];
+      gdResumedUrl = holdGdLocation.toString().substr(10,ft.length).split('\r')[0];
+      
+      resolve(gdResumedUrl);
+      return gdResumedUrl;
   });
 }
-async function gdUploadlargeFileSingle(resumableUrl,gdAccToken,gdFileName,gdFileSize){
+async function gdUploadlargeFileSingle(resumableUrl,gdAccToken,gdFileName){
   return await new Promise(async(resolve,reject) => {
-
+   console.log("resumableUrl "+ resumableUrl);
     child.exec(
-      `curl --location --request PUT '${resumableUrl}' \
+      `curl -i -X PUT "${resumableUrl}" \
       --header 'Authorization: Bearer ${gdAccToken}' \
       --header 'Content-Type: application/octet-stream' \
-      --data-binary @./routes/AllFiles/${gdFileName} \
-      -H 'Content-Length: ${gdFileSize}'`
+      --data-binary @./routes/AllFiles/${gdFileName}`
       ,(err,stdout,stderr) => {
         if(err){
           console.log("err from gdUploadSessionStart " + err);
@@ -2696,9 +2699,4 @@ function formatDate(){
   return currentDate
 }
 
-//formatDate();
-//getFileSize('testImage.jpg');
-//let resAn = hashDigestFilePart('testImage.jpg',0,8388608);
-//console.log(resAn);
-//encodeShaOne('21348301');
 module.exports = router;
