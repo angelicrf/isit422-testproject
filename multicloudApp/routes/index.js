@@ -36,6 +36,8 @@ let secondBxPart = 0;
 let total_parts = 0;
 let part_size = 0;
 let bxUpFileId = '';
+let bxNewFiles = [];
+let storeHashs = [];
 let gdResumedUrl = '';
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
@@ -1658,10 +1660,15 @@ router.post('/BxUpload', (req,res) => {
             console.log("inside large file bxUpload");
             let bxActualFileSize = getFileSize(boxConcatFile);
             await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
-            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile);  
-            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart);
-            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart);
-            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,boxConcatFile);
+            //bytesToCut
+            await encodeShaOne(part_size,boxConcatFile);
+            //create hashes for splitted files
+            await bxNewFlSizes(bxNewFiles);
+            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile,storeHashs[0]);  
+            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart,storeHashs[0]);
+            //handle errors get new hash from error
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,storeHashs[storeHashs.length -2]);
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,storeHashs[storeHashs.length -1]);
             res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
             toDeleteAllFiles();
           }
@@ -1717,12 +1724,15 @@ router.post('/BxLocalUpload', (req,res) => {
           else{
             console.log("inside the large bxfile upload");
             let bxActualFileSize = getFileSize(boxConcatFile);
-            await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
-            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile);  
-            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart);
-            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart);
-            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,boxConcatFile);
-            res.status(200).json({"bxLocalUploadMSG": "bxFile_LocalUploaded", "bxLocalUpload": "bxLocalUploadLargeFileComleted"});
+            await encodeShaOne(part_size,boxConcatFile);
+            //create hashes for splitted files
+            await bxNewFlSizes(bxNewFiles);
+            await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile,storeHashs[0]);  
+            await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart,storeHashs[0]);
+            //handle errors get new hash from error
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,storeHashs[storeHashs.length -2]);
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,storeHashs[storeHashs.length -1]);
+            res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
             toDeleteAllFiles();
           }
       },55000); 
@@ -2447,6 +2457,7 @@ async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
           }
           console.log("the bxUploadSessionStart stdout is " + stdout);
           console.log("the bxUploadSessionStart stderr is " + stderr);
+          
           let mdStdout = stdout.split(':');
           total_parts = mdStdout[1];
           part_size = mdStdout[2].split(',')[0];
@@ -2456,7 +2467,7 @@ async function bxUploadSessionStart(bxAccToken,bxFileSize,bxFileName){
         });
     });
 }
-async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPrt,bxFileName){
+async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPrt,bxFileName,hashDigest){
   return await new Promise(async(resolve,reject) => {
   let bfFileId = bxFileId.substr(1,bxFileId.length-3);
   console.log("bxFileIdLength " + bfFileId.length + "bxFileId " + bfFileId.split('"')[0] + "bxFileSize " + bxFileSize + "firstBxPart " + firstBxPart + "bxFileName " + bxFileName);
@@ -2466,17 +2477,16 @@ async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPrt,bx
   let mdIntFirstBxPart = parseInt(mdFirstBxPart);
   let mdbxFileSize = parseInt(bxFileSize);
   let mdIntFrst = parseInt(firstBxPrt);
-  //Find Digest
-    console.log("bxFileName " + bxFileName + " " + mdIntFirstBxPart + " " + mdbxFileSize);
-    //let shaOutput = await hashDigestFilePart(bxFileName,0,firstBxPart);
-    //console.log("shaOutput " + shaOutput);
+  
+    console.log("hashDigest " + hashDigest);
+
     child.exec(
       `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}" \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       -H 'Content-Range: bytes 0-${mdIntFirstBxPart}/${mdbxFileSize}' \
       --data-binary @./routes/AllFiles/testImage.jpg \
       -H 'Content-Type: application/json' \
-      --header 'Digest: sha=xiZY/GfkxQRJbDFZa15XGqxWa0o=' \
+      --header 'Digest: sha=${hashDigest}' \
       -H 'Content-Length: ${mdIntFrst}'`,
       (err,stdout,stderr) => {
         if(err){
@@ -2493,7 +2503,7 @@ async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPrt,bx
       });
   });
 }
-async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxfirstPrt){
+async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxfirstPrt,hashDigest){
   return await new Promise((resolve,reject) => {
     let bfFileId = bxFileId.substr(1,bxFileId.length-3);
     let mdBxFileId = bfFileId.split('"')[0];
@@ -2501,12 +2511,12 @@ async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,b
     let mdIntFrst = parseInt(bxfirstPrt);
     
     let bxSecondFilePart = (mdIntFrst * 2) -1;
-    console.log("mdIntFrst " + mdIntFrst + "bxSecondFilePart " +  bxSecondFilePart);
-    //Find Digest
+    console.log("hashDigest " + hashDigest);
+  
     child.exec(
       `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}" \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
-      --header 'Digest: sha=xiZY/GfkxQRJbDFZa15XGqxWa0o=' \
+      --header 'Digest: sha=${hashDigest}' \
       -H 'Content-Range: bytes ${mdIntFrst}-${bxSecondFilePart}/${mdbxFileSize}' \
       -H 'Content-Type: application/json' \
       --data-binary @./routes/AllFiles/${bxFileName} \
@@ -2526,7 +2536,7 @@ async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,b
       });
   });
 }
-async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxSecondPrt){
+async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxSecondPrt,hashDigest){
   return await new Promise((resolve,reject) => {
     let bfFileId = bxFileId.substr(1,bxFileId.length-3);
     let mdBxFileId = bfFileId.split('"')[0];
@@ -2535,12 +2545,12 @@ async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bx
     let diffBxPart = mdbxFileSize - 1;
     let lastBxCnLn = (diffBxPart - mdIntSecond) + 1;
     
-    console.log("mdIntSecond " + mdIntSecond + "diffBxPart " +  diffBxPart + "lastBxCnLn " + lastBxCnLn);
-    //Find Digest
+    console.log("hashDigest " + hashDigest);
+   
     child.exec(
       `curl -X PUT "https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}" \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
-      --header 'Digest: sha=ZV5blPb2+zf1aykERjAGM+0Utuw=' \
+      --header 'Digest: sha=${hashDigest}' \
       -H 'Content-Range: bytes ${mdIntSecond}-${diffBxPart}/${mdbxFileSize}' \
       -H 'Content-Type: application/json' \
       --data-binary @./routes/AllFiles/${bxFileName} \
@@ -2559,14 +2569,13 @@ async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bx
       });
   });
 }
-async function bxCommitSession(bxAccToken,bxFileId,bxPrts,bxFlName){
+async function bxCommitSession(bxAccToken,bxFileId,bxPrts,hashDigest){
   return await new Promise(async(resolve,reject) => {
     let dateToDisplay = formatDate();
     console.log("dateToDisplay " + dateToDisplay);
     let bfFileId = bxFileId.substr(1,bxFileId.length-3);
     let mdBxFileId = bfFileId.split('"')[0];
-    //Find Digest  
-    //let shaOutput = await hashDigestFilePart(bxFlName,bxLastStart,bxFlTotalSize);
+   
     let newOut = [];
     bxPrts.filter(el => newOut.push(JSON.parse(el).part));
 
@@ -2575,7 +2584,7 @@ async function bxCommitSession(bxAccToken,bxFileId,bxPrts,bxFlName){
     child.exec(
       `curl -X POST 'https://upload.box.com/api/2.0/files/upload_sessions/${mdBxFileId}/commit' \
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
-      -H 'Digest: sha=aDouGlmToXg4/S6oQwXudang7DU=' \
+      -H 'Digest: sha=${hashDigest}' \
       -H 'Content-Type: application/json' \
       -d '{
         "parts": ${arrayOfParts},
@@ -2609,15 +2618,11 @@ async function gdUploadSessionStart(gdAccToken){
           reject(err);
           throw err;
         }
-       
         console.log("the gdUploadSessionStart stdout is " + stdout);
         console.log("the gdUploadSessionStart stderr is " + stderr);
-
-      });
-      
+      });    
       let holdGdLocation = ft.toString().split('\n')[3];
-      gdResumedUrl = holdGdLocation.toString().substr(10,ft.length).split('\r')[0];
-      
+      gdResumedUrl = holdGdLocation.toString().substr(10,ft.length).split('\r')[0];   
       resolve(gdResumedUrl);
       return gdResumedUrl;
   });
@@ -2642,21 +2647,6 @@ async function gdUploadlargeFileSingle(resumableUrl,gdAccToken,gdFileName){
       });
   });
 }
-//Google drive large file upload
-
-//get sessionId
-//POST https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable
-//X-Upload-Content-Type: application/octet-stream
-//Content-Type:application/json; charset=UTF-8
-//Content-Length: bytes to send
-
-//send file data
-//PUT https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable
-//--data-binary @./routes/AllFiles/${gdFileName}
-//Content-Length: bytes to send
-
-
-
 function User(name,lastname,username,email,password){
   this.name = name,
   this.lastname = lastname,
@@ -2664,34 +2654,63 @@ function User(name,lastname,username,email,password){
   this.email = email,
   this.password = password
 };
-async function hashDigestFilePart(fileToEncode,startingP,EndingP){
-   
-   let mdEndingP = parseInt(EndingP);
-   console.log(fileToEncode + "startingP " + startingP + "mdEndingP " + mdEndingP);
-    return await new Promise(async(resolve, reject) => {
-    let hash = crypto.createHash("md5");
+async function hashDigestFilePart(fileToEncode){
+
+  return await new Promise(async(resolve, reject) => {
+    let hash = crypto.createHash("sha1");
     let file = `./routes/AllFiles/${fileToEncode}`;
-    let stream = fs.createReadStream(file, {encoding: 'binary', start: startingP, end: mdEndingP});
+    let stream = fs.createReadStream(file);
+   
     let data = '';
     stream.on("error", err => reject(err));
     stream.on("data", chunk => {
       data += chunk;
       hash.update(chunk);
     });
-    stream.on("end", () => {
-      //console.log("data " + data);
-      let storeStr = hash.digest();
-      console.log(storeStr);
-      let saveEncodedSha = encodeShaOne(storeStr);
-      console.log(saveEncodedSha);
-      resolve(saveEncodedSha);
-    });       
-  });  
+    stream.on("end", () => { 
+      //output of utf8
+      let storeStr = hash.digest().toString('base64');
+      console.log(storeStr); 
+      //storeHashs.push(storeStr);
+      resolve(storeHashs);
+     // return storeHashs;
+    }); 
+   /*  let hash2 = crypto.createHash("sha1");
+    let fFile = `./routes/AllFiles/${fileToEncode}`;
+    let stream2 = fs.createReadStream(fFile);
+    const firstByte = await stream2[Symbol.asyncIterator]().next();
+    //output of file in Buffer
+    console.log(firstByte.value.length)
+    hash2.update(firstByte.value);
+    let storeStr2 = hash2.digest().toString('base64');
+    console.log(storeStr2);  */      
+  }); 
 }
-function encodeShaOne(strToEncode){
-    let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
-    console.log(buff)
-    return buff;
+async function encodeShaOne(bytesToCut,fileNM){
+  return await new Promise((resolve,reject) => {
+    let newFiles = child.execSync(
+      `cd ./routes/AllFiles && split -b ${bytesToCut} ${fileNM} && ls`
+      ,(err,stdout,stderr) => {
+        if(err){
+          console.log("err from encodeShaOne " + err);
+          reject(err);
+          throw err;
+        }
+        console.log("the encodeShaOne stdout is " + stdout);
+        console.log("the encodeShaOne stderr is " + stderr);
+        
+      });
+      console.log("newFiles " + newFiles);
+      bxNewFiles.push(newFiles);
+      // remove the main file from the array
+      resolve(newFiles);
+  });
+  // let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
+} 
+function bxNewFlSizes(bxNFls){
+   for (let index = 0; index < bxNFls.length; index++) {
+    hashDigestFilePart(bxNFls[index]);
+   }
 }
 function formatDate(){
   var date = new Date().toISOString().substr(0, 19);
