@@ -38,7 +38,11 @@ let part_size = 0;
 let bxUpFileId = '';
 let bxNewFiles = [];
 let storeHashs = [];
+let bxFirstExec = false;
+let bxBeforeEndHash = '';
+let bxCommitHash = '';
 let gdResumedUrl = '';
+
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
 const child = require('child_process');
@@ -1658,17 +1662,25 @@ router.post('/BxUpload', (req,res) => {
             }); 
           }else{
             console.log("inside large file bxUpload");
+            
             let bxActualFileSize = await getFileSize(boxConcatFile);
             await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
             await encodeShaOne(part_size,boxConcatFile);
             await bxNewFlSizes(bxNewFiles);
+            
             await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile,storeHashs[1]);  
             await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart,storeHashs[1]);
             //handle errors get new hash from error
-            //await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,storeHashs[storeHashs.length -2]);
-            //await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,storeHashs[storeHashs.length -1]);
-            //res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
-            //toDeleteAllFiles();
+            bxFirstExec = true;
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,storeHashs[storeHashs.length -2],bxFirstExec);
+            bxFirstExec = false;
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,bxBeforeEndHash,bxFirstExec);
+            bxFirstExec = true;
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,storeHashs[storeHashs.length -1],bxFirstExec);
+            bxFirstExec = false;
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,bxCommitHash,bxFirstExec);
+            res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
+            toDeleteAllFiles(); 
           }
       },55000);
     }
@@ -1725,13 +1737,20 @@ router.post('/BxLocalUpload', (req,res) => {
             await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
             await encodeShaOne(part_size,boxConcatFile);
             await bxNewFlSizes(bxNewFiles);
+            
             await bxFirstLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,part_size,boxConcatFile,storeHashs[1]);  
             await bxSecondLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,firstBxPart,storeHashs[1]);
             //handle errors get new hash from error
-            //await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,storeHashs[storeHashs.length -2]);
-            //await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,storeHashs[storeHashs.length -1]);
-            //res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
-            //toDeleteAllFiles(); 
+            bxFirstExec = true;
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,storeHashs[storeHashs.length -2],bxFirstExec);
+            bxFirstExec = false;
+            await bxThirdLargeFilePart(boxAccessToken,bxUpFileId,bxActualFileSize,boxConcatFile,secondBxPart,bxBeforeEndHash,bxFirstExec);
+            bxFirstExec = true;
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,storeHashs[storeHashs.length -1],bxFirstExec);
+            bxFirstExec = false;
+            await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,bxCommitHash,bxFirstExec);
+            res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
+            toDeleteAllFiles(); 
           }
       },55000); 
     }
@@ -2483,7 +2502,7 @@ async function bxFirstLargeFilePart(bxAccToken,bxFileId,bxFileSize,firstBxPrt,bx
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       -H 'Content-Range: bytes 0-${mdIntFirstBxPart}/${mdbxFileSize}' \
       --data-binary @./routes/AllFiles/testImage.jpg \
-      -H 'Content-Type: application/json' \
+      -H 'Content-Type: application/octet-stream' \
       --header 'Digest: sha=${hashDigest}' \
       -H 'Content-Length: ${mdIntFrst}'`,
       (err,stdout,stderr) => {
@@ -2516,7 +2535,7 @@ async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,b
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       --header 'Digest: sha=${hashDigest}' \
       -H 'Content-Range: bytes ${mdIntFrst}-${bxSecondFilePart}/${mdbxFileSize}' \
-      -H 'Content-Type: application/json' \
+      -H 'Content-Type: application/octet-stream' \
       --data-binary @./routes/AllFiles/${bxFileName} \
       -H 'Content-Length: ${mdIntFrst}'`,
       (err,stdout,stderr) => {
@@ -2534,7 +2553,7 @@ async function bxSecondLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,b
       });
   });
 }
-async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxSecondPrt,hashDigest){
+async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bxSecondPrt,hashDigest,bxFirstRun){
   return await new Promise((resolve,reject) => {
     let bfFileId = bxFileId.substr(1,bxFileId.length-3);
     let mdBxFileId = bfFileId.split('"')[0];
@@ -2550,7 +2569,7 @@ async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bx
       -H 'Authorization: Bearer ${bxAccToken.substr(1,bxAccToken.length-2)}' \
       --header 'Digest: sha=${hashDigest}' \
       -H 'Content-Range: bytes ${mdIntSecond}-${diffBxPart}/${mdbxFileSize}' \
-      -H 'Content-Type: application/json' \
+      -H 'Content-Type: application/octet-stream' \
       --data-binary @./routes/AllFiles/${bxFileName} \
       -H 'Content-Length: ${lastBxCnLn}'`,
       (err,stdout,stderr) => {
@@ -2561,13 +2580,23 @@ async function bxThirdLargeFilePart(bxAccToken,bxFileId,bxFileSize,bxFileName,bx
         }
         console.log("the bxThirdLargeFilePart stdout is " + stdout);
         console.log("the bxThirdLargeFilePart stderr is " + stderr);
-        bxParts.push(stdout);
-        resolve(stdout); 
-        return bxParts;
+        if(bxFirstRun){
+        let readMessage = JSON.parse(stdout).message;
+        let hlMessage = readMessage.split(':')[1].split('=')[0];
+        bxBeforeEndHash = hlMessage.substr(1,hlMessage.length)  + "=";
+        
+        resolve(bxBeforeEndHash); 
+        return bxBeforeEndHash;
+        }
+        else{
+          bxParts.push(stdout);
+          resolve(stdout); 
+          return bxParts;
+        }
       });
   });
 }
-async function bxCommitSession(bxAccToken,bxFileId,bxPrts,hashDigest){
+async function bxCommitSession(bxAccToken,bxFileId,bxPrts,hashDigest,bxFirstRun){
   return await new Promise(async(resolve,reject) => {
     let dateToDisplay = formatDate();
     console.log("dateToDisplay " + dateToDisplay);
@@ -2598,13 +2627,25 @@ async function bxCommitSession(bxAccToken,bxFileId,bxPrts,hashDigest){
         }
         console.log("the bxCommitSession stdout is " + stdout);
         console.log("the bxCommitSession stderr is " + stderr);
-        resolve(stdout);
+        if(bxFirstRun){
+          let readMessage = JSON.parse(stdout).message;
+          let hlMessage = readMessage.split(':')[2].split('=')[0];
+          bxCommitHash = hlMessage.substr(1,hlMessage.length) + "=";
+          
+          resolve(bxCommitHash); 
+          return bxCommitHash;
+          }
+          else{
+            bxParts.push(stdout);
+            resolve(stdout); 
+            return bxParts;
+          }
       });
   });
 }
 async function gdUploadSessionStart(gdAccToken){
   return await new Promise(async(resolve,reject) => {
-    //store Location
+   
     let ft = child.execSync(
       `curl -i -X POST 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable' \
       --header 'Authorization: Bearer ${gdAccToken}' \
@@ -2667,11 +2708,11 @@ async function hashDigestFilePart(fileToEncode){
     });
     stream.on("end", () => { 
       //output of utf8
-      let storeStr = hash.digest().toString('base64');
-      console.log(storeStr); 
-      //storeHashs.push(storeStr);
+      storeHashs.push(hash.digest().toString('base64'));
+      console.log("storeHashs " + storeHashs); 
+      
       resolve(storeHashs);
-     // return storeHashs;
+      return storeHashs;
     }); 
    /*  let hash2 = crypto.createHash("sha1");
     let fFile = `./routes/AllFiles/${fileToEncode}`;
@@ -2707,11 +2748,14 @@ async function encodeShaOne(bytesToCut,fileNM){
   });
   // let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
 } 
-function bxNewFlSizes(bxNFls){
- 
-  for (let index = 0; index < bxNFls.length; index++) {
-    hashDigestFilePart(bxNFls[index]);
-   } 
+async function bxNewFlSizes(bxNFls){
+  return await new Promise(async(resolve,reject) => {
+    for (let index = 0; index < bxNFls.length; index++) {
+      resolve(hashDigestFilePart(bxNFls[index]));
+     } 
+  }).catch(err => {
+     console.log(err);
+  })
 }
 function formatDate(){
   var date = new Date().toISOString().substr(0, 19);
@@ -2719,10 +2763,11 @@ function formatDate(){
   return currentDate
 }
 function testArrayEl(){
-  let bxNls = ["testImage.jpg","xaa","xab","xac"];
-  //setTimeout(() => bxNewFlSizes(bxNls), 3000); 
-  let gh = bxNls.splice(1,0, "htghg")
-  console.log(gh)
+  let bxNls = "File digest was incorrect. Actual: esqbuxiN0uTqZZ3aCfz9r6yQcOw= Expected: aDouGlmToXg4/S6oQwXudang7DU="
+  //let gh = JSON.parse(JSON.stringify(bxNls)).message;
+  let hlMessage = bxNls.split(':')[2].split('=')[0];
+  let thirdHashDigest = hlMessage.substr(1,hlMessage.length);
+  console.log(thirdHashDigest)
 }
-//testArrayEl();
+//testArrayEl()
 module.exports = router;
