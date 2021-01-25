@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
+var BoxSDK = require('box-node-sdk');
 const fetch = require("node-fetch");
 const crypto = require('crypto');
 const {v4 : uuidv4} = require('uuid');
@@ -45,6 +46,8 @@ let gdResumedUrl = '';
 
 let appDir = path.dirname(require.main.filename);
 const fs = require('fs');
+const ReadableStream = require('stream').Readable;
+
 const child = require('child_process');
 const mongoose = require("mongoose");
 const MCUsers = require("../McUsers");
@@ -577,6 +580,7 @@ router.post('/Files', (req, res) => {
   console.log('Files called');
   try {
     if(req.body.path !== undefined || req.body.path !== null || req.body.path !== ""){
+      console.log("req.body.path is " + req.body.path)
       fs.readdir(req.body.path, 'buffer', function (err, files) {
         if (err) {
           console.log('Unable to scan directory: ' + err);
@@ -1734,7 +1738,11 @@ router.post('/BxLocalUpload', (req,res) => {
           else{
             console.log("inside the large bxfile upload");
             let bxActualFileSize = await getFileSize(boxConcatFile);
-            await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
+            await bxSdkUpload(boxAccessToken,boxConcatFile,bxActualFileSize);
+            res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
+            toDeleteAllFiles();
+            /* 
+             await bxUploadSessionStart(boxAccessToken,bxActualFileSize,boxConcatFile);
             await encodeShaOne(part_size,boxConcatFile);
             await bxNewFlSizes(bxNewFiles);
             
@@ -1750,7 +1758,7 @@ router.post('/BxLocalUpload', (req,res) => {
             bxFirstExec = false;
             await bxCommitSession(boxAccessToken,bxUpFileId,bxParts,bxCommitHash,bxFirstExec);
             res.status(200).json({"bxLargeUploadMSG": "bxFile_Uploaded", "bxLargeFileUpload": "bxLargeFileUploadComleted"});
-            toDeleteAllFiles(); 
+            toDeleteAllFiles();  */
           }
       },55000); 
     }
@@ -2696,14 +2704,33 @@ function User(name,lastname,username,email,password){
 async function hashDigestFilePart(fileToEncode){
 
   return await new Promise(async(resolve, reject) => {
-    let hash = crypto.createHash("sha1");
-    let file = `./routes/AllFiles/${fileToEncode}`;
-    let stream = fs.createReadStream(file);
+    //  const blob = this.file.slice(part.offset, part.offset + partSize);
+    //  this._file.slice(this._position, this._position + this._partSize);
+    
+   /* let filePath = `./routes/AllFiles`;
+    
+     fs.readdir(filePath, 'buffer', function (err, files) {
+      if (err) {
+        console.log('Unable to scan directory: ' + err);
+        throw err;
+      } 
+      else {
+        files.forEach(file => {
+          console.log(file)
+          _getNextChunk('callback',file)
+        });
+      
+        //hash.update(buf);
+       }
+      }); */
    
+   let file = `./routes/AllFiles/${flName}`;
+   let stream = fs.createReadStream(file);
     let data = '';
     stream.on("error", err => reject(err));
+    hash = crypto.createHash("sha1");
     stream.on("data", chunk => {
-      data += chunk;
+      data += chunk; 
       hash.update(chunk);
     });
     stream.on("end", () => { 
@@ -2713,7 +2740,7 @@ async function hashDigestFilePart(fileToEncode){
       
       resolve(storeHashs);
       return storeHashs;
-    }); 
+    });   
    /*  let hash2 = crypto.createHash("sha1");
     let fFile = `./routes/AllFiles/${fileToEncode}`;
     let stream2 = fs.createReadStream(fFile);
@@ -2725,6 +2752,60 @@ async function hashDigestFilePart(fileToEncode){
     console.log(storeStr2);  */      
   }); 
 }
+function getNextChunk(callback,file){
+    let hash = crypto.createHash("sha1");
+    let bfFile;
+    let buf;
+    let _stream;
+    let _streamBuffer = [];
+    let part_size = 8388608;
+
+          if (file instanceof ReadableStream) {
+            
+            // Pause the stream so we can read specific chunks from it
+            _stream = file.pause();
+            _streamBuffer = [];
+            console.log(_stream + "calledOne")
+            
+          } else if (file instanceof Buffer || typeof file === 'string') {
+            console.log(file + " calledTwo")
+            bfFile = file;
+          } else {
+            throw new TypeError('file must be a Stream, Buffer, or string!');
+          }
+          if (file) {
+      
+            // Buffer/string case, just get the slice we need
+            buf = file.slice(0, 0 + part_size);
+            console.log(buf + " calledThree");
+           
+          } else if (_streamBuffer.length > 0) {
+            console.log(_streamBuffer.length + " called4")
+            buf = _streamBuffer.shift();
+          } else {
+            console.log(" called5")
+            // Stream case, need to read
+            buf = _stream.read(part_size);
+            
+              if (!buf) {
+                console.log(" called6")
+                // stream needs to read more, retry later
+                setImmediate(() => getNextChunk(callback,file));
+                return;
+              } else if (buf.length > part_size) {
+                console.log(" called7")
+                // stream is done reading and had extra data, buffer the remainder of the file
+                    for (let i = 0; i < buf.length; i += part_size) {
+            
+                      _streamBuffer.push(buf.slice(i, i + part_size));
+                    }
+                    buf = _streamBuffer.shift();
+              }
+            }
+            hash.update(buf);
+            let storeStr = hash.digest().toString('base64');
+            console.log(storeStr);
+         }
 async function encodeShaOne(bytesToCut,fileNM){
   return await new Promise((resolve,reject) => {
     let newFiles = child.execSync(
@@ -2744,7 +2825,7 @@ async function encodeShaOne(bytesToCut,fileNM){
       bxNewFiles = hlBxNewFiles.filter(el => el.trim());
       console.log("bxNewFiles " + bxNewFiles);
       // remove the main file from the array
-      resolve(bxNewFiles);
+      resolve(bxNewFiles.toString());
   });
   // let buff = Buffer.from(`${strToEncode}`).toString('base64').toString('utf8');
 } 
@@ -2762,12 +2843,31 @@ function formatDate(){
   let currentDate = date + "Z";
   return currentDate
 }
-function testArrayEl(){
-  let bxNls = "File digest was incorrect. Actual: esqbuxiN0uTqZZ3aCfz9r6yQcOw= Expected: aDouGlmToXg4/S6oQwXudang7DU="
-  //let gh = JSON.parse(JSON.stringify(bxNls)).message;
-  let hlMessage = bxNls.split(':')[2].split('=')[0];
-  let thirdHashDigest = hlMessage.substr(1,hlMessage.length);
-  console.log(thirdHashDigest)
+async function bxSdkUpload(bxAccToken,flName,bxFileSize){
+  return await new Promise((resolve,reject) => {
+    let sdk = new BoxSDK({
+      clientID: 'cizpnka9apgvmixa683wgv0lk63cbv7q',
+      clientSecret: '5g7OcCqXqheEdINx3zDeF1jeXnBth137'
+    });
+    console.log(bxAccToken);
+    let client = sdk.getBasicClient(`${bxAccToken.substr(1,bxAccToken.length-2)}`);
+    console.log(client)
+     let fileToUpload = `./routes/AllFiles/${flName}`;
+    let stream = fs.createReadStream(`${fileToUpload }`);
+    let UpName = flName.toString();
+    client.files.getChunkedUploader('0', bxFileSize, UpName, stream)
+    .then(uploader => uploader.start())
+    .then(file => {
+      console.log(JSON.stringify(file));
+      resolve(JSON.stringify(file));
+      })
+    .catch(err => {
+      console.log(err);
+      reject(err)
+    });
+  });
 }
-//testArrayEl()
+//let gt = leVraBc2qWxNX0XlyHpajerz1RhOWXy1;
+//bxSdkUpload(gt,'testImage.jpg',21348301);
+
 module.exports = router;
