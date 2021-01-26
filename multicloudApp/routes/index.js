@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
+var Dropbox = require('dropbox').Dropbox;
 var BoxSDK = require('box-node-sdk');
 const fetch = require("node-fetch");
 const crypto = require('crypto');
@@ -1237,13 +1238,13 @@ router.post('/DPUploadLocal', (req, res) =>
               });
             }else{
               console.log("inside the largeFiles ");
-             
-              await dpUploadSessionStart(saveAccess,concatFile);
+              dpSdkUpload(saveAccess,concatFile);
+             /*  await dpUploadSessionStart(saveAccess,concatFile);
               let calcFileActualSize = await getFileSize(concatFile);
               await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               toDeleteAllFiles();
-              res.status(200).send("Response from Node: large local file uploaded to Dropbox") ;  
+              res.status(200).send("Response from Node: large local file uploaded to Dropbox") ;   */
             }
         },35000);  
       }
@@ -2867,7 +2868,64 @@ async function bxSdkUpload(bxAccToken,flName,bxFileSize){
     });
   });
 }
-//let gt = leVraBc2qWxNX0XlyHpajerz1RhOWXy1;
-//bxSdkUpload(gt,'testImage.jpg',21348301);
+function dpSdkUpload(dpAccToken,fileName){
+  //dpAccToken
+  console.log("new AccessToken dp " + dpAccToken);
+  let dbx = new Dropbox({ accessToken: `${dpAccToken}` });
+  //console.log(dbx);
+  let filePath = './routes/AllFiles'
+  const maxBlob = 8 * 1000 * 1000; // 8Mb - Dropbox JavaScript API suggested max file / chunk size
+        var workItems = [];      
+        var offset = 0;
+        let dpSid = '';
+        //let fileName = 'testImage.jpg'
+        
+        var file = fs.readFileSync(filePath + '/testImage.jpg');
+        let fileSize = Buffer.byteLength(file);
+        //console.log(buff)
+       // console.log(file.slice(103, 111))
+               while (offset < fileSize) {
+                var chunkSize = Math.min(maxBlob, fileSize - offset);
+                workItems.push(file.slice(offset, offset + chunkSize));
+                offset += chunkSize;
+              }       
+              const task = workItems.reduce((acc, blob, idx, items) => {
+                //console.log("acc " + acc + "blob " + blob + "idx " + idx + "items " +items)
+                if (idx == 0) {
+                  // Starting multipart upload of file
+                  return acc.then(function() {
+                    console.log('here1')
+                    return dbx.filesUploadSessionStart({ close: false, contents: blob})
+                              .then(response => {
+                                dpSid = JSON.stringify(dpSid.result.session_id);
+                                console.log("dpSid " + dpSid)
+                                response.result.session_id;
+                              })
+                              .catch(err => console.log(err))
+                  });          
+                } else if (idx < items.length-1) {  
+                  // Append part to the upload session
+                  return acc.then(function(sessionId) {
+                    console.log('here2')
+                    sessionId = dpSid;
+                   var cursor = { session_id: sessionId, offset: idx * maxBlob };
+                   return dbx.filesUploadSessionAppendV2({ cursor: cursor, close: false, contents: blob })
+                   .then(() => sessionId)
+                   .catch(err => console.log(err)) 
+                  });
+                } else {
+                  // Last chunk of data, close session
+                  return acc.then(function(sessionId) {
+                    console.log('here3')
+                    sessionId = dpSid;
+                    var cursor = { session_id: sessionId, offset: fileSize - blob.size };
+                    var commit = { path: '/' + fileName, mode: 'add', autorename: true, mute: false };              
+                    return dbx.filesUploadSessionFinish({ cursor: cursor, commit: commit, contents: blob });           
+                  });
+                }          
+              }, Promise.resolve());  
+         
+}
+dpSdkUpload('6LLEn6p22nsAAAAAAAAAASt50g1OEyvhg_lHog2RCGPs-Pq9Ayt5KhmwcbznkGNM','testImage.jpg');
 
 module.exports = router;
