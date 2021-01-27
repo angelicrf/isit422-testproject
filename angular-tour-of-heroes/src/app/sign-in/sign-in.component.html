@@ -2,14 +2,16 @@
 <img class="multicloudImg" src="../../assets/images/multicloud.png" alt="multicloud Logo">
 <div class="signIn">
     <div [(ngModel)]="sInisSingedIn" ngDefaultControl [ngModelOptions]="{standalone: true}"></div>
-    <h3 *ngIf="readLocalStorageValue('userSignedIn') == 'SignedUser'">{{signedInName}}</h3>
+    <h3 class="sI-class" *ngIf="readLocalStorageValue('userSignedIn') == 'SignedUser'">{{signedInName}}</h3>
     <h3 class="sI-class" *ngIf="readLocalStorageValue('userSignedIn') === null">{{signInName}}</h3>
+    <br><br>
     <h4 *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'">Dear customer, you are already logged in</h4>
-    <button *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerLogOut()">Log Out</button>
-    <br />
-    <p *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'">Dear customer,do you like to delete your account?</p>
-    <br />
-    <button *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerDelete()">Delete Account</button>
+    <br>
+    <button class="btn btn-info dlLgBtn" *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerLogOut()">Log Out</button>
+    <br>
+    <h3 *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'">Dear customer,do you like to delete your account?</h3>
+    <br>
+    <button class="btn btn-danger dlLgBtn" *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerDelete()">Delete Account</button>
     <div [hidden]="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" class="row">
         <div class="column">
             <form>
@@ -20,7 +22,7 @@
                       <pre *ngIf="userNameSiInput.errors.required">Required</pre>
                     </div>
                 </div>
-                <br />
+                <br>
                 <div class="form-group">
                 <label for="pword">Password:  </label>
                 <input type="password" id="pswSiInput" name="pswSiInput" #pswSiInput="ngModel" [(ngModel)]="password"  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Password" required>
@@ -28,7 +30,7 @@
                       <pre *ngIf="pswSiInput.errors.required">Required</pre>
                     </div>
                 </div>
-                <br />  
+                <br>  
                 <button type="submit" class="btn btn-info sbSubmit" [disabled]="!userNameSiInput.valid || !pswSiInput.valid " (click)="sendUserInfo()">Sign in to Account</button> 
             </form> 
             <!-- <p>First name value: {{ userNameSiInput.value }}</p>

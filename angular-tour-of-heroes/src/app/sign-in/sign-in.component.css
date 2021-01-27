@@ -5,7 +5,11 @@
   float: left;
 }
 .sI-class{
-  margin-bottom: -20px;
+  margin-left: 40px;
+  margin-top: 30px;
+  font-size: 35px;
+  color: rgb(30, 61, 121);
+  margin-bottom: 30px;
 }
 .signIn {
   float: left;
@@ -16,8 +20,8 @@
     display: flex;
     margin-left: 50px;
     margin-top: 50px;
-  }
-  .container-fluid {
+}
+.container-fluid {
     background-color: hsla(219, 69%, 35%, 0.884);
     width:180%;
     z-index: 2;
@@ -30,19 +34,30 @@
     padding-right:0;
     padding-left:0;
 }
-  .column {
+.column {
     flex: 50%;
   }
-  .form-group{
+.form-group{
     width: 300px;
   }
-  h3{
-    margin-left: 40px;
-  }
-  .siBar{
+.siBar{
    margin-top: 100px;
    margin-bottom: 50px; 
-  }
-  .sbSubmit{
+}
+.sbSubmit{
     margin-bottom: 50px; 
-  }
+}
+h3{
+    font-size: 25px;
+    color: rgb(30, 61, 121);
+}
+h4{
+  margin-top: 30px;
+  font-size: 25px;
+  color: rgb(30, 61, 121);
+  margin-bottom: 30px;
+}
+.dlLgBtn{
+  width: 95px;
+  margin-bottom: 30px;
+}
