@@ -40,10 +40,10 @@ export class CloudmanagementComponent {
   boxForm = false;
   localForm = false;
  
-  gdEmail:string = this.readLocalStorageValue('gdUserEmail')
-  dpEmail:string = this.readLocalStorageValue('dpEmail')
-  bxEmail:string = this.readLocalStorageValue('boxClientEmail')
-  odEmail:string = this.readLocalStorageValue('odClientEmail');
+  gdEmail:string = this.readsessionStorageValue('gdUserEmail')
+  dpEmail:string = this.readsessionStorageValue('dpEmail')
+  bxEmail:string = this.readsessionStorageValue('boxClientEmail')
+  odEmail:string = this.readsessionStorageValue('odClientEmail');
   
   dbAccount = {
     "username": "",
@@ -91,14 +91,14 @@ export class CloudmanagementComponent {
       let stDpCode:string = this.saveDpCode;
       console.log("stDpCode " + stDpCode);
       let saveDpAccessToken:any = await this.dpService.sendMessageToNode(stDpCode);
-      localStorage.setItem("dpAccessToken", saveDpAccessToken); 
+      sessionStorage.setItem("dpAccessToken", saveDpAccessToken); 
       this.removeUrlParams();
 
-      if(localStorage.getItem("gdSelected") === "gdSelected"){
+      if(sessionStorage.getItem("gdSelected") === "gdSelected"){
         this.removeSelectedCloud("gdSelected");
         this.googleDriveInit();
       }
-      if(localStorage.getItem("bxSelected") === "bxSelected"){
+      if(sessionStorage.getItem("bxSelected") === "bxSelected"){
         this.removeSelectedCloud("bxSelected");
         this.bxService.boxRedirectCode();
         let saveBxCode:any = await this.bxService.getBoxCodefromUri();
@@ -108,17 +108,17 @@ export class CloudmanagementComponent {
         await this.bxService.issueBoxAccessToken();
         this.removeUrlParams();
       }
-      if(localStorage.getItem("odSelected") === "odSelected"){
+      if(sessionStorage.getItem("odSelected") === "odSelected"){
         this.removeSelectedCloud("odSelected");
         this.odService.login();
         let saveOdCode:any = await this.odService.odCodeFromUri();
         let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
-        localStorage.setItem("odAccessToken", saveOdAccessToken);
+        sessionStorage.setItem("odAccessToken", saveOdAccessToken);
         this.removeUrlParams();
       }
-      if(localStorage.getItem("lfSelected") === "lfSelected"){
+      if(sessionStorage.getItem("lfSelected") === "lfSelected"){
         this.removeSelectedCloud("lfSelected");
-        this.readLocalStorageValue('localFilePath'); 
+        this.readsessionStorageValue('localFilePath'); 
       }
     }
     if(uriLink.includes('code') && !uriLink.includes('code=MdDdy')){
@@ -130,37 +130,37 @@ export class CloudmanagementComponent {
       await this.bxService.issueBoxAccessToken();
       this.removeUrlParams();
 
-      if(localStorage.getItem("gdSelected") === "gdSelected"){
+      if(sessionStorage.getItem("gdSelected") === "gdSelected"){
         this.removeSelectedCloud("gdSelected");
         this.googleDriveInit();   
       }
-      if(localStorage.getItem("odSelected") === "odSelected"){
+      if(sessionStorage.getItem("odSelected") === "odSelected"){
         this.removeSelectedCloud("odSelected");
         this.odService.login();
         let saveOdCode:any = await this.odService.odCodeFromUri();
         let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
-        localStorage.setItem("odAccessToken", saveOdAccessToken);
+        sessionStorage.setItem("odAccessToken", saveOdAccessToken);
         this.removeUrlParams();
       }
-      if(localStorage.getItem("lfSelected") === "lfSelected"){
+      if(sessionStorage.getItem("lfSelected") === "lfSelected"){
         this.removeSelectedCloud("lfSelected");
-        this.readLocalStorageValue('localFilePath');
+        this.readsessionStorageValue('localFilePath');
       }
     }
     if(uriLink.includes('access_token')){
 
       let saveOdCode:any = await this.odService.odCodeFromUri();
       let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
-      localStorage.setItem("odAccessToken", saveOdAccessToken);
+      sessionStorage.setItem("odAccessToken", saveOdAccessToken);
       this.removeUrlParams();
 
-      if(localStorage.getItem("gdSelected") === "gdSelected"){
+      if(sessionStorage.getItem("gdSelected") === "gdSelected"){
         this.removeSelectedCloud("gdSelected");
         this.googleDriveInit();   
       }
-      if(localStorage.getItem("lfSelected") === "lfSelected"){
+      if(sessionStorage.getItem("lfSelected") === "lfSelected"){
         this.removeSelectedCloud("lfSelected");
-        this.readLocalStorageValue('localFilePath');
+        this.readsessionStorageValue('localFilePath');
       }
     } 
    } catch (error) {
@@ -173,7 +173,7 @@ export class CloudmanagementComponent {
       if(filter !== undefined || filter !== null || filter !== ''){
           // if(!this.filters.includes(filter) && !filter.includes("undefined")){
       this.filters.push(filter);
-      localStorage.setItem("apiFileFilter", filter);
+      sessionStorage.setItem("apiFileFilter", filter);
    // }
       }
     } catch (error) {
@@ -186,7 +186,7 @@ export class CloudmanagementComponent {
     // This should link the account if the passed in username and password are accurate
   }
 
-  setLocalStorageFilePath() {
+  setsessionStorageFilePath() {
     this.localForm = false; 
    /*  let target = ev.target as HTMLInputElement
     let crFile: File = (target.files as FileList)[0];
@@ -199,13 +199,13 @@ export class CloudmanagementComponent {
       //console.log('this currentEv ' + event.target.result)
       hdth = event.target.result;
     } */
-    localStorage.setItem('localFilePath', this.localFilePath);
+    sessionStorage.setItem('localFilePath', this.localFilePath);
   }
 
-  readLocalStorageValue(key) {
+  readsessionStorageValue(key) {
     try {
       if(key !== undefined || key !== null || key !== ""){
-        return localStorage.getItem(key)
+        return sessionStorage.getItem(key)
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -215,16 +215,16 @@ export class CloudmanagementComponent {
   clientEmailValue(v: string) {
     try {
       if(v !== undefined || v !== null || v !== ""){
-        if(localStorage.getItem('gdUserEmail') == null){
+        if(sessionStorage.getItem('gdUserEmail') == null){
           this.gdEmail = v;
-        localStorage.setItem('gdUserEmail', this.gdEmail);
+        sessionStorage.setItem('gdUserEmail', this.gdEmail);
         console.log('the value from set2 ' + this.gdEmail)
-        }else if(localStorage.getItem('gdUserEmail') !== v){
-          localStorage.removeItem('gdUserEmail')
+        }else if(sessionStorage.getItem('gdUserEmail') !== v){
+          sessionStorage.removeItem('gdUserEmail')
           this.gdEmail = v;
-          localStorage.setItem('gdUserEmail', this.gdEmail);
+          sessionStorage.setItem('gdUserEmail', this.gdEmail);
         console.log('the value from set2 ' + this.gdEmail)
-        }else this.gdEmail = localStorage.getItem('gdUserEmail')
+        }else this.gdEmail = sessionStorage.getItem('gdUserEmail')
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -264,71 +264,71 @@ export class CloudmanagementComponent {
       if(this.dpChecked && this.gdChecked){
         this.selectedApi.push(this.services[0],this.services[1]);
         this.selected = true;
-        localStorage.setItem("gdSelected","gdSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("gdSelected","gdSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.dropBoxClientLogin();   
       }
       if(this.dpChecked && this.odChecked){
         this.selectedApi.push(this.services[0],this.services[2]);
         this.selected = true;
-        localStorage.setItem("odSelected","odSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("odSelected","odSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.dropBoxClientLogin();  
       }
       if(this.dpChecked && this.bxChecked){
         this.selectedApi.push(this.services[0],this.services[3]);
         this.selected = true;
-        localStorage.setItem("bxSelected","bxSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("bxSelected","bxSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.dropBoxClientLogin();  
       }
       if(this.dpChecked && this.lfChecked){
         this.selectedApi.push(this.services[0],this.services[4]);
         this.selected = true;
-        localStorage.setItem("lfSelected","lfSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("lfSelected","lfSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.dropBoxClientLogin();  
       }
       if(this.odChecked && this.gdChecked){
         this.selectedApi.push(this.services[2],this.services[1]);
         this.selected = true;
-        localStorage.setItem("gdSelected","gdSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("gdSelected","gdSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.odService.login();  
       }
       if(this.odChecked && this.bxChecked){
         this.selectedApi.push(this.services[2],this.services[3]);
         this.selected = true;
-        localStorage.setItem("bxSelected","bxSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("bxSelected","bxSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.odService.login();  
       }
       if(this.odChecked && this.lfChecked){
         this.selectedApi.push(this.services[2],this.services[4]);
         this.selected = true;
-        localStorage.setItem("lfSelected","lfSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("lfSelected","lfSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.odService.login();  
       }
       if(this.bxChecked && this.gdChecked){
         this.selectedApi.push(this.services[3],this.services[1]);
         this.selected = true;
-        localStorage.setItem("gdSelected","gdSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("gdSelected","gdSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.boxClientLogin();  
       }
       if(this.bxChecked && this.lfChecked){
         this.selectedApi.push(this.services[3],this.services[4]);
         this.selected = true;
-        localStorage.setItem("lfSelected","lfSelected");
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("lfSelected","lfSelected");
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.boxClientLogin();  
       }
       if(this.lfChecked && this.gdChecked){
         this.selectedApi.push(this.services[4],this.services[1]);
         this.selected = true;
   
-        localStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
+        sessionStorage.setItem("apiSelected",JSON.stringify(this.selectedApi));
         this.googleDriveInit();
       }
       if(this.selected == false){
@@ -341,7 +341,7 @@ export class CloudmanagementComponent {
   removeSelectedCloud(slt:string){
     try {
       if(slt !== undefined || slt !== null || slt !== ""){
-        localStorage.removeItem(slt);
+        sessionStorage.removeItem(slt);
       }
     } catch (error) {
       this.errorService.handleError(error);

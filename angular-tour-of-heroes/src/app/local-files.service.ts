@@ -9,7 +9,7 @@ export class LocalFilesService {
   constructor(private errorService:ErrorHandelersService) { }
 
   async sendLfFilePath(){
-    let localFilePath:string = localStorage.getItem("localFilePath");
+    let localFilePath:string = sessionStorage.getItem("localFilePath");
     console.log(localFilePath);
     return await new Promise((resolve,reject) => {
       fetch('/api/LfFilePath', {

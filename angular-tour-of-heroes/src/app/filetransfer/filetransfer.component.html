@@ -5,8 +5,8 @@
 </div>
 <div style="margin-top: 40px; margin-left: 100px; width: 100%; overflow: hidden; align-content: center;">
     <div style="width: 600px; float: left;">
-        <img *ngIf="!leftServiceForm" src="{{serviceIcons[service1]}}" width="64" height="64">
-        <button *ngIf="!leftServiceForm" class="services-button" (click)="leftServiceForm = true; apiMatch();">{{serviceNames[service1]}}<br>{{serviceAccounts[service1]}}<br></button>
+        <img class="frImg" *ngIf="!leftServiceForm" src="{{serviceIcons[5]}}" width="64" height="62">
+        <button *ngIf="!leftServiceForm" class="services-button" (click)="leftServiceForm = true; apiMatch();">Api to Drag</button>
         <div *ngIf="leftServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
           <button [disabled]="!dpApiSelected" class="services-button" (click)="files1=[]; leftServiceForm = false; service1 = 0; dpProcessFiles();">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>
@@ -49,8 +49,8 @@
         </div>
     </div>
     <div style="margin-left: 620px;">
-      <img *ngIf="!rightServiceForm" src="{{serviceIcons[service2]}}" width="64" height="64">
-        <button *ngIf="!rightServiceForm" class="services-button" (click)="rightServiceForm = true">{{serviceNames[service2]}}<br>{{serviceAccounts[service2]}}</button>
+      <img class="frImg" *ngIf="!rightServiceForm" src="{{serviceIcons[6]}}" width="66" height="69">
+        <button *ngIf="!rightServiceForm" class="services-button" (click)="rightServiceForm = true">Api to Drop</button>
         <div *ngIf="rightServiceForm">
           <img src="{{serviceIcons[0]}}" width="64" height="64">
           <button [disabled]="!dpApiSelected" class="services-button" (click)="files2=[]; rightServiceForm = false; service2 = 0;">{{serviceNames[0]}}<br>{{serviceAccounts[0]}}</button><br>

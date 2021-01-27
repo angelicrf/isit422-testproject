@@ -87,7 +87,7 @@ export class BxCloudService {
         .then((result) => {
           this.accesToken = result[Object.keys(result)[1]];
           console.log("AccessToken form BoxService " + this.accesToken);
-          localStorage.setItem("bxAccessToken", this.accesToken);
+          sessionStorage.setItem("bxAccessToken", this.accesToken);
           resolve(this.accesToken);
       })
       .catch((err) => {

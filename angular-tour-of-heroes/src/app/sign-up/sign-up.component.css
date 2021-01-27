@@ -43,3 +43,16 @@
   .sbSubmit{
     margin-bottom: 50px; 
   }
+  .sP-class{
+    margin-left: 40px;
+    margin-top: 30px;
+    font-size: 35px;
+    color: rgb(30, 61, 121);
+    margin-bottom: 30px;
+  }
+h4{
+  margin-top: 30px;
+  font-size: 25px;
+  color: rgb(30, 61, 121);
+  margin-bottom: 30px;
+}

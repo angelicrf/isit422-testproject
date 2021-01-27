@@ -18,16 +18,16 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  readLocalStorageValue(key) {
+  readsessionStorageValue(key) {
     try {
       if(key !== undefined || key !== null || key !== "")
-      return localStorage.getItem(key);
+      return sessionStorage.getItem(key);
     } catch (error) { 
       this.errorService.handleError(error);    }   
   }
   customerLogOut(){
     this.usrLogin.logOutMnCustomer(); 
-    localStorage.removeItem('userSignedIn');
+    sessionStorage.removeItem('userSignedIn');
   }
   sendUserInfo(){
     let userValue = JSON.stringify({
@@ -50,7 +50,7 @@ export class SignInComponent implements OnInit {
   }
   signedin() {
     console.log('signedin');
-    if(localStorage.getItem('userSignedIn') === null){
+    if(sessionStorage.getItem('userSignedIn') === null){
       
       this.usrLogin.userSignIn()
       .then(res => {
@@ -84,11 +84,11 @@ export class SignInComponent implements OnInit {
        if(userNameFound && passwordFound){
          this.sInisSingedIn = true
          this.signInName = this.signedInName
-        if(localStorage.getItem('userSignedUp') == 'SignedUpUser'){
-          localStorage.removeItem('userSignedUp')
+        if(sessionStorage.getItem('userSignedUp') == 'SignedUpUser'){
+          sessionStorage.removeItem('userSignedUp')
          }
-         localStorage.setItem('userSignedIn', 'SignedUser')
-         localStorage.setItem('userMnId', clientIdValue[0])
+         sessionStorage.setItem('userSignedIn', 'SignedUser')
+         sessionStorage.setItem('userMnId', clientIdValue[0])
          window.location.replace("http://localhost:4200/home")
          alert('user name and password found user is signed in')
             return this.usrLogin.isSingedIn = true

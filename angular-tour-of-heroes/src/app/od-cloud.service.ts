@@ -44,9 +44,9 @@ async odCodeFromUri(){
     console.log("formatlClName " + formatlClName);
     let hlOdEmail:string = profileClientInfo[0];
     console.log("hlOdEmail " + hlOdEmail);
-    localStorage.setItem("odClientEmail", profileClientInfo[0]);
+    sessionStorage.setItem("odClientEmail", profileClientInfo[0]);
   
-    let mongoDbUserId:string = localStorage.getItem('userMnId');
+    let mongoDbUserId:string = sessionStorage.getItem('userMnId');
     sendOdClientInfo(formatlClName.replace(/['"]+/g, '').toString(),hlOdEmail.toString(),mongoDbUserId);
     
     let odAallFiles:any = await this.odGetFiles();

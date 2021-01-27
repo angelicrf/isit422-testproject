@@ -3,16 +3,13 @@ import { FilterService } from '../filter.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { GdCloudService } from '../gd-cloud.service';
 import { DpCloudService } from '../dp-cloud.service';
-import { CheckCategories, buildFileListByFilter } from '../filetransfer/filterByFileType.js';
+import { buildFileListByFilter } from '../filetransfer/filterByFileType.js';
 import { GDClientCredentials } from '../gdClientCredentials';
 import { BxCloudService } from '../bx-cloud.service';
 import { OdCloudService } from '../od-cloud.service';
 import { LocalFilesService } from '../local-files.service';
 import { ErrorHandelersService } from '../error-handelers.service';
 
-let clFile: string[];
-let showData: string;
-let bxCode:any;
 let retreiveDpFiles:any = {};
 let holdClientFilesToDisplay:any = {};
 let holdBoxAllFlsFl:any = {};
@@ -28,12 +25,12 @@ let odFile = [];
 })
 export class FiletransferComponent implements OnInit {
 
+  gdEmail:string = this.readsessionStorageValue('gdUserEmail');
+  storedApi = JSON.parse(sessionStorage.getItem("apiSelected"));
+  
+  apiFound:boolean = false;
   leftServiceForm = false;
   rightServiceForm = false;
-  gdEmail:string = this.readLocalStorageValue('gdUserEmail');
-  storedApi = JSON.parse(localStorage.getItem("apiSelected"));
-  apiFound:boolean = false;
-
   gdApiSelected:boolean = false;
   dpApiSelected:boolean = false;
   odApiSelected:boolean = false;
@@ -45,7 +42,9 @@ export class FiletransferComponent implements OnInit {
     "assets/images/googledrive.png",
     "assets/images/onedrive.png",
     "assets/images/box.png",
-    "assets/images/folder.png"
+    "assets/images/folder.png",
+    "assets/images/selectFile.jpg",
+    "assets/images/FileDrop.png"
   ];
 
   serviceNames = [
@@ -57,11 +56,11 @@ export class FiletransferComponent implements OnInit {
   ]
 
   serviceAccounts = [
-    localStorage.getItem('dpEmail'),
-    localStorage.getItem('gdUserEmail'),
-    localStorage.getItem('odClientEmail'),,
-    localStorage.getItem('boxClientEmail'),
-    localStorage.getItem('localFilePath')
+    sessionStorage.getItem('dpEmail'),
+    sessionStorage.getItem('gdUserEmail'),
+    sessionStorage.getItem('odClientEmail'),,
+    sessionStorage.getItem('boxClientEmail'),
+    sessionStorage.getItem('localFilePath')
   ]
 
   service1 = 0;
@@ -89,11 +88,11 @@ export class FiletransferComponent implements OnInit {
 
 async ngOnInit(){
   try {
-    if("apiFileFilter" in localStorage){
+    if("apiFileFilter" in sessionStorage){
       console.log("inside OnInt filetransfer");
       this.getFilters();
    }
-      this.serviceAccounts[0] = localStorage.getItem('dpEmail');
+      this.serviceAccounts[0] = sessionStorage.getItem('dpEmail');
   } catch (error) {
     this.errorService.handleError(error);
   } 
@@ -139,25 +138,25 @@ findMatch(firstArray:string[], itemToFound:string ){
           console.log("inside storeApi if " + holdApiSelected  );
           this.findMatch(holdApiSelected,this.serviceNames[index]);     
         }
-        this.removeLocalStorageValue("apiSelected");
+        this.removesessionStorageValue("apiSelected");
       }
     } catch (error) {
       this.errorService.handleError(error);
     }
   } 
-  readLocalStorageValue(key) {
+  readsessionStorageValue(key) {
     try {
       if(key !== undefined || key !== null || key !== ""){
-        return localStorage.getItem(key)
+        return sessionStorage.getItem(key)
       }
     } catch (error) {
       this.errorService.handleError(error);
     } 
   }
-  removeLocalStorageValue(str:string){
+  removesessionStorageValue(str:string){
     try {
       if(str !== undefined || str !== null || str !== ""){
-        localStorage.removeItem(str);
+        sessionStorage.removeItem(str);
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -261,10 +260,10 @@ findMatch(firstArray:string[], itemToFound:string ){
   }
   getFilters(): void {
     try {
-      if("apiFileFilter" in localStorage){
+      if("apiFileFilter" in sessionStorage){
         
         let getFilterArray = [];
-        let getFilterStr =  localStorage.getItem("apiFileFilter");
+        let getFilterStr =  sessionStorage.getItem("apiFileFilter");
         
         if(getFilterStr !== "" || getFilterStr !== null){
           if(getFilterStr.includes(',')){
@@ -897,18 +896,18 @@ findMatch(firstArray:string[], itemToFound:string ){
     try {
       if(v !== undefined || v !== null || v !== ""){
         
-        if(localStorage.getItem('gdUserEmail') == null){
+        if(sessionStorage.getItem('gdUserEmail') == null){
           this.gdEmail = v;
-        localStorage.setItem('gdUserEmail', this.gdEmail);
+        sessionStorage.setItem('gdUserEmail', this.gdEmail);
         console.log('the value from set2 ' + this.gdEmail)
         }
-        else if(localStorage.getItem('gdUserEmail') !== v){
-          localStorage.removeItem('gdUserEmail')
+        else if(sessionStorage.getItem('gdUserEmail') !== v){
+          sessionStorage.removeItem('gdUserEmail')
           this.gdEmail = v;
-          localStorage.setItem('gdUserEmail', this.gdEmail);
+          sessionStorage.setItem('gdUserEmail', this.gdEmail);
         console.log('the value from set2 ' + this.gdEmail)
         }
-        else this.gdEmail = localStorage.getItem('gdUserEmail')
+        else this.gdEmail = sessionStorage.getItem('gdUserEmail')
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -918,36 +917,6 @@ findMatch(firstArray:string[], itemToFound:string ){
   async getClientEmail(){
     return await this.clientEmailValue(this.gdcl.holdDataClient[0])
   }
-  
-  // /** Predicate function that only allows filtered types to be dropped into a list */
-  // async filterPredicate(item: CdkDrag<String>, list: CdkDropList) {
-  //   var re = /(?:\.([^.]+))?$/;
-    
-  //   if(list.id === "left") {
-  //     console.log("left")
-  //     // if(this.filters.length > 0 && this.filters.includes(this.serviceNames[this.service1])) {
-  //     //   let check = re.exec(item.data.toString())[1];
-  //     //   console.log(check);
-  //     //   if(CheckCategories(check)) {
-  //     //     return true;
-  //     //   }
-  //     //   else return false;
-  //     // }
-  //   }
-  //   if(list.id === "right") {
-  //     let filterName = this.filterList(this.filters, this.service2);
-  //     //
-  //     if(filterName) {
-  //       console.log("right")
-  //       //let check = re.exec(item.data.toString())[1];
-  //       // console.log(check);
-  //       // if(CheckCategories(check)) {
-  //       //   return true;
-  //       // }
-  //       // else return false;
-  //     }   
-  //   }
-  // }
 
   async getFiles() {
     console.log("getFiles called");
@@ -986,9 +955,9 @@ findMatch(firstArray:string[], itemToFound:string ){
    } 
   async dpProcessFiles(){
     try {
-      if("dpAccessToken" in localStorage){
+      if("dpAccessToken" in sessionStorage){
         
-        let displayResult:string = localStorage.getItem("dpAccessToken");
+        let displayResult:string = sessionStorage.getItem("dpAccessToken");
         this.dpService.dpGetClientInfo(displayResult)
         retreiveDpFiles = await this.dpService.dpGetFilesList(displayResult);
       
@@ -1029,7 +998,6 @@ findMatch(firstArray:string[], itemToFound:string ){
       this.errorService.handleError(error);
     }
   }
-  // TODO: get the file id to pass into request
   async removeGDFile() {
     return await new Promise((resolve,reject) => {
       return gapi.client
@@ -1051,8 +1019,8 @@ findMatch(firstArray:string[], itemToFound:string ){
       let hlBxClName:string = storeBxInfo[0];
       let hlBxClEmail:string = storeBxInfo[1];
       let formathlBxClName = hlBxClName.split(",")[0];
-      localStorage.setItem("boxClientEmail", hlBxClEmail );
-      let mongoDbUserId = localStorage.getItem('userMnId');
+      sessionStorage.setItem("boxClientEmail", hlBxClEmail );
+      let mongoDbUserId = sessionStorage.getItem('userMnId');
     
       this.bxService.sendBoxClientInfo(formathlBxClName.replace(/['"]+/g, '').toString(),hlBxClEmail.toString(),mongoDbUserId);
       holdBoxAllFlsFl = await this.bxService.boxAllFoldersFiles();
@@ -1153,9 +1121,9 @@ findMatch(firstArray:string[], itemToFound:string ){
   }
   async lfProcessFiles() {
     try {
-      if("localFilePath" in localStorage){
+      if("localFilePath" in sessionStorage){
         
-        let filePath:string = localStorage.getItem("localFilePath");
+        let filePath:string = sessionStorage.getItem("localFilePath");
         console.log("filePath is " + filePath);
         const files = await fetch('/api/Files', {
           method: 'POST',

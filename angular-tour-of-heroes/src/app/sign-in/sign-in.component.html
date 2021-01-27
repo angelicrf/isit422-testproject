@@ -2,17 +2,17 @@
 <img class="multicloudImg" src="../../assets/images/multicloud.png" alt="multicloud Logo">
 <div class="signIn">
     <div [(ngModel)]="sInisSingedIn" ngDefaultControl [ngModelOptions]="{standalone: true}"></div>
-    <h3 class="sI-class" *ngIf="readLocalStorageValue('userSignedIn') == 'SignedUser'">{{signedInName}}</h3>
-    <h3 class="sI-class" *ngIf="readLocalStorageValue('userSignedIn') === null">{{signInName}}</h3>
+    <h3 class="sI-class" *ngIf="readsessionStorageValue('userSignedIn') == 'SignedUser'">{{signedInName}}</h3>
+    <h3 class="sI-class" *ngIf="readsessionStorageValue('userSignedIn') === null">{{signInName}}</h3>
     <br><br>
-    <h4 *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'">Dear customer, you are already logged in</h4>
+    <h4 *ngIf="sInisSingedIn || readsessionStorageValue('userSignedIn')== 'SignedUser'">Dear customer, you are already logged in</h4>
     <br>
-    <button class="btn btn-info dlLgBtn" *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerLogOut()">Log Out</button>
+    <button class="btn btn-info dlLgBtn" *ngIf="sInisSingedIn || readsessionStorageValue('userSignedIn')== 'SignedUser'" (click)="customerLogOut()">Log Out</button>
     <br>
-    <h3 *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'">Dear customer,do you like to delete your account?</h3>
+    <h3 *ngIf="sInisSingedIn || readsessionStorageValue('userSignedIn')== 'SignedUser'">Dear customer,do you like to delete your account?</h3>
     <br>
-    <button class="btn btn-danger dlLgBtn" *ngIf="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" (click)="customerDelete()">Delete Account</button>
-    <div [hidden]="sInisSingedIn || readLocalStorageValue('userSignedIn')== 'SignedUser'" class="row">
+    <button class="btn btn-danger dlLgBtn" *ngIf="sInisSingedIn || readsessionStorageValue('userSignedIn')== 'SignedUser'" (click)="customerDelete()">Delete Account</button>
+    <div [hidden]="sInisSingedIn || readsessionStorageValue('userSignedIn')== 'SignedUser'" class="row">
         <div class="column">
             <form>
                 <div class="form-group">

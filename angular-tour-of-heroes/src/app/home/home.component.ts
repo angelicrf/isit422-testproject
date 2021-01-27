@@ -16,10 +16,10 @@ export class HomeComponent implements OnInit {
     },10000);
   }
   textToAppear:boolean = false;
-  readLocalStorageValue(key) {
+  readsessionStorageValue(key) {
     try {
       if(key !== undefined || key !== null || key !== ""){
-        return localStorage.getItem(key);
+        return sessionStorage.getItem(key);
       }
     } catch (error) {
       this.errorService.handleError(error);

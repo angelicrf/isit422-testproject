@@ -45,7 +45,7 @@ export class GdCloudService {
           let clientName = googleUser.getBasicProfile().getName();
           let InstantiateClient = showClient.isSignedIn.get();
           getEmailValue = true
-          let mongoDbUserId = localStorage.getItem('userMnId')
+          let mongoDbUserId = sessionStorage.getItem('userMnId')
           sendGdClientInfo(clientName,clientEmail,mongoDbUserId)
           holdClientEmail.push(clientEmail,clientaccessToken)
           accessTokenGoogleDrive(clientaccessToken)

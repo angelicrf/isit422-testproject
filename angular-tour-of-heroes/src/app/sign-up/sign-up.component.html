@@ -2,10 +2,10 @@
 <img class="multicloudImg" src="../../assets/images/multicloud.png" alt="multicloud Logo">
 <div class="signUp">
   <div [(ngModel)]="sUpisSingedUp" ngDefaultControl [ngModelOptions]="{standalone: true}"></div>
-  <h3 *ngIf="readLocalStorageValue('userSignedUp') == 'SignedUpUser'">{{signedUpName}}</h3>
-  <h3 *ngIf="readLocalStorageValue('userSignedUp') === null">{{signUpName}}</h3>
-  <h4 *ngIf="sUpisSingedUp || readLocalStorageValue('userSignedUp') == 'SignedUpUser'">Dear customer, you are already signed up</h4>
-  <div [hidden]="sUpisSingedUp || readLocalStorageValue('userSignedUp') == 'SignedUpUser'" class="row">
+  <h3 class="sP-class" *ngIf="readsessionStorageValue('userSignedUp') == 'SignedUpUser'">{{signedUpName}}</h3>
+  <h3 class="sP-class" *ngIf="readsessionStorageValue('userSignedUp') === null">{{signUpName}}</h3>
+  <h4 *ngIf="sUpisSingedUp || readsessionStorageValue('userSignedUp') == 'SignedUpUser'">Dear customer, you are already signed up</h4>
+  <div [hidden]="sUpisSingedUp || readsessionStorageValue('userSignedUp') == 'SignedUpUser'" class="row">
       <div class="column">
           <form>
               <div class="form-group">

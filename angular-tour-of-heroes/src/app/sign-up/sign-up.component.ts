@@ -21,10 +21,10 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  readLocalStorageValue(key) {
+  readsessionStorageValue(key) {
     try {
       if(key !== undefined || key !== null || key !== ""){
-        return localStorage.getItem(key);
+        return sessionStorage.getItem(key);
       }
       } catch (error) {
       this.errorService.handleError(error);
@@ -32,7 +32,7 @@ export class SignUpComponent implements OnInit {
   }
   signedup() {
     try {
-      if(localStorage.getItem('userSignedUp') === null){
+      if(sessionStorage.getItem('userSignedUp') === null){
         let newName = this.name
         let newlastName = this.lastname
         let newUserName = this.username
@@ -45,7 +45,7 @@ export class SignUpComponent implements OnInit {
         this.usrLogin.userSiginUp(newName,newlastName,newUserName,newEmail,newPassword)
         this.sUpisSingedUp = true
         this.usrLogin.isSingedUp = true
-        localStorage.setItem('userSignedUp','SignedUpUser')
+        sessionStorage.setItem('userSignedUp','SignedUpUser')
         window.location.replace("http://localhost:4200/home")
         return this.usrLogin.isSingedUp
         }

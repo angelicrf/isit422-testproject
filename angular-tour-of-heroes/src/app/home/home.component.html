@@ -2,13 +2,13 @@
 <div class="hmBar">
 <a class="centerImg"></a>
 <div *ngIf="textToAppear" class="homeMsm">
-  <div *ngIf="readLocalStorageValue('userSignedUp') == 'SignedUpUser'">
+  <div *ngIf="readsessionStorageValue('userSignedUp') == 'SignedUpUser'">
     <h1>Welcome to our team, Multicloud  dear new customer! Hope you enjoy our app</h1>
   </div>
-  <div *ngIf="readLocalStorageValue('userSignedIn') == 'SignedUser'">
+  <div *ngIf="readsessionStorageValue('userSignedIn') == 'SignedUser'">
     <h3>Welcome back to Multicloud, dear customer! Hope you enjoy our app</h3>
   </div>
-  <div *ngIf="readLocalStorageValue('userSignedIn') !== 'SignedUser' && readLocalStorageValue('userSignedUp') !== 'SignedUpUser'">
+  <div *ngIf="readsessionStorageValue('userSignedIn') !== 'SignedUser' && readsessionStorageValue('userSignedUp') !== 'SignedUpUser'">
     <h2>Welcome to Multicloud</h2>
   </div>
 <div class="homeTxt">
@@ -19,8 +19,8 @@
   <p><mat-icon class="mtIcon">label_important</mat-icon>To manage or transfer files, click on the <mat-icon>menu</mat-icon> button, and navigate to the File Transfer Page.</p>
   <p><mat-icon class="mtIcon">assignment</mat-icon>You must be signed into the Multicloud app, and have <b>two</b> cloud account configured and added.</p>
   <br>
-  <button *ngIf="readLocalStorageValue('userSignedIn') !== 'SignedUser'" type="submit" routerLink="/sign-in" class="btn-danger btn-lg siHome">sign In</button>
-  <button *ngIf="readLocalStorageValue('userSignedIn') !== 'SignedUser' && readLocalStorageValue('userSignedIn') !== 'SignedUpUser'" type="submit" routerLink="/sign-up" class="btn-info btn-lg spHome">sign Up</button>
+  <button *ngIf="readsessionStorageValue('userSignedIn') !== 'SignedUser'" type="submit" routerLink="/sign-in" class="btn-danger btn-lg siHome">sign In</button>
+  <button *ngIf="readsessionStorageValue('userSignedIn') !== 'SignedUser' && readsessionStorageValue('userSignedIn') !== 'SignedUpUser'" type="submit" routerLink="/sign-up" class="btn-info btn-lg spHome">sign Up</button>
 </div>
 </div>
 </div>

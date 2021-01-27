@@ -68,7 +68,7 @@ logOutMnCustomer() {
     .catch((err) => this.errorService.handleError(err));
 }
 deleteCustomer(){
-  localStorage.clear();
+  sessionStorage.clear();
   fetch('/api/DeleteMCUser', {
     method: 'DELETE',
     headers: {

@@ -81,11 +81,11 @@ dpGetClientInfo(dpAccessToken:string){
         .usersGetCurrentAccount()
         .then(response => {
            console.log(JSON.stringify("First then" + response.result.email))
-           localStorage.setItem('dpEmail',response.result.email)
+           sessionStorage.setItem('dpEmail',response.result.email)
            let getDpName = response.result.name.display_name
            let getDpEmail = response.result.email
            //userMnId is null
-           let getUserMongoId = localStorage.getItem('userMnId')
+           let getUserMongoId = sessionStorage.getItem('userMnId')
            console.log("getUserMongoId is " + getUserMongoId)
            //connect to dpCloud mongodb
            sendDpClientInfo(getDpName,getDpEmail,getUserMongoId)

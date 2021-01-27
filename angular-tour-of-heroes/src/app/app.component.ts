@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     this.signedInApprouved();
   }
   signedInApprouved(){
-    let signInValue = localStorage.getItem("userSignedIn");
+    let signInValue = sessionStorage.getItem("userSignedIn");
     if(signInValue == "SignedUser"){
       this.signedConfirmed = true;
     }

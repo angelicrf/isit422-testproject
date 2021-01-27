@@ -13,7 +13,9 @@
 .services-button:hover {
     background: rgb(220, 235, 255);
 }
-
+.frImg{
+  border-radius: 10px;
+}
 .boxes {
     margin-top: 10px;
     width: 400px;

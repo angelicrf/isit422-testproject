@@ -43,12 +43,12 @@
     
       <br>
       <input *ngIf="!localForm" [disabled]="(dpChecked && odChecked ? true : null) || (dpChecked && bxChecked ? true : null) || (dpChecked && gdChecked ? true : null) || (bxChecked && gdChecked ? true : null) || (bxChecked && odChecked ? true : null) || (gdChecked && odChecked ? true : null)" type="checkbox" [(ngModel)]="lfChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/folder.png" width="64" height="64">
-      <span *ngIf="!localForm" class="services-button">Local File System<br>{{readLocalStorageValue('localFilePath')}}</span>
+      <span *ngIf="!localForm" class="services-button">Local File System<br>{{readsessionStorageValue('localFilePath')}}</span>
       <label *ngIf="lfChecked" class="services">Specify a local file path:</label>
       <div *ngIf="lfChecked">
         <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="/home/bcuser/Documents" [(ngModel)]="localFilePath">
         
-        <button class="service-input" (click)="setLocalStorageFilePath()">Submit</button>
+        <button class="service-input" (click)="setsessionStorageFilePath()">Submit</button>
         <button class="service-input" (click)="localForm = false">Cancel</button>
       </div><br><br>
       <button *ngIf="!dropboxForm" class="btn btn-danger submit-button" (click)="handleClientLogin()">Submit<br></button>
