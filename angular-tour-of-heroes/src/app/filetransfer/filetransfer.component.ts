@@ -44,7 +44,7 @@ export class FiletransferComponent implements OnInit {
     "assets/images/box.png",
     "assets/images/folder.png",
     "assets/images/selectFile.jpg",
-    "assets/images/FileDrop.png"
+    "assets/images/fileDrop.png"
   ];
 
   serviceNames = [
