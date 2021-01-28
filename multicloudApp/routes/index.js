@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var domain = require('domain');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 var path = require('path');
 var Dropbox = require('dropbox').Dropbox;
 var BoxSDK = require('box-node-sdk');
-const fetch = require("node-fetch");
 const crypto = require('crypto');
 const {v4 : uuidv4} = require('uuid');
 const folder = './routes/AllFiles';
@@ -57,7 +57,21 @@ const MCClient = require("../McCloud");
 const BoxClient = require("../BoxCloud");
 const DbClient = require('../DbCloud');
 const OdClient = require("../OdCloud");
+var app = express();
 
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, '../public')));
+
+
+//app.use('/', indexapp);
+
+/* app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+  }); */
 
 const dbURI =
   "mongodb+srv://yelloteam:bcuser123456@cluster0.08j1d.mongodb.net/MultiCloudDB?retryWrites=true&w=majority";
@@ -83,7 +97,7 @@ router.get('/', (req, res) => {
   console.log('Home Page route called');
   res.status(200).sendFile('index.html');
 });
-router.get('/AllMCUsers', (req, res) => {
+app.get('/AllMCUsers', (req, res) => {
   try {
     if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
     || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""){
@@ -109,7 +123,7 @@ router.get('/AllMCUsers', (req, res) => {
     throw error;
   }
 });
-router.get('/MCUserByID', (req, res) => {
+app.get('/MCUserByID', (req, res) => {
   try {
     if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
     || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""){
@@ -157,7 +171,7 @@ router.post('/MCUserInfo', (req, res) => {
     throw error;
   }
 });
-router.get('/MCUserByUsrNmPwd', (req, res) => {
+app.get('/MCUserByUsrNmPwd', (req, res) => {
   console.log("MCUserByUsrNmPwd called");
  try {
   if(HoldUserData[0] !== "" || HoldUserData[0] !== null
@@ -193,7 +207,7 @@ router.get('/MCUserByUsrNmPwd', (req, res) => {
   throw error;
  }  
 });
-router.post('/MCUser', (req, res) => {
+app.post('/MCUser', (req, res) => {
   console.log("MCUser called ");
  try {
    if(req.body.password !== undefined || req.body.password !== null || req.body.password !== ""
@@ -228,7 +242,7 @@ router.post('/MCUser', (req, res) => {
   throw error;
  } 
 });
-router.patch('/UpdateMCUser', (req, res) => {
+app.patch('/UpdateMCUser', (req, res) => {
  try {
    if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
    || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""
@@ -280,7 +294,7 @@ router.patch('/UpdateMCUser', (req, res) => {
   throw error;
  }
 });
-router.post('/MCGdClient', (req, res) => {
+app.post('/MCGdClient', (req, res) => {
   console.log("MCGdClient called ");
   try {
     if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
@@ -312,7 +326,7 @@ router.post('/MCGdClient', (req, res) => {
 
   
 });
-router.post('/MCBoxClient', (req, res) => {
+app.post('/MCBoxClient', (req, res) => {
   console.log("MCBoxClient called ");
  try {
   if(req.body.bxname !== undefined || req.body.bxname !== null || req.body.bxname !== ""
@@ -343,7 +357,7 @@ router.post('/MCBoxClient', (req, res) => {
  }
   
 });
-router.post('/MCOdClient', (req, res) => {
+app.post('/MCOdClient', (req, res) => {
   console.log("MCOdClient called ");
   try {
     if(req.body.odname !== undefined || req.body.odname !== null || req.body.odname !== ""
@@ -373,7 +387,7 @@ router.post('/MCOdClient', (req, res) => {
     throw error;
   }
 });
-router.delete('/DeleteMCUser', (req, res) => {
+app.delete('/DeleteMCUser', (req, res) => {
  try {
   if (LoggedInUserID !== undefined || LoggedInUserID !== '' || LoggedInUserID !== null) {
     console.log('DeleteMCUser called');
@@ -406,7 +420,7 @@ router.delete('/DeleteMCUser', (req, res) => {
   throw error;
  }
 });
-router.get('/LogOutMCUser', (req, res) => {
+app.get('/LogOutMCUser', (req, res) => {
   console.log('LogOutMCUser called ');
   try {
     if (LoggedInUserID !== undefined || LoggedInUserID !== null  || LoggedInUserID !== "") {
@@ -422,7 +436,7 @@ router.get('/LogOutMCUser', (req, res) => {
     throw error;
   }
 });
-router.post('/MCGdClient', (req, res) => {
+app.post('/MCGdClient', (req, res) => {
   console.log("MCGdClient called ");
  try {
    if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
@@ -484,7 +498,7 @@ router.post('/MCGdClient', (req, res) => {
  }
   
 });
-router.get('/MCClientData', (req, res) => {
+app.get('/MCClientData', (req, res) => {
   console.log('MCClientData called');
  try {
    if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -507,7 +521,7 @@ router.get('/MCClientData', (req, res) => {
  }
   
 });
-router.delete('/MCClientDeleteData', (req, res) => {
+app.delete('/MCClientDeleteData', (req, res) => {
   console.log('MCClientDeleteData called ');
  try {
   if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -539,7 +553,7 @@ router.delete('/MCClientDeleteData', (req, res) => {
   throw error;
  }
 });
-router.patch('/MCClientUpdateData', (req, res) => {
+app.patch('/MCClientUpdateData', (req, res) => {
   console.log('MCClientUpdateData called ');
   try {
     if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
@@ -580,7 +594,7 @@ router.patch('/MCClientUpdateData', (req, res) => {
     throw error;
   }
 });
-router.post('/Files', (req, res) => {
+app.post('/Files', (req, res) => {
   console.log('Files called');
   try {
     if(req.body.path !== undefined || req.body.path !== null || req.body.path !== ""){
@@ -608,7 +622,7 @@ router.post('/Files', (req, res) => {
     throw error;
   }  
 });
-router.post('/AddFiles', (req, res) => {
+app.post('/AddFiles', (req, res) => {
   console.log('AddFiles called');
   try {
     if(req.body.filePath !== undefined || req.body.filePath !== null || req.body.filePath !== ""
@@ -637,7 +651,7 @@ router.post('/AddFiles', (req, res) => {
     throw error;
   }  
 });
-router.post('/LfFilePath', (req, res) => {
+app.post('/LfFilePath', (req, res) => {
   console.log('LfFilePath called');
   try {
    
@@ -654,7 +668,7 @@ router.post('/LfFilePath', (req, res) => {
     throw err;
   }
 });
-router.get('/LfDownload', (req, res) => {
+app.get('/LfDownload', (req, res) => {
   console.log('LfDownload called');
   try {
     
@@ -674,7 +688,7 @@ router.get('/LfDownload', (req, res) => {
     throw err;
   }
 });
-router.post('/LfileServer', (req, res) => {
+app.post('/LfileServer', (req, res) => {
   console.log('LfileServer called');
   try {
 
@@ -695,7 +709,7 @@ router.post('/LfileServer', (req, res) => {
     throw err;
   }
 });
-router.post('/DeleteFiles', (req, res) => {
+app.post('/DeleteFiles', (req, res) => {
   console.log('DeleteFiles called');
   try {
     if(req.body.filePath !== undefined || req.body.filePath !== null || req.body.filePath !== ""
@@ -711,7 +725,7 @@ router.post('/DeleteFiles', (req, res) => {
   }
 
 });
-router.post('/MoveFile',(req, res) => {
+app.post('/MoveFile',(req, res) => {
   console.log('MoveFile called');
   try {
     if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""){
@@ -726,7 +740,7 @@ router.post('/MoveFile',(req, res) => {
     throw err;
   }
 });
-router.post('/MCDbClient', (req, res) => {
+app.post('/MCDbClient', (req, res) => {
   console.log("MCDbClient calledOne ")
   try {
     if(req.body.dbname !== undefined || req.body.dbname !== null || req.body.dbname !== ""
@@ -788,7 +802,7 @@ router.post('/MCDbClient', (req, res) => {
     throw err;
   }  
 });
-router.get('/DbClientData', (req, res) => {
+app.get('/DbClientData', (req, res) => {
   console.log('DbClientData called');
   try {
     if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -811,7 +825,7 @@ router.get('/DbClientData', (req, res) => {
     throw err;
   }
 });
-router.delete('/DbClientDeleteData', (req, res) => {
+app.delete('/DbClientDeleteData', (req, res) => {
   console.log('DbClientDeleteData called ' + JSON.stringify(req.body));
   try {
     if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -844,7 +858,7 @@ router.delete('/DbClientDeleteData', (req, res) => {
     throw err;
   }
 });
-router.patch('/DbClientUpdateData', (req, res) => {
+app.patch('/DbClientUpdateData', (req, res) => {
   console.log('DbClientUpdateData called ');
   try {
     if(req.body.dbname !== undefined || req.body.dbname !== null || req.body.dbname !== ""
@@ -883,7 +897,7 @@ router.patch('/DbClientUpdateData', (req, res) => {
   }
   
 });
-router.post('/ShowData', (req, res) => {
+app.post('/ShowData', (req, res) => {
   console.log("ShowData called ");
   res.header('Access-Control-Allow-Origin', '*');
   try {
@@ -916,7 +930,7 @@ router.post('/ShowData', (req, res) => {
      throw err;
   }
 });
-router.post('/GDAcessToken', (req, res) =>
+app.post('/GDAcessToken', (req, res) =>
 {
   console.log('GDAcessToken called ');
   try {
@@ -933,7 +947,7 @@ router.post('/GDAcessToken', (req, res) =>
      throw err;
   }
 });
-router.get('/UploadGd', (req, res) =>
+app.get('/UploadGd', (req, res) =>
 {
   try {
     if(downloadedFileName !== "" || downloadedFileName != undefined || downloadedFileName !== null
@@ -993,7 +1007,7 @@ router.get('/UploadGd', (req, res) =>
     throw error;
   }
 });
-router.post('/UploadGdLocal', (req, res) =>
+app.post('/UploadGdLocal', (req, res) =>
 {
   try {
     if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""
@@ -1052,7 +1066,7 @@ router.post('/UploadGdLocal', (req, res) =>
     throw error;
   } 
 })
-router.get('/GDUpdateLocalFile' , (req, res) => {
+app.get('/GDUpdateLocalFile' , (req, res) => {
   console.log("GDUpdateLocalFile called ");
   try {
     if(sendToGd !== undefined || sendToGd !== null || sendToGd !== ""
@@ -1085,7 +1099,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
   }  
  });
- router.get('/GDUpdateFile' , (req, res) => {
+ app.get('/GDUpdateFile' , (req, res) => {
    console.log("GDUpdateFile called " );
    try {
      if(downloadedFileName !== undefined || downloadedFileName !== null || downloadedFileName !== ""
@@ -1119,7 +1133,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
    }  
   });
- router.get('/DPUpload', (req, res) =>
+ app.get('/DPUpload', (req, res) =>
 {
   console.log("DpUpload called ");
   try {
@@ -1193,7 +1207,7 @@ router.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
   }
 });
-router.post('/DPUploadLocal', (req, res) =>
+app.post('/DPUploadLocal', (req, res) =>
 {
   console.log("DpUploadLocal called ");
   try {
@@ -1262,7 +1276,7 @@ router.post('/DPUploadLocal', (req, res) =>
     throw error;
   }
 });
-router.post('/DpPath', function (req, res)
+app.post('/DpPath', function (req, res)
 {
   console.log("DpPath called"); 
   try {
@@ -1280,7 +1294,7 @@ router.post('/DpPath', function (req, res)
   }
   
 });
-router.get('/DPDownload', async (req, res) =>
+app.get('/DPDownload', async (req, res) =>
 {
   console.log("DPDownload called");
   try {
@@ -1328,7 +1342,7 @@ router.get('/DPDownload', async (req, res) =>
     throw error;
   }   
 });
-router.get('/DPDownloadLocal', async (req, res) =>
+app.get('/DPDownloadLocal', async (req, res) =>
 {
   console.log("DPDownloadLocal called");
   try {
@@ -1374,7 +1388,7 @@ router.get('/DPDownloadLocal', async (req, res) =>
     throw error;
   } 
 });
-router.post('/GdId', (req, res) => {
+app.post('/GdId', (req, res) => {
   console.log("GdId called ");
   try {
    if(req.body.gdSaveId !== undefined || req.body.gdSaveId !== null || req.body.gdSaveId !== ""
@@ -1392,7 +1406,7 @@ router.post('/GdId', (req, res) => {
       throw error;
   }
 });
-router.get('/DownloadGd', (req, res) =>
+app.get('/DownloadGd', (req, res) =>
 {
   console.log("DownloadGd called ");
   try {
@@ -1427,7 +1441,7 @@ router.get('/DownloadGd', (req, res) =>
       throw error;
   }
 });
-router.get('/DownloadGdLocal', (req, res) =>
+app.get('/DownloadGdLocal', (req, res) =>
 {
   console.log("DownloadGdLocal called ");
   try {
@@ -1463,7 +1477,7 @@ router.get('/DownloadGdLocal', (req, res) =>
       throw error;
   } 
 });
-router.post('/BoxCode', (req,res) => {
+app.post('/BoxCode', (req,res) => {
   console.log("BoxCode called");
  
   try {
@@ -1479,7 +1493,7 @@ router.post('/BoxCode', (req,res) => {
       throw err;
   }
 });
-router.get('/BoxOauth', (req,res) => {
+app.get('/BoxOauth', (req,res) => {
   console.log("BoxOauth called");
   try {
     if(holdBoxCode !== undefined || holdBoxCode !== null || holdBoxCode !== ""){
@@ -1513,7 +1527,7 @@ router.get('/BoxOauth', (req,res) => {
       throw err;
   }
 });
-router.get('/BoxClientEmail', (req,res) => {
+app.get('/BoxClientEmail', (req,res) => {
   console.log("BoxClientEmail called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
@@ -1544,7 +1558,7 @@ router.get('/BoxClientEmail', (req,res) => {
       throw err;
   }
 });
-router.get('/BoxGetFile', (req,res) => {
+app.get('/BoxGetFile', (req,res) => {
   console.log("BoxGetFile called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
@@ -1570,7 +1584,7 @@ router.get('/BoxGetFile', (req,res) => {
   }
    
 });
-router.get('/BoxGetFolders', (req,res) => {
+app.get('/BoxGetFolders', (req,res) => {
   console.log("BoxGetFolders called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
@@ -1595,7 +1609,7 @@ router.get('/BoxGetFolders', (req,res) => {
       throw err;
   } 
 });
-router.post('/BxDownload', (req,res) => {
+app.post('/BxDownload', (req,res) => {
   console.log("BxDownload called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""
@@ -1628,7 +1642,7 @@ router.post('/BxDownload', (req,res) => {
       throw err;
   }
 });
-router.post('/BxUpload', (req,res) => {
+app.post('/BxUpload', (req,res) => {
 
   console.log("BxUpload called");
   try {
@@ -1705,7 +1719,7 @@ router.post('/BxUpload', (req,res) => {
       throw err;
   }
 });
-router.post('/BxLocalUpload', (req,res) => {
+app.post('/BxLocalUpload', (req,res) => {
 
   console.log("BxLocalUpload called");
   try {
@@ -1779,7 +1793,7 @@ router.post('/BxLocalUpload', (req,res) => {
       throw err;
   }
 });
-router.post('/OdAccessToken', (req,res) => {
+app.post('/OdAccessToken', (req,res) => {
   console.log("OdAccessToken called");
   res.header('Access-Control-Allow-Origin', '*');
  
@@ -1796,7 +1810,7 @@ router.post('/OdAccessToken', (req,res) => {
     throw error;
   }
 });
-router.get('/OdProfile', (req,res) => {
+app.get('/OdProfile', (req,res) => {
   console.log("OdProfile called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""){
@@ -1828,7 +1842,7 @@ router.get('/OdProfile', (req,res) => {
     throw error;
   }
 });
-router.get('/OdGetFiles', (req,res) => {
+app.get('/OdGetFiles', (req,res) => {
   console.log("OdGetFiles called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""){
@@ -1853,7 +1867,7 @@ router.get('/OdGetFiles', (req,res) => {
     throw error;
   }
 });
-router.post('/OdDownload', (req,res) => {
+app.post('/OdDownload', (req,res) => {
   console.log("OdDownload called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
@@ -1888,7 +1902,7 @@ router.post('/OdDownload', (req,res) => {
   }
  
 });
-router.post('/OdUpload', (req,res) => {
+app.post('/OdUpload', (req,res) => {
   console.log("OdUpload called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
@@ -1952,7 +1966,7 @@ router.post('/OdUpload', (req,res) => {
     throw error;
   } 
 });
-router.post('/OdLocalUpload', (req,res) => {
+app.post('/OdLocalUpload', (req,res) => {
   console.log("OdLocalUpload called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
@@ -2949,5 +2963,5 @@ function toTryDomain(){
     console.log(error); 
    }
 }
-toTryDomain();
-module.exports = router;
+//toTryDomain();
+module.exports = app;
