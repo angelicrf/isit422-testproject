@@ -13,7 +13,7 @@ export class OdCloudService {
 
 constructor(private errorService:ErrorHandelersService) { }
   login() {
-    let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=http://localhost:4200/cloudmanagement/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
+    let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
     let link = document.createElement('a');
     link.href = odUrl;
     link.click();

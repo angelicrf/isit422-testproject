@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
 var path = require('path');
 var Dropbox = require('dropbox').Dropbox;
 var BoxSDK = require('box-node-sdk');
@@ -63,9 +64,20 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public/dist/angular-multiclouds')));
 
-
+var corsOptions = {
+  origin: 'https://stormy-headland-33273.herokuapp.com',
+  optionsSuccessStatus: 200 
+}
+app.use(cors(corsOptions));
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static('dist/angular-multiclouds'));
+  app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
+})
+}
 //app.use('/', indexapp);
 
 /* app.use((err, req, res, next) => {
@@ -150,7 +162,7 @@ app.get('/MCUserByID', (req, res) => {
     throw error;
   }
 });
-router.post('/MCUserInfo', (req, res) => {
+app.post('/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
   
   try {
@@ -2953,15 +2965,5 @@ async function dpSdkUpload(dpAccToken,fileName){
               }, Promise.resolve());
       });    
 }
-function toTryDomain(){
-  //var d = domain.create();
-  let fileToUpload = `./routes/AllFiles/testImage.jpg`;
-   try {
-    let stream = fs.createReadStream(`${fileToUpload }`);
-    console.log(stream); 
-   } catch (error) {
-    console.log(error); 
-   }
-}
-//toTryDomain();
+
 module.exports = app;

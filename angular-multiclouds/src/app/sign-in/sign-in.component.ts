@@ -89,7 +89,7 @@ export class SignInComponent implements OnInit {
          }
          sessionStorage.setItem('userSignedIn', 'SignedUser')
          sessionStorage.setItem('userMnId', clientIdValue[0])
-         window.location.replace("http://localhost:4200/home")
+         window.location.replace("https://stormy-headland-33273.herokuapp.com/home")
          alert('user name and password found user is signed in')
             return this.usrLogin.isSingedIn = true
          }       

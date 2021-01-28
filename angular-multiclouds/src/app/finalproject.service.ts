@@ -11,11 +11,11 @@ export class FinalprojectService {
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<User[]>{
-   return this.http.get<User[]>('http://localhost:3000/users')
+   return this.http.get<User[]>('https://stormy-headland-33273.herokuapp.com/users')
   }
 
   getuser(id:string): Observable<User[]>{
-  return this.http.get<User[]>(`http://localhost:3000/users/${id}`)
+  return this.http.get<User[]>(`https://stormy-headland-33273.herokuapp.com/users/${id}`)
   }
 
 }

@@ -12,7 +12,7 @@ export class DpCloudService {
 
   accesToken: string;
   dropBoxClLogin(){
-    const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fcloudmanagement"
+    const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https%3A%2F%2Fstormy-headland-33273.herokuapp.com%2Fcloudmanagement"
     let link = document.createElement('a')
     link.href = dpUrl
     link.click()

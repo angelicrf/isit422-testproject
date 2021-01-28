@@ -16,7 +16,7 @@ exports.config = {
     browserName: 'chrome'
   },
   directConnect: true,
-  baseUrl: 'http://localhost:4200/',
+  baseUrl: 'https://stormy-headland-33273.herokuapp.com/',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,

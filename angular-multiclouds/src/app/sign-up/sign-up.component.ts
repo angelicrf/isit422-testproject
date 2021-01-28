@@ -46,7 +46,7 @@ export class SignUpComponent implements OnInit {
         this.sUpisSingedUp = true
         this.usrLogin.isSingedUp = true
         sessionStorage.setItem('userSignedUp','SignedUpUser')
-        window.location.replace("http://localhost:4200/home")
+        window.location.replace("https://stormy-headland-33273.herokuapp.com/home")
         return this.usrLogin.isSingedUp
         }
     } catch (error) {
