@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var domain = require('domain');
 var path = require('path');
 var Dropbox = require('dropbox').Dropbox;
 var BoxSDK = require('box-node-sdk');
@@ -67,7 +68,9 @@ const options = {
   useUnifiedTopology: true,
   poolSize: 10
 };
-
+process.on('uncaughtException', function (err) {
+  console.log(err);
+}); 
 mongoose.connect(dbURI, options).then(
   () => {
     console.log("Database connection established!");
@@ -80,7 +83,7 @@ router.get('/', (req, res) => {
   console.log('Home Page route called');
   res.status(200).sendFile('index.html');
 });
-router.get('/AllMCUsers', function(req, res) {
+router.get('/AllMCUsers', (req, res) => {
   try {
     if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
     || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""){
@@ -2936,5 +2939,15 @@ async function dpSdkUpload(dpAccToken,fileName){
               }, Promise.resolve());
       });    
 }
-
+function toTryDomain(){
+  //var d = domain.create();
+  let fileToUpload = `./routes/AllFiles/testImage.jpg`;
+   try {
+    let stream = fs.createReadStream(`${fileToUpload }`);
+    console.log(stream); 
+   } catch (error) {
+    console.log(error); 
+   }
+}
+toTryDomain();
 module.exports = router;
