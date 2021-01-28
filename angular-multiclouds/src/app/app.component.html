@@ -1,0 +1,86 @@
+<div>
+    <mat-toolbar class="fixed-header">
+     <button mat-icon-button class="btn btn-primary" [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+      </button>
+      <span id="team_name">Multicloud</span>
+      <nav>
+        <a routerLink="/home" id="a_three">Home</a>
+        <a *ngIf="signedConfirmed" routerLink="/cloudmanagement" id="a_one" >Cloud Management</a><a *ngIf="!signedConfirmed" id="a_one">Cloud Management</a>
+        <a *ngIf="signedConfirmed" routerLink="/filetransfer" id="a_two">File Transfer</a><a *ngIf="!signedConfirmed" id="a_two">File Transfer</a>
+        <a routerLink="/sign-up" id="a_three">{{appSpName}}</a>
+        <a routerLink="/sign-in" id="a_four">{{appSiName}}</a> 
+      </nav>
+    </mat-toolbar> 
+      <mat-menu #menu="matMenu">
+        <div class="card">
+            <button mat-menu-item routerLink="/home" >
+              <mat-icon >home</mat-icon>
+              <span>home</span>
+            </button>
+            <button mat-menu-item routerLink="/sign-in" >
+              <mat-icon>login</mat-icon>
+              <span>{{appSiName}}</span>
+            </button>
+            <button mat-menu-item routerLink="/sign-up">
+              <mat-icon>add_task</mat-icon>
+              <span>{{appSpName}}</span>
+            </button>
+            <button mat-menu-item [disabled]="!signedConfirmed" routerLink="/cloudmanagement" >
+             <mat-icon >cloud_download</mat-icon>
+             <span>Cloud Management</span>
+            </button>
+           <button mat-menu-item [disabled]="!signedConfirmed" routerLink="/filetransfer" >
+            <mat-icon >perm_media</mat-icon>
+            <span>File Transfer</span>
+           </button>
+      </div>
+      </mat-menu>
+    
+<router-outlet></router-outlet>
+<app-messages></app-messages>
+<div class="footer-div container-fluid">
+  <div class="container-fluid cnSecond pb-0 mb-0 justify-content-center text-light">
+    <footer class="stFooter">
+        <div class="row my-5 justify-content-center py-5">
+            <div class="col-11">
+                <div class="row ">
+                    <div class="col-xl-8 col-md-4 col-sm-4 col-12 my-auto mx-auto a">
+                        <h3 class="text-muted mb-md-0 mb-5 bold-text">Multicloud Corp.</h3>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-sm-4 col-12">
+                        <h6 class="mb-3 mb-lg-4 bold-text "><b>MENU</b></h6>
+                        <ul class="list-unstyled">
+                            <li><a routerLink="/home">Home</a></li>
+                            <li><a routerLink="/sign-in">Sign In</a></li>
+                            <li><a routerLink="/sign-up">Sign Out</a></li>
+                            <li><a *ngIf="signedConfirmed" routerLink="/cloudmanagement">Cloud Management</a><a *ngIf="!signedConfirmed">Cloud Management</a></li>
+                            <li><a *ngIf="signedConfirmed" routerLink="/filetransfer">File Transfer</a><a *ngIf="!signedConfirmed">File Transfer</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-sm-4 col-12">
+                        <h6 class="mb-3 mb-lg-4 text-muted bold-text mt-sm-0 mt-5"><b>ADDRESS</b></h6>
+                        <p class="mb-1">2034, Bel-red Rd,Bellevue, WA 98008</p>
+                        <p>Multicloud Corp.</p>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-xl-8 col-md-4 col-sm-4 col-auto my-md-0 mt-5 order-sm-1 order-3 align-self-end">
+                        <p class="social text-muted mb-0 pb-0 bold-text"> <span class="mx-2"><i class="fa fa-facebook" aria-hidden="true"></i></span> <span class="mx-2"><i class="fa fa-linkedin-square" aria-hidden="true"></i></span> <span class="mx-2"><i class="fa fa-twitter" aria-hidden="true"></i></span> <span class="mx-2"><i class="fa fa-instagram" aria-hidden="true"></i></span> </p><small class="rights">
+                            <span>&#174;</span>Multicloud Corp. Signs & Logo Registered.</small><br>
+                            <small class="rights">Copyright <span>&#169;</span> 2020 Multicloud Corp. All Rights Reserved.</small>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-1 align-self-end ">
+                        <h6 class="mt-55 mt-2 text-muted bold-text"><b>yellowteam Isit422</b></h6><small> <span><i class="fa fa-envelope" aria-hidden="true"></i></span>yellowteamisit422@gmail.com</small>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-2 align-self-end mt-3 ">
+                        <h6 class="text-muted bold-text"><b>YELLOWTEAM ISIT422</b></h6><small><span><i class="fa fa-envelope" aria-hidden="true"></i></span>yellowteamisit422@gmail.com</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </footer>
+</div>
+</div>
+</div>

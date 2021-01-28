@@ -1,0 +1,58 @@
+<div class="cmBar">
+<div style="margin-top: 40px; margin-left: 100px; width: 100%; overflow: hidden; align-content: center;">
+    <div style="width: 600px; float: left;">
+      <h4>Filters</h4>
+      <ul class="filters">
+        <li *ngFor="let flt of filters; index as ind">
+          <input *ngIf="flt !== ''" autocomplete="off" aria-invalid="false" value={{flt}} readonly>
+          <button *ngIf="flt !== ''" class="delete-button" (click)="filters.splice(ind, 1)">X</button>
+          
+        </li>
+        <li *ngIf="addFilterForm">
+          <select id="fileType" [(ngModel)]="fileType">
+            <option *ngFor="let ft of fileTypes">{{ft}}</option>
+          </select>
+          <p style="display: inline;"> to </p>
+          <select id='service' [(ngModel)]="service">
+            <option *ngFor="let srv of services">{{srv}}</option>
+          </select>
+        </li>
+        <li>
+          <button *ngIf="!addFilterForm" class="new-filter" (click)="addFilterForm = true">+ New Filter</button>
+          <button *ngIf="addFilterForm" class="new-filter" (click)="addFilterForm = false; addFilter(fileType + ' to ' + service)">Complete Filter</button><br>
+          <button *ngIf="addFilterForm" class="new-filter" (click)="addFilterForm = false;">Cancel</button>
+        </li>
+      </ul>
+    </div>
+    <div style="margin-left: 620px;">
+     
+      <input *ngIf="!dropboxForm" [disabled]="(gdChecked && odChecked ? true : null) || (gdChecked && bxChecked ? true : null) || (gdChecked && lfChecked ? true : null) || (bxChecked && lfChecked ? true : null) || (bxChecked && odChecked ? true : null) || (lfChecked && odChecked ? true : null)"type="checkbox" [(ngModel)]="dpChecked" [ngModelOptions]="{standalone:true}" class="services" aria-checked="false"><img src="assets/images/dropbox.png" width="64" height="64">
+      <span *ngIf="!dropboxForm" class="services-button">Dropbox<br><span>{{dpEmail}}</span></span>
+  
+      <br>
+      <input *ngIf="!googleDriveForm" [disabled]="(dpChecked && odChecked ? true : null) || (dpChecked && bxChecked ? true : null) || (dpChecked && lfChecked ? true : null) || (bxChecked && lfChecked ? true : null) || (bxChecked && odChecked ? true : null) || (lfChecked && odChecked ? true : null)" type="checkbox" [(ngModel)]="gdChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/googledrive.png" width="64" height="64">
+      <span *ngIf="!googleDriveForm"  class="services-button">Google Drive<br><span >{{gdEmail}}</span></span>
+      <br>
+      <input *ngIf="!oneDriveForm" [disabled]="(dpChecked && gdChecked ? true : null) || (dpChecked && bxChecked ? true : null) || (dpChecked && lfChecked ? true : null) || (bxChecked && lfChecked ? true : null) || (bxChecked && gdChecked ? true : null) || (lfChecked && gdChecked ? true : null)" type="checkbox" [(ngModel)]="odChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/onedrive.png" width="64" height="64">
+      <span *ngIf="!oneDriveForm" class="services-button">OneDrive<br>{{odEmail}}</span>
+   
+      <br>
+      
+      <input *ngIf="!boxForm" [disabled]="(dpChecked && odChecked ? true : null) || (dpChecked && gdChecked ? true : null) || (dpChecked && lfChecked ? true : null) || (gdChecked && lfChecked ? true : null) || (odChecked && gdChecked ? true : null) || (lfChecked && odChecked ? true : null)" type="checkbox" [(ngModel)]="bxChecked" [ngModelOptions]="{standalone:true}"class="services"  aria-checked="false"><img src="assets/images/box.png" width="64" height="64">
+      <span *ngIf="!boxForm" class="services-button">Box<br>{{bxEmail}}</span>
+    
+      <br>
+      <input *ngIf="!localForm" [disabled]="(dpChecked && odChecked ? true : null) || (dpChecked && bxChecked ? true : null) || (dpChecked && gdChecked ? true : null) || (bxChecked && gdChecked ? true : null) || (bxChecked && odChecked ? true : null) || (gdChecked && odChecked ? true : null)" type="checkbox" [(ngModel)]="lfChecked" [ngModelOptions]="{standalone:true}" class="services"  aria-checked="false"><img src="assets/images/folder.png" width="64" height="64">
+      <span *ngIf="!localForm" class="services-button">Local File System<br>{{readsessionStorageValue('localFilePath')}}</span>
+      <label *ngIf="lfChecked" class="services">Specify a local file path:</label>
+      <div *ngIf="lfChecked">
+        <input class="service-input" autocomplete="off" aria-invalid="false" placeholder="/home/bcuser/Documents" [(ngModel)]="localFilePath">
+        
+        <button class="service-input" (click)="setsessionStorageFilePath()">Submit</button>
+        <button class="service-input" (click)="localForm = false">Cancel</button>
+      </div><br><br>
+      <button *ngIf="!dropboxForm" class="btn btn-danger submit-button" (click)="handleClientLogin()">Submit<br></button>
+     
+    </div>
+  </div>
+</div>
