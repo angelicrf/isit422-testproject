@@ -187,7 +187,7 @@ app.post('/api/MCUserInfo', (req, res) => {
   }
 });
 //app.use('/api', router);
-app.get('/MCUserByUsrNmPwd', (req, res) => {
+app.get('/api/MCUserByUsrNmPwd', (req, res) => {
   console.log("MCUserByUsrNmPwd called");
  try {
   if(HoldUserData[0] !== "" || HoldUserData[0] !== null
