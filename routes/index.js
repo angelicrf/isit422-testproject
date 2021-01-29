@@ -78,6 +78,9 @@ if (process.env.NODE_ENV === 'production') {
   res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
 })
 }
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, '../public/dist/angular-multiclouds/index.html'));
+});
 //app.use('/', indexapp);
 
 /* app.use((err, req, res, next) => {
@@ -162,7 +165,7 @@ app.get('/MCUserByID', (req, res) => {
     throw error;
   }
 });
-app.post('/MCUserInfo', (req, res) => {
+app.post('/api/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
   
   try {
@@ -183,6 +186,7 @@ app.post('/MCUserInfo', (req, res) => {
     throw error;
   }
 });
+//app.use('/api', router);
 app.get('/MCUserByUsrNmPwd', (req, res) => {
   console.log("MCUserByUsrNmPwd called");
  try {

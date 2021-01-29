@@ -78,7 +78,9 @@ if (process.env.NODE_ENV === 'production') {
   res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
 })
 }
-//app.use('/', indexapp);
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, '../public/dist/angular-multiclouds/index.html'));
+});
 
 /* app.use((err, req, res, next) => {
     console.error(err.stack)
