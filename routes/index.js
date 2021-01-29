@@ -223,7 +223,7 @@ app.post('/api/MCUserByUsrNmPwd', (req, res) => {
   throw error;
  }  
 });
-app.post('/MCUser', (req, res) => {
+app.post('/api/MCUser', (req, res) => {
   console.log("MCUser called ");
  try {
    if(req.body.password !== undefined || req.body.password !== null || req.body.password !== ""
@@ -258,7 +258,7 @@ app.post('/MCUser', (req, res) => {
   throw error;
  } 
 });
-app.patch('/UpdateMCUser', (req, res) => {
+app.patch('/api/UpdateMCUser', (req, res) => {
  try {
    if(req.body.id !== undefined || req.body.id !== null || req.body.id !== ""
    || LoggedInUserID !== undefined || LoggedInUserID !== null || LoggedInUserID !== ""
@@ -310,7 +310,7 @@ app.patch('/UpdateMCUser', (req, res) => {
   throw error;
  }
 });
-app.post('/MCGdClient', (req, res) => {
+app.post('/api/MCGdClient', (req, res) => {
   console.log("MCGdClient called ");
   try {
     if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
@@ -342,7 +342,7 @@ app.post('/MCGdClient', (req, res) => {
 
   
 });
-app.post('/MCBoxClient', (req, res) => {
+app.post('/api/MCBoxClient', (req, res) => {
   console.log("MCBoxClient called ");
  try {
   if(req.body.bxname !== undefined || req.body.bxname !== null || req.body.bxname !== ""
@@ -373,7 +373,7 @@ app.post('/MCBoxClient', (req, res) => {
  }
   
 });
-app.post('/MCOdClient', (req, res) => {
+app.post('/api/MCOdClient', (req, res) => {
   console.log("MCOdClient called ");
   try {
     if(req.body.odname !== undefined || req.body.odname !== null || req.body.odname !== ""
@@ -403,7 +403,7 @@ app.post('/MCOdClient', (req, res) => {
     throw error;
   }
 });
-app.delete('/DeleteMCUser', (req, res) => {
+app.delete('/api/DeleteMCUser', (req, res) => {
  try {
   if (LoggedInUserID !== undefined || LoggedInUserID !== '' || LoggedInUserID !== null) {
     console.log('DeleteMCUser called');
@@ -436,7 +436,7 @@ app.delete('/DeleteMCUser', (req, res) => {
   throw error;
  }
 });
-app.get('/LogOutMCUser', (req, res) => {
+app.get('/api/LogOutMCUser', (req, res) => {
   console.log('LogOutMCUser called ');
   try {
     if (LoggedInUserID !== undefined || LoggedInUserID !== null  || LoggedInUserID !== "") {
@@ -452,7 +452,7 @@ app.get('/LogOutMCUser', (req, res) => {
     throw error;
   }
 });
-app.post('/MCGdClient', (req, res) => {
+app.post('/api/MCGdClient', (req, res) => {
   console.log("MCGdClient called ");
  try {
    if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
@@ -514,7 +514,7 @@ app.post('/MCGdClient', (req, res) => {
  }
   
 });
-app.get('/MCClientData', (req, res) => {
+app.get('/api/MCClientData', (req, res) => {
   console.log('MCClientData called');
  try {
    if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -537,7 +537,7 @@ app.get('/MCClientData', (req, res) => {
  }
   
 });
-app.delete('/MCClientDeleteData', (req, res) => {
+app.delete('/api/MCClientDeleteData', (req, res) => {
   console.log('MCClientDeleteData called ');
  try {
   if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -569,7 +569,7 @@ app.delete('/MCClientDeleteData', (req, res) => {
   throw error;
  }
 });
-app.patch('/MCClientUpdateData', (req, res) => {
+app.patch('/api/MCClientUpdateData', (req, res) => {
   console.log('MCClientUpdateData called ');
   try {
     if(req.body.gdname !== undefined || req.body.gdname !== null || req.body.gdname !== ""
@@ -610,7 +610,7 @@ app.patch('/MCClientUpdateData', (req, res) => {
     throw error;
   }
 });
-app.post('/Files', (req, res) => {
+app.post('/api/Files', (req, res) => {
   console.log('Files called');
   try {
     if(req.body.path !== undefined || req.body.path !== null || req.body.path !== ""){
@@ -638,7 +638,7 @@ app.post('/Files', (req, res) => {
     throw error;
   }  
 });
-app.post('/AddFiles', (req, res) => {
+app.post('/api/AddFiles', (req, res) => {
   console.log('AddFiles called');
   try {
     if(req.body.filePath !== undefined || req.body.filePath !== null || req.body.filePath !== ""
@@ -667,7 +667,7 @@ app.post('/AddFiles', (req, res) => {
     throw error;
   }  
 });
-app.post('/LfFilePath', (req, res) => {
+app.post('/api/LfFilePath', (req, res) => {
   console.log('LfFilePath called');
   try {
    
@@ -684,7 +684,7 @@ app.post('/LfFilePath', (req, res) => {
     throw err;
   }
 });
-app.get('/LfDownload', (req, res) => {
+app.get('/api/LfDownload', (req, res) => {
   console.log('LfDownload called');
   try {
     
@@ -704,7 +704,7 @@ app.get('/LfDownload', (req, res) => {
     throw err;
   }
 });
-app.post('/LfileServer', (req, res) => {
+app.post('/api/LfileServer', (req, res) => {
   console.log('LfileServer called');
   try {
 
@@ -725,7 +725,7 @@ app.post('/LfileServer', (req, res) => {
     throw err;
   }
 });
-app.post('/DeleteFiles', (req, res) => {
+app.post('/api/DeleteFiles', (req, res) => {
   console.log('DeleteFiles called');
   try {
     if(req.body.filePath !== undefined || req.body.filePath !== null || req.body.filePath !== ""
@@ -741,7 +741,7 @@ app.post('/DeleteFiles', (req, res) => {
   }
 
 });
-app.post('/MoveFile',(req, res) => {
+app.post('/api/MoveFile',(req, res) => {
   console.log('MoveFile called');
   try {
     if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""){
@@ -756,7 +756,7 @@ app.post('/MoveFile',(req, res) => {
     throw err;
   }
 });
-app.post('/MCDbClient', (req, res) => {
+app.post('/api/MCDbClient', (req, res) => {
   console.log("MCDbClient calledOne ")
   try {
     if(req.body.dbname !== undefined || req.body.dbname !== null || req.body.dbname !== ""
@@ -818,7 +818,7 @@ app.post('/MCDbClient', (req, res) => {
     throw err;
   }  
 });
-app.get('/DbClientData', (req, res) => {
+app.get('/api/DbClientData', (req, res) => {
   console.log('DbClientData called');
   try {
     if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -841,7 +841,7 @@ app.get('/DbClientData', (req, res) => {
     throw err;
   }
 });
-app.delete('/DbClientDeleteData', (req, res) => {
+app.delete('/api/DbClientDeleteData', (req, res) => {
   console.log('DbClientDeleteData called ' + JSON.stringify(req.body));
   try {
     if(req.body.usermongoid !== undefined || req.body.usermongoid !== null || req.body.usermongoid !== ""){
@@ -874,7 +874,7 @@ app.delete('/DbClientDeleteData', (req, res) => {
     throw err;
   }
 });
-app.patch('/DbClientUpdateData', (req, res) => {
+app.patch('/api/DbClientUpdateData', (req, res) => {
   console.log('DbClientUpdateData called ');
   try {
     if(req.body.dbname !== undefined || req.body.dbname !== null || req.body.dbname !== ""
@@ -913,7 +913,7 @@ app.patch('/DbClientUpdateData', (req, res) => {
   }
   
 });
-app.post('/ShowData', (req, res) => {
+app.post('/api/ShowData', (req, res) => {
   console.log("ShowData called ");
   res.header('Access-Control-Allow-Origin', '*');
   try {
@@ -946,7 +946,7 @@ app.post('/ShowData', (req, res) => {
      throw err;
   }
 });
-app.post('/GDAcessToken', (req, res) =>
+app.post('/api/GDAcessToken', (req, res) =>
 {
   console.log('GDAcessToken called ');
   try {
@@ -963,7 +963,7 @@ app.post('/GDAcessToken', (req, res) =>
      throw err;
   }
 });
-app.get('/UploadGd', (req, res) =>
+app.get('/api/UploadGd', (req, res) =>
 {
   try {
     if(downloadedFileName !== "" || downloadedFileName != undefined || downloadedFileName !== null
@@ -1023,7 +1023,7 @@ app.get('/UploadGd', (req, res) =>
     throw error;
   }
 });
-app.post('/UploadGdLocal', (req, res) =>
+app.post('/api/UploadGdLocal', (req, res) =>
 {
   try {
     if(req.body.fileName !== undefined || req.body.fileName !== null || req.body.fileName !== ""
@@ -1082,7 +1082,7 @@ app.post('/UploadGdLocal', (req, res) =>
     throw error;
   } 
 })
-app.get('/GDUpdateLocalFile' , (req, res) => {
+app.get('/api/GDUpdateLocalFile' , (req, res) => {
   console.log("GDUpdateLocalFile called ");
   try {
     if(sendToGd !== undefined || sendToGd !== null || sendToGd !== ""
@@ -1115,7 +1115,7 @@ app.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
   }  
  });
- app.get('/GDUpdateFile' , (req, res) => {
+ app.get('/api/GDUpdateFile' , (req, res) => {
    console.log("GDUpdateFile called " );
    try {
      if(downloadedFileName !== undefined || downloadedFileName !== null || downloadedFileName !== ""
@@ -1149,7 +1149,7 @@ app.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
    }  
   });
- app.get('/DPUpload', (req, res) =>
+ app.get('/api/DPUpload', (req, res) =>
 {
   console.log("DpUpload called ");
   try {
@@ -1223,7 +1223,7 @@ app.get('/GDUpdateLocalFile' , (req, res) => {
     throw error;
   }
 });
-app.post('/DPUploadLocal', (req, res) =>
+app.post('/api/DPUploadLocal', (req, res) =>
 {
   console.log("DpUploadLocal called ");
   try {
@@ -1292,7 +1292,7 @@ app.post('/DPUploadLocal', (req, res) =>
     throw error;
   }
 });
-app.post('/DpPath', function (req, res)
+app.post('/api/DpPath', function (req, res)
 {
   console.log("DpPath called"); 
   try {
@@ -1310,7 +1310,7 @@ app.post('/DpPath', function (req, res)
   }
   
 });
-app.get('/DPDownload', async (req, res) =>
+app.get('/api/DPDownload', async (req, res) =>
 {
   console.log("DPDownload called");
   try {
@@ -1358,7 +1358,7 @@ app.get('/DPDownload', async (req, res) =>
     throw error;
   }   
 });
-app.get('/DPDownloadLocal', async (req, res) =>
+app.get('/api/DPDownloadLocal', async (req, res) =>
 {
   console.log("DPDownloadLocal called");
   try {
@@ -1404,7 +1404,7 @@ app.get('/DPDownloadLocal', async (req, res) =>
     throw error;
   } 
 });
-app.post('/GdId', (req, res) => {
+app.post('/api/GdId', (req, res) => {
   console.log("GdId called ");
   try {
    if(req.body.gdSaveId !== undefined || req.body.gdSaveId !== null || req.body.gdSaveId !== ""
@@ -1422,7 +1422,7 @@ app.post('/GdId', (req, res) => {
       throw error;
   }
 });
-app.get('/DownloadGd', (req, res) =>
+app.get('/api/DownloadGd', (req, res) =>
 {
   console.log("DownloadGd called ");
   try {
@@ -1457,7 +1457,7 @@ app.get('/DownloadGd', (req, res) =>
       throw error;
   }
 });
-app.get('/DownloadGdLocal', (req, res) =>
+app.get('/api/DownloadGdLocal', (req, res) =>
 {
   console.log("DownloadGdLocal called ");
   try {
@@ -1493,7 +1493,7 @@ app.get('/DownloadGdLocal', (req, res) =>
       throw error;
   } 
 });
-app.post('/BoxCode', (req,res) => {
+app.post('/api/BoxCode', (req,res) => {
   console.log("BoxCode called");
  
   try {
@@ -1509,7 +1509,7 @@ app.post('/BoxCode', (req,res) => {
       throw err;
   }
 });
-app.get('/BoxOauth', (req,res) => {
+app.get('/api/BoxOauth', (req,res) => {
   console.log("BoxOauth called");
   try {
     if(holdBoxCode !== undefined || holdBoxCode !== null || holdBoxCode !== ""){
@@ -1543,7 +1543,7 @@ app.get('/BoxOauth', (req,res) => {
       throw err;
   }
 });
-app.get('/BoxClientEmail', (req,res) => {
+app.get('/api/BoxClientEmail', (req,res) => {
   console.log("BoxClientEmail called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
@@ -1574,7 +1574,7 @@ app.get('/BoxClientEmail', (req,res) => {
       throw err;
   }
 });
-app.get('/BoxGetFile', (req,res) => {
+app.get('/api/BoxGetFile', (req,res) => {
   console.log("BoxGetFile called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
@@ -1600,7 +1600,7 @@ app.get('/BoxGetFile', (req,res) => {
   }
    
 });
-app.get('/BoxGetFolders', (req,res) => {
+app.get('/api/BoxGetFolders', (req,res) => {
   console.log("BoxGetFolders called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""){
@@ -1625,7 +1625,7 @@ app.get('/BoxGetFolders', (req,res) => {
       throw err;
   } 
 });
-app.post('/BxDownload', (req,res) => {
+app.post('/api/BxDownload', (req,res) => {
   console.log("BxDownload called");
   try {
     if(boxAccessToken !== undefined || boxAccessToken !== null || boxAccessToken !== ""
@@ -1658,7 +1658,7 @@ app.post('/BxDownload', (req,res) => {
       throw err;
   }
 });
-app.post('/BxUpload', (req,res) => {
+app.post('/api/BxUpload', (req,res) => {
 
   console.log("BxUpload called");
   try {
@@ -1735,7 +1735,7 @@ app.post('/BxUpload', (req,res) => {
       throw err;
   }
 });
-app.post('/BxLocalUpload', (req,res) => {
+app.post('/api/BxLocalUpload', (req,res) => {
 
   console.log("BxLocalUpload called");
   try {
@@ -1809,7 +1809,7 @@ app.post('/BxLocalUpload', (req,res) => {
       throw err;
   }
 });
-app.post('/OdAccessToken', (req,res) => {
+app.post('/api/OdAccessToken', (req,res) => {
   console.log("OdAccessToken called");
   res.header('Access-Control-Allow-Origin', '*');
  
@@ -1826,7 +1826,7 @@ app.post('/OdAccessToken', (req,res) => {
     throw error;
   }
 });
-app.get('/OdProfile', (req,res) => {
+app.get('/api/OdProfile', (req,res) => {
   console.log("OdProfile called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""){
@@ -1858,7 +1858,7 @@ app.get('/OdProfile', (req,res) => {
     throw error;
   }
 });
-app.get('/OdGetFiles', (req,res) => {
+app.get('/api/OdGetFiles', (req,res) => {
   console.log("OdGetFiles called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""){
@@ -1883,7 +1883,7 @@ app.get('/OdGetFiles', (req,res) => {
     throw error;
   }
 });
-app.post('/OdDownload', (req,res) => {
+app.post('/api/OdDownload', (req,res) => {
   console.log("OdDownload called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
@@ -1918,7 +1918,7 @@ app.post('/OdDownload', (req,res) => {
   }
  
 });
-app.post('/OdUpload', (req,res) => {
+app.post('/api/OdUpload', (req,res) => {
   console.log("OdUpload called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
@@ -1982,7 +1982,7 @@ app.post('/OdUpload', (req,res) => {
     throw error;
   } 
 });
-app.post('/OdLocalUpload', (req,res) => {
+app.post('/api/OdLocalUpload', (req,res) => {
   console.log("OdLocalUpload called");
   try {
     if(odAccessToken !== undefined || odAccessToken !== null || odAccessToken !== ""
