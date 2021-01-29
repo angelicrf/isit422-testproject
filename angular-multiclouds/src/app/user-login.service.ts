@@ -32,12 +32,17 @@ export class UserLoginService {
   }
   userSignIn(){
     return new Promise((resolve, reject) => {
+      let userValue = JSON.stringify({
+        usrResult: "value posted"
+      })
     fetch('/api/MCUserByUsrNmPwd', {
-      method: 'GET',
+      
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
+      body: userValue
     })
       .then(response => {return response.json()})
       .then(getdata => {

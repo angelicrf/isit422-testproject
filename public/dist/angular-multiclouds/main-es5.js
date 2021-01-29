@@ -10427,12 +10427,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this58 = this;
 
           return new Promise(function (resolve, reject) {
+            var userValue = JSON.stringify({
+              usrResult: "value posted"
+            });
             fetch('/api/MCUserByUsrNmPwd', {
-              method: 'GET',
+              method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
-              }
+              },
+              body: userValue
             }).then(function (response) {
               return response.json();
             }).then(function (getdata) {
