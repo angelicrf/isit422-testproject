@@ -64,7 +64,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public/dist/angular-multiclouds')));
+app.use(express.static(path.join(__dirname, 'dist/angular-multiclouds')));
 
 var corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
@@ -75,11 +75,11 @@ if (process.env.NODE_ENV === 'production') {
   // Set static folder
   app.use(express.static('dist/angular-multiclouds'));
   app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
+  res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
 })
 }
 app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
+  res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
 });
 //app.use('/', indexapp);
 
