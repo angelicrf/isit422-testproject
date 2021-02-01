@@ -6,7 +6,7 @@
       <span id="team_name">Multicloud</span>
       <nav>
         <a routerLink="/home" id="a_three">Home</a>
-        <a *ngIf="signedConfirmed" routerLink="/cloudmanagement/" id="a_one" >Cloud Management</a><a *ngIf="!signedConfirmed" id="a_one">Cloud Management</a>
+        <a *ngIf="signedConfirmed" routerLink="/cloudmanagement/." id="a_one" >Cloud Management</a><a *ngIf="!signedConfirmed" id="a_one">Cloud Management</a>
         <a *ngIf="signedConfirmed" routerLink="/filetransfer" id="a_two">File Transfer</a><a *ngIf="!signedConfirmed" id="a_two">File Transfer</a>
         <a routerLink="/sign-up" id="a_three">{{appSpName}}</a>
         <a routerLink="/sign-in" id="a_four">{{appSiName}}</a> 
@@ -26,7 +26,7 @@
               <mat-icon>add_task</mat-icon>
               <span>{{appSpName}}</span>
             </button>
-            <button mat-menu-item [disabled]="!signedConfirmed" routerLink="/cloudmanagement/" >
+            <button mat-menu-item [disabled]="!signedConfirmed" routerLink="/cloudmanagement/." >
              <mat-icon >cloud_download</mat-icon>
              <span>Cloud Management</span>
             </button>
@@ -54,7 +54,7 @@
                             <li><a routerLink="/home">Home</a></li>
                             <li><a routerLink="/sign-in">Sign In</a></li>
                             <li><a routerLink="/sign-up">Sign Out</a></li>
-                            <li><a *ngIf="signedConfirmed" routerLink="/cloudmanagement/">Cloud Management</a><a *ngIf="!signedConfirmed">Cloud Management</a></li>
+                            <li><a *ngIf="signedConfirmed" routerLink="/cloudmanagement/.">Cloud Management</a><a *ngIf="!signedConfirmed">Cloud Management</a></li>
                             <li><a *ngIf="signedConfirmed" routerLink="/filetransfer">File Transfer</a><a *ngIf="!signedConfirmed">File Transfer</a></li>
                         </ul>
                     </div>
