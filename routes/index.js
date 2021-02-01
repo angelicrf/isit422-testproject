@@ -2917,7 +2917,7 @@ async function dpSdkUpload(dpAccToken,fileName){
         let workItems = [];      
         let offset = 0;
         let dpSid = '';
-        let file = fs.readFileSync(filePath + '/testImage.jpg');
+        let file = fs.readFileSync(filePath + '/' + fileName);
         let fileSize = Buffer.byteLength(file);
       
                while (offset < fileSize) {
