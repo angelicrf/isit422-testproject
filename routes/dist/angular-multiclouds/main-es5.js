@@ -3026,7 +3026,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(DpCloudService, [{
         key: "dropBoxClLogin",
         value: function dropBoxClLogin() {
-          var dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https%3A%2F%2Fstormy-headland-33273.herokuapp.com%2Fcloudmanagement";
+          var dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
           var link = document.createElement('a');
           link.href = dpUrl;
           link.click();
