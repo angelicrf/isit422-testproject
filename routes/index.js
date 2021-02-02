@@ -1251,7 +1251,7 @@ app.post('/api/DPUploadLocal', (req, res) =>
             }            
             });
             let fileSizeUp = bytesToSize(concatFile);
-            localFile.storage("fileSizeUp is " + fileSizeUp);
+            console.log("fileSizeUp is " + fileSizeUp);
             //if(fileSizeUp < 5 && fileSizeUp !== NaN){ 
             console.log("concatFile outside " + concatFile) 
             child.exec(
