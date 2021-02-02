@@ -435,6 +435,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _home_home_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./home/home.component */ "./src/app/home/home.component.ts");
 /* harmony import */ var _filetransfer_filetransfer_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./filetransfer/filetransfer.component */ "./src/app/filetransfer/filetransfer.component.ts");
 /* harmony import */ var _error_handelers_service__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./error-handelers.service */ "./src/app/error-handelers.service.ts");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
 
 
 
@@ -457,6 +458,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+const __stripTrailingSlash = _angular_common__WEBPACK_IMPORTED_MODULE_21__["Location"].stripTrailingSlash;
+_angular_common__WEBPACK_IMPORTED_MODULE_21__["Location"].stripTrailingSlash = function _stripTrailingSlash(url) {
+    const queryString$ = url.match(/([^?]*)?(.*)/);
+    if (queryString$[2].length > 0) {
+        return /[^\/]\/$/.test(queryString$[1]) ? queryString$[1] + '.' + queryString$[2] : __stripTrailingSlash(url);
+    }
+    return /[^\/]\/$/.test(url) ? url + '.' : __stripTrailingSlash(url);
+};
 class AppModule {
 }
 AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_10__["AppComponent"]] });

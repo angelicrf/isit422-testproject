@@ -990,6 +990,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var _error_handelers_service__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(
     /*! ./error-handelers.service */
     "./src/app/error-handelers.service.ts");
+    /* harmony import */
+
+
+    var _angular_common__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(
+    /*! @angular/common */
+    "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
+
+    var __stripTrailingSlash = _angular_common__WEBPACK_IMPORTED_MODULE_21__["Location"].stripTrailingSlash;
+
+    _angular_common__WEBPACK_IMPORTED_MODULE_21__["Location"].stripTrailingSlash = function _stripTrailingSlash(url) {
+      var queryString$ = url.match(/([^?]*)?(.*)/);
+
+      if (queryString$[2].length > 0) {
+        return /[^\/]\/$/.test(queryString$[1]) ? queryString$[1] + '.' + queryString$[2] : __stripTrailingSlash(url);
+      }
+
+      return /[^\/]\/$/.test(url) ? url + '.' : __stripTrailingSlash(url);
+    };
 
     var AppModule = function AppModule() {
       _classCallCheck(this, AppModule);
