@@ -925,7 +925,7 @@ app.post('/api/ShowData', (req, res) => {
           `curl https://api.dropbox.com/oauth2/token \
                 -d code=${codeData} \
                 -d grant_type=authorization_code \
-                -d redirect_uri=http://localhost:4200/cloudmanagement \
+                -d redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/ \
                 -u 4kbv0so8hjs83lf:hzrap940rcg09t1`
      ,(err,stdout, stderr) => {       
       if(err){
