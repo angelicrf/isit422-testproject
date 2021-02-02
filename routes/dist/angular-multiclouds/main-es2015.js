@@ -565,7 +565,7 @@ class BxCloudService {
         this.boxCodeStored = '';
     }
     boxRedirectCode() {
-        let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
+        let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/";
         let link = document.createElement('a');
         link.href = bxUrl;
         link.click();
@@ -1587,7 +1587,7 @@ class DpCloudService {
         this.errorService = errorService;
     }
     dropBoxClLogin() {
-        const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
+        const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/";
         let link = document.createElement('a');
         link.href = dpUrl;
         link.click();
