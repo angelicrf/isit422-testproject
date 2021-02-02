@@ -1251,7 +1251,8 @@ app.post('/api/DPUploadLocal', (req, res) =>
             }            
             });
             let fileSizeUp = bytesToSize(concatFile);
-            if(fileSizeUp < 5 && fileSizeUp !== NaN){ 
+            localFile.storage("fileSizeUp is " + fileSizeUp);
+            //if(fileSizeUp < 5 && fileSizeUp !== NaN){ 
             console.log("concatFile outside " + concatFile) 
             child.exec(
               `curl -X POST https://content.dropboxapi.com/2/files/upload \
@@ -1271,18 +1272,18 @@ app.post('/api/DPUploadLocal', (req, res) =>
                 toDeleteAllFiles();
                 res.status(200).send("Response from Node: local file uploaded to Dropbox");   
               });
-            }else{
-              console.log("inside the largeFiles ");
+           // }else{
+              /* console.log("inside the largeFiles ");
               await dpSdkUpload(saveAccess,concatFile);
               toDeleteAllFiles();
-              res.status(200).send("Response from Node: large local file uploaded to Dropbox") ;
+              res.status(200).send("Response from Node: large local file uploaded to Dropbox") ; */
               /*  await dpUploadSessionStart(saveAccess,concatFile);
               let calcFileActualSize = await getFileSize(concatFile);
               await dpUploadLargeFileAppend(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               await dpUploadSessionFinish(saveAccess,holdDpSessionId.toString(),concatFile,calcFileActualSize);
               toDeleteAllFiles();
               res.status(200).send("Response from Node: large local file uploaded to Dropbox") ;   */
-            }
+           // }
         },35000);  
       }
     }
@@ -2204,7 +2205,6 @@ async function bytesToSize(fileName) {
       }          
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   } 
 }
@@ -2926,6 +2926,7 @@ async function dpSdkUpload(dpAccToken,fileName){
                 offset += chunkSize;
               }       
               const task = workItems.reduce((acc, blob, idx, items) => {
+                console.log("idx is" + idx);
                 if (idx == 0) {
                   return acc.then(() => { 
                     return dbx.filesUploadSessionStart({ close: false, contents: blob})
@@ -2935,8 +2936,13 @@ async function dpSdkUpload(dpAccToken,fileName){
                                 JSON.stringify(response.result.session_id);
                               })
                               .catch(err => console.log(err))
-                  });          
-                } else if (idx < items.length-1) {  
+                  });
+
+                } 
+               
+                else if (idx < items.length-1) { 
+                  console.log("idx is" + idx);
+
                   return acc.then((sessionId) => {  
                     sessionId = dpSid;
                     console.log("idx * maxBlob is " + idx * maxBlob)
