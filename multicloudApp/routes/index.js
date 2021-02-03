@@ -185,7 +185,7 @@ app.post('/MCUserInfo', (req, res) => {
     throw error;
   }
 });
-app.get('/MCUserByUsrNmPwd', (req, res) => {
+app.post('/MCUserByUsrNmPwd', (req, res) => {
   console.log("MCUserByUsrNmPwd called");
  try {
   if(HoldUserData[0] !== "" || HoldUserData[0] !== null

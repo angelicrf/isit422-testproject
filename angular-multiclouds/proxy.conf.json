@@ -1,9 +1,9 @@
 {
-    "/api/*": {
-      "target": "https://stormy-headland-33273.herokuapp.com",
-      "pathRewrite": {
-        "^/api": ""
-      }
-    },
-    "changeOrigin":true
+  "/api/*": {
+    "target": "https://stormy-headland-33273.herokuapp.com",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  },
+  "changeOrigin": true
 }

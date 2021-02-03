@@ -102,10 +102,10 @@ mongoose.connect(dbURI, options).then(
     console.log('Error connecting Database instance due to: ', err);
   },
 );
-router.get('/', (req, res) => {
+/* app.get('/', (req, res) => {
   console.log('Home Page route called');
   res.status(200).sendFile('index.html');
-});
+}); */
 app.post('/AllMCUsers', (req, res) => {
   try {
     if (
