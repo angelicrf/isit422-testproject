@@ -64,24 +64,25 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(
+/* app.use(
   express.static(path.join(__dirname, '../routes/dist/angular-multiclouds')),
 );
-app.get('*/*', function (req, res) {
+app.get('*', function (req, res) {
   res.sendFile(
     path.join(__dirname, '../routes/dist/angular-multiclouds', 'index.html'),
   );
-});
+}); */
 
 let corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
+
 if (process.env.NODE_ENV === 'production') {
   console.log('app in production mode ....');
   app.use(express.static('../routes/dist/angular-multiclouds'));
-  app.post('*/*', function (req, res) {
+  app.get('*', function (req, res) {
     res.sendFile(
       path.join(__dirname, '../routes/dist/angular-multiclouds/index.html'),
     );
