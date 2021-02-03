@@ -64,14 +64,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-/*  app.use(
-  express.static(path.join(__dirname, '../routes/dist/angular-multiclouds')),
-);
+app.use(express.static(path.join(__dirname, 'dist/angular-multiclouds')));
 app.get('*', function (req, res) {
-  res.sendFile(
-    path.join(__dirname, '../routes/dist/angular-multiclouds', 'index.html'),
-  );
-});  */
+  res.sendFile(path.join(__dirname, 'dist/angular-multiclouds', 'index.html'));
+});
 
 let corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
@@ -81,9 +77,11 @@ app.use(cors(corsOptions));
 
 if (process.env.NODE_ENV === 'production') {
   console.log('app in production mode ....');
-  app.use(express.static('/', 'dist/angular-multiclouds'));
-  app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
+  app.use(express.static(__dirname, 'dist/angular-multiclouds'));
+  app.get('*', function (req, res) {
+    res.sendFile(
+      path.join(__dirname, 'dist/angular-multiclouds', 'index.html'),
+    );
   });
 }
 const dbURI =
