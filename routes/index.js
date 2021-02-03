@@ -78,7 +78,7 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
   });
 }
-app.get('*/*', function (req, res) {
+app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
 });
 
@@ -168,7 +168,7 @@ app.post('/api/MCUserByID', (req, res) => {
     throw error;
   }
 });
-app.post('*/api/MCUserInfo', (req, res) => {
+app.post('/api/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
 
   try {
@@ -193,7 +193,7 @@ app.post('*/api/MCUserInfo', (req, res) => {
     throw error;
   }
 });
-app.post('*/api/MCUserByUsrNmPwd', (req, res) => {
+app.post('/api/MCUserByUsrNmPwd', (req, res) => {
   console.log('MCUserByUsrNmPwd called');
   try {
     if (
