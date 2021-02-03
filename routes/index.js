@@ -78,7 +78,7 @@ app.use(cors(corsOptions));
 
 if (process.env.NODE_ENV === 'production') {
   console.log('app in production mode ....');
- /*  app.use(express.static(__dirname, 'dist/angular-multiclouds'));
+  /*  app.use(express.static(__dirname, 'dist/angular-multiclouds'));
   app.get('*', function (req, res) {
     res.sendFile(
       path.join(__dirname, 'dist/angular-multiclouds', 'index.html'),
@@ -2210,18 +2210,20 @@ app.post('/api/OdProfile', (req, res) => {
           }
           console.log('the OdProfile stdout is ' + stdout);
           console.log('the OdProfile stderr is ' + stderr);
-
-          let obj = stdout;
-          let odClientName = obj.toString().split(':')[6];
-          console.log('odClientName ' + odClientName);
-          let newObj = obj.toString().split(':')[7];
-          console.log('newObj ' + newObj);
-          let odEmail = newObj.substring(0, newObj.indexOf(','));
-          console.log('odEmail ' + odEmail);
+          console.log(
+            'odProfile in detail ' +
+              JSON.parse(stdout) +
+              'Name is ' +
+              JSON.parse(stdout).id +
+              'email is ' +
+              JSON.parse(stdout).userPrincipalName,
+          );
+          let odClientName = JSON.parse(stdout).id;
+          let odEmail = JSON.parse(stdout).userPrincipalName;
           res.status(200).json({
             OdProfileMSG: 'OdProfile_ProfileInfo',
-            OdProfileInfo: odEmail,
-            odClientName: odClientName,
+            OdProfileInfo: odEmail.toString(),
+            odClientName: odClientName.toString(),
           });
         },
       );
@@ -3624,5 +3626,24 @@ async function dpSdkUpload(dpAccToken, fileName) {
     }, Promise.resolve());
   }).catch((err) => console.log(err));
 }
-
+function testOdResult() {
+  let htOd = {
+    '@odata.context':
+      'https://graph.microsoft.com/v1.0/$metadata#users/$entity',
+    displayName: '',
+    surname: '',
+    givenName: '',
+    id: 'ffcbc48920626bf2',
+    userPrincipalName: 'yellowteamisit422@gmail.com',
+    businessPhones: [],
+    jobTitle: null,
+    mail: null,
+    mobilePhone: null,
+    officeLocation: null,
+    preferredLanguage: null,
+  };
+  console.log(JSON.parse(JSON.stringify(htOd)).id);
+  console.log(JSON.parse(JSON.stringify(htOd)).userPrincipalName);
+}
+//testOdResult()
 module.exports = app;
