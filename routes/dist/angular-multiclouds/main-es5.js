@@ -1105,7 +1105,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(BxCloudService, [{
         key: "boxRedirectCode",
         value: function boxRedirectCode() {
-          var bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/";
+          var bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
           var link = document.createElement('a');
           link.href = bxUrl;
           link.click();
@@ -1135,8 +1135,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(error);
                       }
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -1193,8 +1191,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 6:
@@ -1232,11 +1228,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var myHeaders = new Headers();
                       myHeaders.append('Content-Type', 'application/json');
                       var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        method: 'GET',
+                        headers: myHeaders
                       };
                       fetch('/api/BoxOauth', requestOptions).then(function (response) {
                         return response.json();
@@ -1250,8 +1243,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -1280,11 +1271,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var myHeaders = new Headers();
                       myHeaders.append('Content-Type', 'application/json');
                       var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        method: 'GET',
+                        headers: myHeaders
                       };
                       fetch('/api/BoxClientEmail', requestOptions).then(function (response) {
                         return response.json();
@@ -1300,8 +1288,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -1330,11 +1316,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var myHeaders = new Headers();
                       myHeaders.append('Content-Type', 'application/json');
                       var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        method: 'GET',
+                        headers: myHeaders
                       };
                       fetch('/api/BoxGetFile', requestOptions).then(function (response) {
                         return response.json();
@@ -1347,8 +1330,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -1377,11 +1358,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var myHeaders = new Headers();
                       myHeaders.append('Content-Type', 'application/json');
                       var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        method: 'GET',
+                        headers: myHeaders
                       };
                       fetch('/api/BoxGetFolders', requestOptions).then(function (response) {
                         return response.json();
@@ -1393,8 +1371,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -1451,8 +1427,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 5:
@@ -1516,8 +1490,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -1581,8 +1553,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -2371,7 +2341,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context10.prev = 1;
 
                     if (!uriLink.includes('code=MdDdy')) {
-                      _context10.next = 38;
+                      _context10.next = 39;
                       break;
                     }
 
@@ -2421,52 +2391,52 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                   case 27:
                     if (!(sessionStorage.getItem("odSelected") === "odSelected")) {
-                      _context10.next = 37;
+                      _context10.next = 38;
                       break;
                     }
 
-                    //this.removeSelectedCloud("odSelected");
+                    this.removeSelectedCloud("odSelected");
                     this.odService.login();
-                    _context10.next = 31;
+                    _context10.next = 32;
                     return this.odService.odCodeFromUri();
 
-                  case 31:
+                  case 32:
                     saveOdCode = _context10.sent;
-                    _context10.next = 34;
+                    _context10.next = 35;
                     return this.odService.odAccessToken(saveOdCode);
 
-                  case 34:
+                  case 35:
                     saveOdAccessToken = _context10.sent;
                     sessionStorage.setItem("odAccessToken", saveOdAccessToken);
                     this.removeUrlParams();
 
-                  case 37:
+                  case 38:
                     if (sessionStorage.getItem("lfSelected") === "lfSelected") {
                       this.removeSelectedCloud("lfSelected");
                       this.readsessionStorageValue('localFilePath');
                     }
 
-                  case 38:
+                  case 39:
                     if (!(uriLink.includes('code') && !uriLink.includes('code=MdDdy'))) {
-                      _context10.next = 62;
+                      _context10.next = 63;
                       break;
                     }
 
-                    _context10.next = 41;
+                    _context10.next = 42;
                     return this.bxService.getBoxCodefromUri();
 
-                  case 41:
+                  case 42:
                     _saveBxCode = _context10.sent;
                     _stBxCode = _saveBxCode;
                     console.log("stBxCode " + _stBxCode);
-                    _context10.next = 46;
+                    _context10.next = 47;
                     return this.bxService.getboxCodeOauth(_saveBxCode);
 
-                  case 46:
-                    _context10.next = 48;
+                  case 47:
+                    _context10.next = 49;
                     return this.bxService.issueBoxAccessToken();
 
-                  case 48:
+                  case 49:
                     this.removeUrlParams();
 
                     if (sessionStorage.getItem("gdSelected") === "gdSelected") {
@@ -2475,46 +2445,46 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
 
                     if (!(sessionStorage.getItem("odSelected") === "odSelected")) {
-                      _context10.next = 61;
+                      _context10.next = 62;
                       break;
                     }
 
                     this.removeSelectedCloud("odSelected");
                     this.odService.login();
-                    _context10.next = 55;
+                    _context10.next = 56;
                     return this.odService.odCodeFromUri();
 
-                  case 55:
+                  case 56:
                     _saveOdCode = _context10.sent;
-                    _context10.next = 58;
+                    _context10.next = 59;
                     return this.odService.odAccessToken(_saveOdCode);
 
-                  case 58:
+                  case 59:
                     _saveOdAccessToken = _context10.sent;
                     sessionStorage.setItem("odAccessToken", _saveOdAccessToken);
                     this.removeUrlParams();
 
-                  case 61:
+                  case 62:
                     if (sessionStorage.getItem("lfSelected") === "lfSelected") {
                       this.removeSelectedCloud("lfSelected");
                       this.readsessionStorageValue('localFilePath');
                     }
 
-                  case 62:
+                  case 63:
                     if (!uriLink.includes('access_token')) {
-                      _context10.next = 73;
+                      _context10.next = 74;
                       break;
                     }
 
-                    _context10.next = 65;
+                    _context10.next = 66;
                     return this.odService.odCodeFromUri();
 
-                  case 65:
+                  case 66:
                     _saveOdCode2 = _context10.sent;
-                    _context10.next = 68;
+                    _context10.next = 69;
                     return this.odService.odAccessToken(_saveOdCode2);
 
-                  case 68:
+                  case 69:
                     _saveOdAccessToken2 = _context10.sent;
                     sessionStorage.setItem("odAccessToken", _saveOdAccessToken2);
                     this.removeUrlParams();
@@ -2529,21 +2499,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       this.readsessionStorageValue('localFilePath');
                     }
 
-                  case 73:
-                    _context10.next = 78;
+                  case 74:
+                    _context10.next = 79;
                     break;
 
-                  case 75:
-                    _context10.prev = 75;
+                  case 76:
+                    _context10.prev = 76;
                     _context10.t0 = _context10["catch"](1);
                     this.errorService.handleError(_context10.t0);
 
-                  case 78:
+                  case 79:
                   case "end":
                     return _context10.stop();
                 }
               }
-            }, _callee10, this, [[1, 75]]);
+            }, _callee10, this, [[1, 76]]);
           }));
         }
       }, {
@@ -3074,7 +3044,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(DpCloudService, [{
         key: "dropBoxClLogin",
         value: function dropBoxClLogin() {
-          var dpUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/';
+          var dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
           var link = document.createElement('a');
           link.href = dpUrl;
           link.click();
@@ -3096,7 +3066,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var findParam = newUri.searchParams.get('code');
 
                       try {
-                        if (findParam !== undefined || findParam !== null || findParam !== '') {
+                        if (findParam !== undefined || findParam !== null || findParam !== "") {
                           return resolve(findParam);
                         }
                       } catch (error) {
@@ -3104,8 +3074,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(error);
                       }
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -3125,7 +3093,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this12 = this;
 
           try {
-            if (sendCodeData !== undefined || sendCodeData !== null || sendCodeData !== '') {
+            if (sendCodeData !== undefined || sendCodeData !== null || sendCodeData !== "") {
               return new Promise(function (resolve, reject) {
                 var myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
@@ -3148,8 +3116,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                   return reject(error);
                 });
-              })["catch"](function (err) {
-                return console.log(err);
               });
             }
           } catch (error) {
@@ -3162,19 +3128,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this13 = this;
 
           try {
-            if (dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== '') {
+            if (dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== "") {
               var dbx = new dropbox__WEBPACK_IMPORTED_MODULE_2__["Dropbox"]({
                 accessToken: dpAccessToken
               });
               console.log(JSON.stringify(dbx));
               dbx.usersGetCurrentAccount().then(function (response) {
-                console.log(JSON.stringify('First then' + response.result.email));
+                console.log(JSON.stringify("First then" + response.result.email));
                 sessionStorage.setItem('dpEmail', response.result.email);
                 var getDpName = response.result.name.display_name;
                 var getDpEmail = response.result.email; //userMnId is null
 
                 var getUserMongoId = sessionStorage.getItem('userMnId');
-                console.log('getUserMongoId is ' + getUserMongoId); //connect to dpCloud mongodb
+                console.log("getUserMongoId is " + getUserMongoId); //connect to dpCloud mongodb
 
                 sendDpClientInfo(getDpName, getDpEmail, getUserMongoId);
                 return getDpEmail;
@@ -3198,7 +3164,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context15.prev = 0;
 
-                    if (!(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== '')) {
+                    if (!(dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== "")) {
                       _context15.next = 5;
                       break;
                     }
@@ -3215,12 +3181,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         recursive: true
                       }).then(function (response) {
                         var hpldDpFiles = response.result.entries;
-                        console.log('hpldDpFiles ' + JSON.stringify(hpldDpFiles[0].path_lower));
+                        console.log("hpldDpFiles " + JSON.stringify(hpldDpFiles[0].path_lower));
 
                         for (var index = 0; index < hpldDpFiles.length; index++) {
                           var holdObj = {};
-                          holdObj['dpClName'] = hpldDpFiles[index].name;
-                          holdObj['dpClPath'] = hpldDpFiles[index].path_display;
+                          holdObj["dpClName"] = hpldDpFiles[index].name;
+                          holdObj["dpClPath"] = hpldDpFiles[index].path_display;
                           holdelement[index] = holdObj;
                         }
 
@@ -3230,8 +3196,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -3267,14 +3231,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context16.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/DPDownload', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -3283,8 +3244,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -3311,14 +3270,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context17.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/DPDownloadLocal', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -3327,8 +3283,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -3355,16 +3309,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context18.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/DPUpload', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
-                        alert('File is submitted to your Dropbox');
+                        alert("File is submitted to your Dropbox");
                         console.log(response);
                         return resolve(response);
                       })["catch"](function (err) {
@@ -3372,8 +3323,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -3399,7 +3348,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context19.prev = 0;
 
-                    if (!(fileName !== undefined || fileName !== null || fileName !== '')) {
+                    if (!(fileName !== undefined || fileName !== null || fileName !== "")) {
                       _context19.next = 5;
                       break;
                     }
@@ -3416,7 +3365,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                           fileName: fileName
                         })
                       }).then(function (response) {
-                        alert('File is submitted to your Dropbox');
+                        alert("File is submitted to your Dropbox");
                         console.log(response);
                         return resolve(response);
                       })["catch"](function (err) {
@@ -3424,8 +3373,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -3460,12 +3407,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context20.prev = 0;
 
-                    if (!(dpPathGiven !== undefined || dpPathGiven !== null || dpPathGiven !== '')) {
+                    if (!(dpPathGiven !== undefined || dpPathGiven !== null || dpPathGiven !== "")) {
                       _context20.next = 6;
                       break;
                     }
 
-                    console.log('dpPathFile is called' + dpPathGiven);
+                    console.log("dpPathFile is called" + dpPathGiven);
                     _context20.next = 5;
                     return new Promise(function (resolve, reject) {
                       var myHeaders = new Headers();
@@ -3490,8 +3437,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 5:
@@ -3546,10 +3491,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function sendDpClientInfo(getDbName, getDbEmail, getUserMongoId) {
       var _this20 = this;
 
-      console.log('sendDpClientInfo called ');
+      console.log("sendDpClientInfo called ");
 
       try {
-        if (getDbName !== undefined || getDbName !== null || getDbName !== '' || getDbEmail !== undefined || getDbEmail !== null || getDbEmail !== '' || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== '') {
+        if (getDbName !== undefined || getDbName !== null || getDbName !== "" || getDbEmail !== undefined || getDbEmail !== null || getDbEmail !== "" || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== "") {
           var dbClientValue = JSON.stringify({
             dbname: getDbName,
             dbemail: getDbEmail,
@@ -6137,8 +6082,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                           }
                         }, _callee35, this);
                       }));
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 3:
@@ -6320,8 +6263,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       })["catch"](function (err) {
                         return _this27.errorService.handleError(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -6515,8 +6456,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       }
 
                       return resolve(_this28.files1);
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 3:
@@ -7370,8 +7309,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                           return reject(err);
                         });
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -7420,8 +7357,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 3:
@@ -7448,14 +7383,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context47.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/UploadGd', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -7464,8 +7396,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -7492,14 +7422,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context48.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/GDUpdateFile', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -7508,8 +7435,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -7559,8 +7484,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -7596,14 +7519,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context50.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/GDUpdateLocalFile', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -7612,8 +7532,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -7669,8 +7587,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     }));
 
                   case 4:
@@ -7703,14 +7619,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context52.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/DownloadGd', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -7719,8 +7632,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -7747,14 +7658,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context53.next = 2;
                     return new Promise(function (resolve, reject) {
                       fetch('/api/DownloadGdLocal', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',
                           'Access-Control-Allow-Origin': '*'
-                        },
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        }
                       }).then(function (response) {
                         console.log(response);
                         return resolve(response);
@@ -7763,8 +7671,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -7868,8 +7774,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
               return reject(error);
             });
-          })["catch"](function (err) {
-            return console.log(err);
           });
         }
       } catch (error) {
@@ -8334,7 +8238,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               while (1) {
                 switch (_context54.prev = _context54.next) {
                   case 0:
-                    localFilePath = sessionStorage.getItem('localFilePath');
+                    localFilePath = sessionStorage.getItem("localFilePath");
                     console.log(localFilePath);
                     _context54.next = 4;
                     return new Promise(function (resolve, reject) {
@@ -8357,8 +8261,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -8387,11 +8289,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var myHeaders = new Headers();
                       myHeaders.append('Content-Type', 'application/json');
                       var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        method: 'GET',
+                        headers: myHeaders
                       };
                       fetch('/api/LfDownload', requestOptions).then(function (response) {
                         return response.json();
@@ -8403,8 +8302,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -8430,7 +8327,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context56.prev = 0;
 
-                    if (!(lfTrs !== undefined || lfTrs !== null || lfTrs !== '')) {
+                    if (!(lfTrs !== undefined || lfTrs !== null || lfTrs !== "")) {
                       _context56.next = 5;
                       break;
                     }
@@ -8456,8 +8353,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -8785,10 +8680,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(OdCloudService, [{
         key: "login",
         value: function login() {
-          var odUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/';
+          var odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
           var link = document.createElement('a');
           link.href = odUrl;
-          console.log('odUrl is ' + odUrl);
           link.click();
         }
       }, {
@@ -8804,12 +8698,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _context57.next = 2;
                     return new Promise(function (resolve, reject) {
                       var uriLink = location.href;
-                      console.log('uriLink is ' + uriLink);
                       var findParam = uriLink.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
-                      console.log('findParam is ' + findParam);
 
                       try {
-                        if (findParam !== undefined || findParam !== null || findParam !== '') {
+                        if (findParam !== undefined || findParam !== null || findParam !== "") {
                           return resolve(findParam);
                         }
                       } catch (error) {
@@ -8817,8 +8709,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         return reject(error);
                       }
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -8855,14 +8745,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                               case 2:
                                 profileClientInfo = _context58.sent;
-                                console.log('profileClientInfo ' + profileClientInfo);
+                                console.log("profileClientInfo " + profileClientInfo);
                                 hlOdName = profileClientInfo[1];
-                                console.log('hlOdName ' + hlOdName);
-                                formatlClName = hlOdName.split(',')[0];
-                                console.log('formatlClName ' + formatlClName);
+                                console.log("hlOdName " + hlOdName);
+                                formatlClName = hlOdName.split(",")[0];
+                                console.log("formatlClName " + formatlClName);
                                 hlOdEmail = profileClientInfo[0];
-                                console.log('hlOdEmail ' + hlOdEmail);
-                                sessionStorage.setItem('odClientEmail', profileClientInfo[0]);
+                                console.log("hlOdEmail " + hlOdEmail);
+                                sessionStorage.setItem("odClientEmail", profileClientInfo[0]);
                                 mongoDbUserId = sessionStorage.getItem('userMnId');
                                 sendOdClientInfo(formatlClName.replace(/['"]+/g, '').toString(), hlOdEmail.toString(), mongoDbUserId);
                                 _context58.next = 15;
@@ -8873,7 +8763,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                 holdOdItems = this.storeOdFlsFiles(odAallFiles);
                                 _context58.prev = 17;
 
-                                if (!(holdOdItems != undefined || holdOdItems !== null || holdOdItems !== '')) {
+                                if (!(holdOdItems != undefined || holdOdItems !== null || holdOdItems !== "")) {
                                   _context58.next = 20;
                                   break;
                                 }
@@ -8897,8 +8787,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                           }
                         }, _callee58, this, [[17, 22]]);
                       }));
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -8922,9 +8810,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
               for (var index = 0; index < storeOdFlsFolders.length; index++) {
                 var holdOdItems = {};
-                var getOdUrl = '@microsoft.graph.downloadUrl';
-                holdOdItems['odFileName'] = storeOdFlsFolders[index].name;
-                holdOdItems['odFileUrl'] = storeOdFlsFolders[index]['@microsoft.graph.downloadUrl'];
+                var getOdUrl = "@microsoft.graph.downloadUrl";
+                holdOdItems["odFileName"] = storeOdFlsFolders[index].name;
+                holdOdItems["odFileUrl"] = storeOdFlsFolders[index]["@microsoft.graph.downloadUrl"];
                 this.storeOdFiles.push(holdOdItems);
               }
 
@@ -8949,11 +8837,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                       var myHeaders = new Headers();
                       myHeaders.append('Content-Type', 'application/json');
                       var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: JSON.stringify({
-                          msgPost: 'msgPosted'
-                        })
+                        method: 'GET',
+                        headers: myHeaders
                       };
                       fetch('/api/OdGetFiles', requestOptions).then(function (response) {
                         return response.json();
@@ -8965,8 +8850,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 2:
@@ -8992,7 +8875,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context61.prev = 0;
 
-                    if (!(odUrl !== undefined || odUrl !== null || odUrl !== '' || odFl !== undefined || odFl !== null || odFl !== '')) {
+                    if (!(odUrl !== undefined || odUrl !== null || odUrl !== "" || odFl !== undefined || odFl !== null || odFl !== "")) {
                       _context61.next = 5;
                       break;
                     }
@@ -9019,8 +8902,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -9055,7 +8936,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context62.prev = 0;
 
-                    if (!(odFl !== undefined || odFl !== null || odFl !== '')) {
+                    if (!(odFl !== undefined || odFl !== null || odFl !== "")) {
                       _context62.next = 5;
                       break;
                     }
@@ -9081,8 +8962,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -9117,7 +8996,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context63.prev = 0;
 
-                    if (!(odFl !== undefined || odFl !== null || odFl !== '')) {
+                    if (!(odFl !== undefined || odFl !== null || odFl !== "")) {
                       _context63.next = 5;
                       break;
                     }
@@ -9143,8 +9022,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -9179,7 +9056,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   case 0:
                     _context64.prev = 0;
 
-                    if (!(odToken !== undefined || odToken !== null || odToken !== '')) {
+                    if (!(odToken !== undefined || odToken !== null || odToken !== "")) {
                       _context64.next = 5;
                       break;
                     }
@@ -9205,8 +9082,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         reject(err);
                       });
-                    })["catch"](function (err) {
-                      return console.log(err);
                     });
 
                   case 4:
@@ -9269,14 +9144,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 _context65.next = 2;
                 return new Promise(function (resolve, reject) {
                   fetch('/api/OdProfile', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                       'Content-Type': 'application/json',
                       'Access-Control-Allow-Origin': '*'
-                    },
-                    body: JSON.stringify({
-                      msgPost: 'msgPosted'
-                    })
+                    }
                   }).then(function (result) {
                     return result.json();
                   }).then(function (response) {
@@ -9284,15 +9156,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     var msgBxNameDisplay = response[Object.keys(response)[2]];
                     var holdBxClInfo = [];
                     holdBxClInfo.push(msgDisplay, msgBxNameDisplay);
-                    console.log('holdBxClInfo ' + holdBxClInfo);
+                    console.log("holdBxClInfo " + holdBxClInfo);
                     resolve(holdBxClInfo);
                   })["catch"](function (err) {
                     _this53.errorService.handleError(err);
 
                     reject(err);
                   });
-                })["catch"](function (err) {
-                  return console.log(err);
                 });
 
               case 2:
@@ -9311,7 +9181,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var _this54 = this;
 
       try {
-        if (getOdName !== undefined || getOdName !== null || getOdName !== '' || getOdEmail !== undefined || getOdEmail !== null || getOdEmail !== '' || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== '') {
+        if (getOdName !== undefined || getOdName !== null || getOdName !== "" || getOdEmail !== undefined || getOdEmail !== null || getOdEmail !== "" || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== "") {
           var odClientValue = JSON.stringify({
             odname: getOdName,
             odemail: getOdEmail,
@@ -10576,7 +10446,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           return new Promise(function (resolve, reject) {
             var userValue = JSON.stringify({
-              usrResult: 'value posted'
+              usrResult: "value posted"
             });
             fetch('/api/MCUserByUsrNmPwd', {
               method: 'POST',
@@ -10588,20 +10458,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }).then(function (response) {
               return response.json();
             }).then(function (getdata) {
-              console.log('getdata from Service ' + JSON.stringify(getdata));
+              console.log("getdata from Service " + JSON.stringify(getdata));
               var findAllMongoData = [];
               var newUserMongoData = {};
               newUserMongoData['clientUserName'] = getdata.username;
               newUserMongoData['clientPassword'] = getdata.password;
               newUserMongoData['clientId'] = getdata._id;
               findAllMongoData.push(newUserMongoData);
-              console.log('elementEmail from Service ' + JSON.stringify(findAllMongoData));
+              console.log("elementEmail from Service " + JSON.stringify(findAllMongoData));
               resolve(findAllMongoData);
             })["catch"](function (err) {
               return _this58.errorService.handleError(err);
             });
-          })["catch"](function (err) {
-            return console.log(err);
           });
         }
       }, {
@@ -10610,14 +10478,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this59 = this;
 
           fetch('/api/LogOutMCUser', {
-            method: 'POST',
+            method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-              msgPost: 'msgPosted'
-            })
+            }
           }).then(function (response) {
             return console.log(response);
           })["catch"](function (err) {

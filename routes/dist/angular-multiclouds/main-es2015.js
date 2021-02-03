@@ -565,7 +565,7 @@ class BxCloudService {
         this.boxCodeStored = '';
     }
     boxRedirectCode() {
-        let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/";
+        let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
         let link = document.createElement('a');
         link.href = bxUrl;
         link.click();
@@ -585,7 +585,7 @@ class BxCloudService {
                     this.errorService.handleError(error);
                     return reject(error);
                 }
-            }).catch(err => console.log(err));
+            });
         });
     }
     getboxCodeOauth(boxIssuedCode) {
@@ -619,7 +619,7 @@ class BxCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch(err => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -633,11 +633,8 @@ class BxCloudService {
                 let myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
                 let requestOptions = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
+                    method: 'GET',
+                    headers: myHeaders
                 };
                 fetch('/api/BoxOauth', requestOptions)
                     .then((response) => {
@@ -653,7 +650,7 @@ class BxCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     getBoxClientInfo() {
@@ -662,11 +659,8 @@ class BxCloudService {
                 let myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
                 let requestOptions = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
+                    method: 'GET',
+                    headers: myHeaders
                 };
                 fetch('/api/BoxClientEmail', requestOptions)
                     .then((response) => {
@@ -684,7 +678,7 @@ class BxCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     boxShowFile() {
@@ -693,11 +687,8 @@ class BxCloudService {
                 let myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
                 let requestOptions = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
+                    method: 'GET',
+                    headers: myHeaders
                 };
                 fetch('/api/BoxGetFile', requestOptions)
                     .then((response) => {
@@ -712,7 +703,7 @@ class BxCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     boxAllFoldersFiles() {
@@ -721,11 +712,8 @@ class BxCloudService {
                 let myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
                 let requestOptions = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
+                    method: 'GET',
+                    headers: myHeaders
                 };
                 fetch('/api/BoxGetFolders', requestOptions)
                     .then((response) => {
@@ -739,7 +727,7 @@ class BxCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     boxDownload(bxId, bxName) {
@@ -774,7 +762,7 @@ class BxCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch(err => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -811,7 +799,7 @@ class BxCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch(err => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -848,7 +836,7 @@ class BxCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch(err => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -1241,7 +1229,7 @@ class CloudmanagementComponent {
                         this.removeUrlParams();
                     }
                     if (sessionStorage.getItem("odSelected") === "odSelected") {
-                        //this.removeSelectedCloud("odSelected");
+                        this.removeSelectedCloud("odSelected");
                         this.odService.login();
                         let saveOdCode = yield this.odService.odCodeFromUri();
                         let saveOdAccessToken = yield this.odService.odAccessToken(saveOdCode);
@@ -1599,7 +1587,7 @@ class DpCloudService {
         this.errorService = errorService;
     }
     dropBoxClLogin() {
-        const dpUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/';
+        const dpUrl = "https://www.dropbox.com/oauth2/authorize?client_id=4kbv0so8hjs83lf&response_type=code&scope=account_info.read files.metadata.read files.content.write files.content.read&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
         let link = document.createElement('a');
         link.href = dpUrl;
         link.click();
@@ -1611,7 +1599,7 @@ class DpCloudService {
                 const newUri = new URL(uriLink);
                 const findParam = newUri.searchParams.get('code');
                 try {
-                    if (findParam !== undefined || findParam !== null || findParam !== '') {
+                    if (findParam !== undefined || findParam !== null || findParam !== "") {
                         return resolve(findParam);
                     }
                 }
@@ -1619,14 +1607,12 @@ class DpCloudService {
                     this.errorService.handleError(error);
                     reject(error);
                 }
-            }).catch((err) => console.log(err));
+            });
         });
     }
     sendMessageToNode(sendCodeData) {
         try {
-            if (sendCodeData !== undefined ||
-                sendCodeData !== null ||
-                sendCodeData !== '') {
+            if (sendCodeData !== undefined || sendCodeData !== null || sendCodeData !== "") {
                 return new Promise((resolve, reject) => {
                     let myHeaders = new Headers();
                     myHeaders.append('Content-Type', 'application/json');
@@ -1651,7 +1637,7 @@ class DpCloudService {
                         this.errorService.handleError(error);
                         return reject(error);
                     });
-                }).catch((err) => console.log(err));
+                });
             }
         }
         catch (error) {
@@ -1660,26 +1646,24 @@ class DpCloudService {
     }
     dpGetClientInfo(dpAccessToken) {
         try {
-            if (dpAccessToken !== undefined ||
-                dpAccessToken !== null ||
-                dpAccessToken !== '') {
+            if (dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== "") {
                 let dbx = new dropbox__WEBPACK_IMPORTED_MODULE_2__["Dropbox"]({
-                    accessToken: dpAccessToken,
+                    accessToken: dpAccessToken
                 });
                 console.log(JSON.stringify(dbx));
                 dbx
                     .usersGetCurrentAccount()
-                    .then((response) => {
-                    console.log(JSON.stringify('First then' + response.result.email));
+                    .then(response => {
+                    console.log(JSON.stringify("First then" + response.result.email));
                     sessionStorage.setItem('dpEmail', response.result.email);
                     let getDpName = response.result.name.display_name;
                     let getDpEmail = response.result.email;
                     //userMnId is null
                     let getUserMongoId = sessionStorage.getItem('userMnId');
-                    console.log('getUserMongoId is ' + getUserMongoId);
+                    console.log("getUserMongoId is " + getUserMongoId);
                     //connect to dpCloud mongodb
                     sendDpClientInfo(getDpName, getDpEmail, getUserMongoId);
-                    return getDpEmail;
+                    return (getDpEmail);
                 })
                     .catch((err) => this.errorService.handleError(err));
             }
@@ -1691,27 +1675,25 @@ class DpCloudService {
     dpGetFilesList(dpAccessToken) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (dpAccessToken !== undefined ||
-                    dpAccessToken !== null ||
-                    dpAccessToken !== '') {
+                if (dpAccessToken !== undefined || dpAccessToken !== null || dpAccessToken !== "") {
                     return yield new Promise((resolve, reject) => {
                         let holdelement = [];
                         let dbx = new dropbox__WEBPACK_IMPORTED_MODULE_2__["Dropbox"]({
-                            accessToken: dpAccessToken,
+                            accessToken: dpAccessToken
                         });
                         console.log(JSON.stringify(dbx));
                         dbx
                             .filesListFolder({
                             path: '',
-                            recursive: true,
+                            recursive: true
                         })
-                            .then((response) => {
+                            .then(response => {
                             let hpldDpFiles = response.result.entries;
-                            console.log('hpldDpFiles ' + JSON.stringify(hpldDpFiles[0].path_lower));
+                            console.log("hpldDpFiles " + JSON.stringify(hpldDpFiles[0].path_lower));
                             for (let index = 0; index < hpldDpFiles.length; index++) {
                                 let holdObj = {};
-                                holdObj['dpClName'] = hpldDpFiles[index].name;
-                                holdObj['dpClPath'] = hpldDpFiles[index].path_display;
+                                holdObj["dpClName"] = hpldDpFiles[index].name;
+                                holdObj["dpClPath"] = hpldDpFiles[index].path_display;
                                 holdelement[index] = holdObj;
                             }
                             return resolve(holdelement);
@@ -1720,7 +1702,7 @@ class DpCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -1732,14 +1714,11 @@ class DpCloudService {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/DPDownload', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted',
-                    }),
                 })
                     .then((response) => {
                     console.log(response);
@@ -1749,21 +1728,18 @@ class DpCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch((err) => console.log(err));
+            });
         });
     }
     dPDownloadLocalFromNode() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/DPDownloadLocal', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted',
-                    }),
                 })
                     .then((response) => {
                     console.log(response);
@@ -1773,24 +1749,21 @@ class DpCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch((err) => console.log(err));
+            });
         });
     }
     dPUploadFromNode() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/DPUpload', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted',
-                    }),
                 })
                     .then((response) => {
-                    alert('File is submitted to your Dropbox');
+                    alert("File is submitted to your Dropbox");
                     console.log(response);
                     return resolve(response);
                 })
@@ -1798,13 +1771,13 @@ class DpCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch((err) => console.log(err));
+            });
         });
     }
     dPUploadLocalFromNode(fileName) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (fileName !== undefined || fileName !== null || fileName !== '') {
+                if (fileName !== undefined || fileName !== null || fileName !== "") {
                     return yield new Promise((resolve, reject) => {
                         fetch('/api/DPUploadLocal', {
                             method: 'POST',
@@ -1813,11 +1786,11 @@ class DpCloudService {
                                 'Access-Control-Allow-Origin': '*',
                             },
                             body: JSON.stringify({
-                                fileName: fileName,
-                            }),
+                                fileName: fileName
+                            })
                         })
                             .then((response) => {
-                            alert('File is submitted to your Dropbox');
+                            alert("File is submitted to your Dropbox");
                             console.log(response);
                             return resolve(response);
                         })
@@ -1825,7 +1798,7 @@ class DpCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -1836,10 +1809,8 @@ class DpCloudService {
     dpPathFiles(dpPathGiven) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (dpPathGiven !== undefined ||
-                    dpPathGiven !== null ||
-                    dpPathGiven !== '') {
-                    console.log('dpPathFile is called' + dpPathGiven);
+                if (dpPathGiven !== undefined || dpPathGiven !== null || dpPathGiven !== "") {
+                    console.log("dpPathFile is called" + dpPathGiven);
                     return yield new Promise((resolve, reject) => {
                         let myHeaders = new Headers();
                         myHeaders.append('Accept', '/');
@@ -1852,20 +1823,18 @@ class DpCloudService {
                         let requestOptions = {
                             method: 'POST',
                             headers: myHeaders,
-                            body: raw,
+                            body: raw
                         };
                         fetch('/api/DpPath', requestOptions)
                             .then((response) => {
                             return response.text();
                         })
-                            .then((response) => {
-                            return resolve(response);
-                        })
+                            .then(response => { return resolve(response); })
                             .catch((err) => {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -1879,21 +1848,15 @@ DpCloudService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineIn
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DpCloudService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
-                providedIn: 'root',
+                providedIn: 'root'
             }]
     }], function () { return [{ type: _error_handelers_service__WEBPACK_IMPORTED_MODULE_3__["ErrorHandelersService"] }]; }, null); })();
 function sendDpClientInfo(getDbName, getDbEmail, getUserMongoId) {
-    console.log('sendDpClientInfo called ');
+    console.log("sendDpClientInfo called ");
     try {
-        if (getDbName !== undefined ||
-            getDbName !== null ||
-            getDbName !== '' ||
-            getDbEmail !== undefined ||
-            getDbEmail !== null ||
-            getDbEmail !== '' ||
-            getUserMongoId !== undefined ||
-            getUserMongoId !== null ||
-            getUserMongoId !== '') {
+        if (getDbName !== undefined || getDbName !== null || getDbName !== ""
+            || getDbEmail !== undefined || getDbEmail !== null || getDbEmail !== ""
+            || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== "") {
             let dbClientValue = JSON.stringify({
                 dbname: getDbName,
                 dbemail: getDbEmail,
@@ -1904,13 +1867,11 @@ function sendDpClientInfo(getDbName, getDbEmail, getUserMongoId) {
             return fetch('/api/MCDbClient', {
                 method: 'POST',
                 headers: myHeaders,
-                body: dbClientValue,
+                body: dbClientValue
             })
-                .then((response) => {
-                return response.json();
-            })
-                .then((data) => console.log(data))
-                .catch((err) => this.errorService.handleError(err));
+                .then(response => { return response.json(); })
+                .then(data => console.log(data))
+                .catch(err => this.errorService.handleError(err));
         }
     }
     catch (error) {
@@ -3159,7 +3120,7 @@ class FiletransferComponent {
                 console.log("getFiles called two");
                 let displayItems = yield this.gdService.listGoogleDriveFiles();
                 return resolve(displayItems);
-            })).catch(err => console.log(err));
+            }));
         });
     }
     gdProcessFiles() {
@@ -3245,7 +3206,7 @@ class FiletransferComponent {
                     console.log('Removed');
                 }))
                     .catch(err => this.errorService.handleError(err));
-            }).catch(err => console.log(err));
+            });
         });
     }
     removeUrlParams() {
@@ -3350,7 +3311,7 @@ class FiletransferComponent {
                     }
                 }
                 return resolve(this.files1);
-            }).catch(err => console.log(err));
+            });
         });
     }
     lfProcessFiles() {
@@ -3832,7 +3793,7 @@ class GdCloudService {
                         return reject(err);
                     });
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     listGoogleDriveFiles() {
@@ -3861,21 +3822,18 @@ class GdCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     gDUploadFromNode() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/UploadGd', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
                 })
                     .then((response) => {
                     console.log(response);
@@ -3885,21 +3843,18 @@ class GdCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     gDUpdateFileName() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/GDUpdateFile', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
                 })
                     .then((response) => {
                     console.log(response);
@@ -3909,7 +3864,7 @@ class GdCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     gDUploadLocal(fileName) {
@@ -3935,7 +3890,7 @@ class GdCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch(err => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -3947,14 +3902,11 @@ class GdCloudService {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/GDUpdateLocalFile', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
                 })
                     .then((response) => {
                     console.log(response);
@@ -3964,7 +3916,7 @@ class GdCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     getGdId(fileId, fileGdName) {
@@ -3995,7 +3947,7 @@ class GdCloudService {
                             this.errorService.handleError(err);
                             return reject(err);
                         });
-                    }).catch(err => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -4007,14 +3959,11 @@ class GdCloudService {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/DownloadGd', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
                 })
                     .then((response) => {
                     console.log(response);
@@ -4024,21 +3973,18 @@ class GdCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
     gDDownloadLocalFromNode() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 fetch('/api/DownloadGdLocal', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted'
-                    })
                 })
                     .then((response) => {
                     console.log(response);
@@ -4048,7 +3994,7 @@ class GdCloudService {
                     this.errorService.handleError(err);
                     return reject(err);
                 });
-            }).catch(err => console.log(err));
+            });
         });
     }
 }
@@ -4115,7 +4061,7 @@ function accessTokenGoogleDrive(saveDg) {
                     this.errorService.handleError(error);
                     return reject(error);
                 });
-            }).catch(err => console.log(err));
+            });
         }
     }
     catch (error) {
@@ -4346,7 +4292,7 @@ class LocalFilesService {
     }
     sendLfFilePath() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            let localFilePath = sessionStorage.getItem('localFilePath');
+            let localFilePath = sessionStorage.getItem("localFilePath");
             console.log(localFilePath);
             return yield new Promise((resolve, reject) => {
                 fetch('/api/LfFilePath', {
@@ -4356,13 +4302,13 @@ class LocalFilesService {
                         'Access-Control-Allow-Origin': '*',
                     },
                     body: JSON.stringify({
-                        lfStorePath: localFilePath,
-                    }),
+                        lfStorePath: localFilePath
+                    })
                 })
                     .then((result) => {
                     return result.json();
                 })
-                    .then((response) => {
+                    .then(response => {
                     let msgDisplay = response[Object.keys(response)[1]];
                     resolve(msgDisplay);
                 })
@@ -4370,7 +4316,7 @@ class LocalFilesService {
                     this.errorService.handleError(err);
                     reject(err);
                 });
-            }).catch((err) => console.log(err));
+            });
         });
     }
     lfDownlodToLocalPath() {
@@ -4379,11 +4325,8 @@ class LocalFilesService {
                 let myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
                 let requestOptions = {
-                    method: 'POST',
+                    method: 'GET',
                     headers: myHeaders,
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted',
-                    }),
                 };
                 fetch('/api/LfDownload', requestOptions)
                     .then((response) => {
@@ -4393,17 +4336,17 @@ class LocalFilesService {
                     let holdResult = result[Object.keys(result)[1]];
                     resolve(holdResult);
                 })
-                    .catch((err) => {
+                    .catch(err => {
                     this.errorService.handleError(err);
                     reject(err);
                 });
-            }).catch((err) => console.log(err));
+            });
         });
     }
     lfFromLocalPathToServer(lfTrs) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (lfTrs !== undefined || lfTrs !== null || lfTrs !== '') {
+                if (lfTrs !== undefined || lfTrs !== null || lfTrs !== "") {
                     return yield new Promise((resolve, reject) => {
                         let myHeaders = new Headers();
                         myHeaders.append('Content-Type', 'application/json');
@@ -4411,8 +4354,8 @@ class LocalFilesService {
                             method: 'POST',
                             headers: myHeaders,
                             body: JSON.stringify({
-                                lfTranfer: lfTrs,
-                            }),
+                                lfTranfer: lfTrs
+                            })
                         };
                         fetch('/api/LfileServer', requestOptions)
                             .then((response) => {
@@ -4422,11 +4365,11 @@ class LocalFilesService {
                             let holdResult = result[Object.keys(result)[1]];
                             resolve(holdResult);
                         })
-                            .catch((err) => {
+                            .catch(err => {
                             this.errorService.handleError(err);
                             reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -4440,7 +4383,7 @@ LocalFilesService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefin
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](LocalFilesService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
-                providedIn: 'root',
+                providedIn: 'root'
             }]
     }], function () { return [{ type: _error_handelers_service__WEBPACK_IMPORTED_MODULE_2__["ErrorHandelersService"] }]; }, null); })();
 
@@ -4574,21 +4517,18 @@ class OdCloudService {
         this.storeOdFiles = [];
     }
     login() {
-        let odUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/';
+        let odUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite&state=null";
         let link = document.createElement('a');
         link.href = odUrl;
-        console.log('odUrl is ' + odUrl);
         link.click();
     }
     odCodeFromUri() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {
                 const uriLink = location.href;
-                console.log('uriLink is ' + uriLink);
                 let findParam = uriLink.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
-                console.log('findParam is ' + findParam);
                 try {
-                    if (findParam !== undefined || findParam !== null || findParam !== '') {
+                    if (findParam !== undefined || findParam !== null || findParam !== "") {
                         return resolve(findParam);
                     }
                 }
@@ -4596,29 +4536,27 @@ class OdCloudService {
                     this.errorService.handleError(error);
                     return reject(error);
                 }
-            }).catch((err) => console.log(err));
+            });
         });
     }
     odDisplayFilesFlsProcess() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                 let profileClientInfo = yield getProfile();
-                console.log('profileClientInfo ' + profileClientInfo);
+                console.log("profileClientInfo " + profileClientInfo);
                 let hlOdName = profileClientInfo[1];
-                console.log('hlOdName ' + hlOdName);
-                let formatlClName = hlOdName.split(',')[0];
-                console.log('formatlClName ' + formatlClName);
+                console.log("hlOdName " + hlOdName);
+                let formatlClName = hlOdName.split(",")[0];
+                console.log("formatlClName " + formatlClName);
                 let hlOdEmail = profileClientInfo[0];
-                console.log('hlOdEmail ' + hlOdEmail);
-                sessionStorage.setItem('odClientEmail', profileClientInfo[0]);
+                console.log("hlOdEmail " + hlOdEmail);
+                sessionStorage.setItem("odClientEmail", profileClientInfo[0]);
                 let mongoDbUserId = sessionStorage.getItem('userMnId');
                 sendOdClientInfo(formatlClName.replace(/['"]+/g, '').toString(), hlOdEmail.toString(), mongoDbUserId);
                 let odAallFiles = yield this.odGetFiles();
                 let holdOdItems = this.storeOdFlsFiles(odAallFiles);
                 try {
-                    if (holdOdItems != undefined ||
-                        holdOdItems !== null ||
-                        holdOdItems !== '') {
+                    if (holdOdItems != undefined || holdOdItems !== null || holdOdItems !== "") {
                         return resolve(holdOdItems);
                     }
                 }
@@ -4626,7 +4564,7 @@ class OdCloudService {
                     this.errorService.handleError(error);
                     return reject(error);
                 }
-            })).catch((err) => console.log(err));
+            }));
         });
     }
     storeOdFlsFiles(odFilesFls) {
@@ -4636,10 +4574,9 @@ class OdCloudService {
                 let storeOdFlsFolders = savedOdFlsFolders.value;
                 for (let index = 0; index < storeOdFlsFolders.length; index++) {
                     let holdOdItems = {};
-                    let getOdUrl = '@microsoft.graph.downloadUrl';
-                    holdOdItems['odFileName'] = storeOdFlsFolders[index].name;
-                    holdOdItems['odFileUrl'] =
-                        storeOdFlsFolders[index]['@microsoft.graph.downloadUrl'];
+                    let getOdUrl = "@microsoft.graph.downloadUrl";
+                    holdOdItems["odFileName"] = storeOdFlsFolders[index].name;
+                    holdOdItems["odFileUrl"] = storeOdFlsFolders[index]["@microsoft.graph.downloadUrl"];
                     this.storeOdFiles.push(holdOdItems);
                 }
                 return this.storeOdFiles;
@@ -4655,11 +4592,8 @@ class OdCloudService {
                 let myHeaders = new Headers();
                 myHeaders.append('Content-Type', 'application/json');
                 let requestOptions = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body: JSON.stringify({
-                        msgPost: 'msgPosted',
-                    }),
+                    method: 'GET',
+                    headers: myHeaders
                 };
                 fetch('/api/OdGetFiles', requestOptions)
                     .then((response) => {
@@ -4669,22 +4603,18 @@ class OdCloudService {
                     let holdOdAllFlsFils = result[Object.keys(result)[1]];
                     resolve(holdOdAllFlsFils);
                 })
-                    .catch((err) => {
+                    .catch(err => {
                     this.errorService.handleError(err);
                     reject(err);
                 });
-            }).catch((err) => console.log(err));
+            });
         });
     }
     odDownloadFile(odUrl, odFl) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (odUrl !== undefined ||
-                    odUrl !== null ||
-                    odUrl !== '' ||
-                    odFl !== undefined ||
-                    odFl !== null ||
-                    odFl !== '') {
+                if (odUrl !== undefined || odUrl !== null || odUrl !== ""
+                    || odFl !== undefined || odFl !== null || odFl !== "") {
                     return yield new Promise((resolve, reject) => {
                         fetch('/api/OdDownload', {
                             method: 'POST',
@@ -4694,13 +4624,13 @@ class OdCloudService {
                             },
                             body: JSON.stringify({
                                 odFileUrl: odUrl,
-                                odFileName: odFl,
-                            }),
+                                odFileName: odFl
+                            })
                         })
                             .then((result) => {
                             return result.json();
                         })
-                            .then((response) => {
+                            .then(response => {
                             let msgDisplay = response[Object.keys(response)[1]];
                             resolve(msgDisplay);
                         })
@@ -4708,7 +4638,7 @@ class OdCloudService {
                             this.errorService.handleError(err);
                             reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -4719,7 +4649,7 @@ class OdCloudService {
     odUploadFile(odFl) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (odFl !== undefined || odFl !== null || odFl !== '') {
+                if (odFl !== undefined || odFl !== null || odFl !== "") {
                     return yield new Promise((resolve, reject) => {
                         fetch('/api/OdUpload', {
                             method: 'POST',
@@ -4728,13 +4658,13 @@ class OdCloudService {
                                 'Access-Control-Allow-Origin': '*',
                             },
                             body: JSON.stringify({
-                                odUpFileName: odFl,
-                            }),
+                                odUpFileName: odFl
+                            })
                         })
                             .then((result) => {
                             return result.json();
                         })
-                            .then((response) => {
+                            .then(response => {
                             let msgDisplay = response[Object.keys(response)[1]];
                             resolve(msgDisplay);
                         })
@@ -4742,7 +4672,7 @@ class OdCloudService {
                             this.errorService.handleError(err);
                             reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -4753,7 +4683,7 @@ class OdCloudService {
     odUploadLocalFile(odFl) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (odFl !== undefined || odFl !== null || odFl !== '') {
+                if (odFl !== undefined || odFl !== null || odFl !== "") {
                     return yield new Promise((resolve, reject) => {
                         fetch('/api/OdLocalUpload', {
                             method: 'POST',
@@ -4762,13 +4692,13 @@ class OdCloudService {
                                 'Access-Control-Allow-Origin': '*',
                             },
                             body: JSON.stringify({
-                                odUpFileName: odFl,
-                            }),
+                                odUpFileName: odFl
+                            })
                         })
                             .then((result) => {
                             return result.json();
                         })
-                            .then((response) => {
+                            .then(response => {
                             let msgDisplay = response[Object.keys(response)[1]];
                             resolve(msgDisplay);
                         })
@@ -4776,7 +4706,7 @@ class OdCloudService {
                             this.errorService.handleError(err);
                             reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -4787,7 +4717,7 @@ class OdCloudService {
     odAccessToken(odToken) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             try {
-                if (odToken !== undefined || odToken !== null || odToken !== '') {
+                if (odToken !== undefined || odToken !== null || odToken !== "") {
                     return yield new Promise((resolve, reject) => {
                         fetch('/api/OdAccessToken', {
                             method: 'POST',
@@ -4796,13 +4726,13 @@ class OdCloudService {
                                 'Access-Control-Allow-Origin': '*',
                             },
                             body: JSON.stringify({
-                                odCode: odToken,
-                            }),
+                                odCode: odToken
+                            })
                         })
                             .then((result) => {
                             return result.json();
                         })
-                            .then((response) => {
+                            .then(response => {
                             let msgDisplay = response[Object.keys(response)[1]];
                             resolve(msgDisplay);
                         })
@@ -4810,7 +4740,7 @@ class OdCloudService {
                             this.errorService.handleError(err);
                             reject(err);
                         });
-                    }).catch((err) => console.log(err));
+                    });
                 }
             }
             catch (error) {
@@ -4824,51 +4754,42 @@ OdCloudService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineIn
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](OdCloudService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
-                providedIn: 'root',
+                providedIn: 'root'
             }]
     }], function () { return [{ type: _error_handelers_service__WEBPACK_IMPORTED_MODULE_2__["ErrorHandelersService"] }]; }, null); })();
 function getProfile() {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
         return yield new Promise((resolve, reject) => {
             fetch('/api/OdProfile', {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
-                },
-                body: JSON.stringify({
-                    msgPost: 'msgPosted',
-                }),
+                }
             })
                 .then((result) => {
                 return result.json();
             })
-                .then((response) => {
+                .then(response => {
                 let msgDisplay = response[Object.keys(response)[1]];
                 let msgBxNameDisplay = response[Object.keys(response)[2]];
                 let holdBxClInfo = [];
                 holdBxClInfo.push(msgDisplay, msgBxNameDisplay);
-                console.log('holdBxClInfo ' + holdBxClInfo);
+                console.log("holdBxClInfo " + holdBxClInfo);
                 resolve(holdBxClInfo);
             })
                 .catch((err) => {
                 this.errorService.handleError(err);
                 reject(err);
             });
-        }).catch((err) => console.log(err));
+        });
     });
 }
 function sendOdClientInfo(getOdName, getOdEmail, getUserMongoId) {
     try {
-        if (getOdName !== undefined ||
-            getOdName !== null ||
-            getOdName !== '' ||
-            getOdEmail !== undefined ||
-            getOdEmail !== null ||
-            getOdEmail !== '' ||
-            getUserMongoId !== undefined ||
-            getUserMongoId !== null ||
-            getUserMongoId !== '') {
+        if (getOdName !== undefined || getOdName !== null || getOdName !== ""
+            || getOdEmail !== undefined || getOdEmail !== null || getOdEmail !== ""
+            || getUserMongoId !== undefined || getUserMongoId !== null || getUserMongoId !== "") {
             let odClientValue = JSON.stringify({
                 odname: getOdName,
                 odemail: getOdEmail,
@@ -4879,11 +4800,11 @@ function sendOdClientInfo(getOdName, getOdEmail, getUserMongoId) {
             return fetch('/api/MCOdClient', {
                 method: 'POST',
                 headers: myHeaders,
-                body: odClientValue,
+                body: odClientValue
             })
-                .then((response) => response.json())
-                .then((data) => console.log(data))
-                .catch((err) => this.errorService.handleError(err));
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(err => this.errorService.handleError(err));
         }
     }
     catch (error) {
@@ -5517,23 +5438,23 @@ class UserLoginService {
             lastname: userlastName,
             username: userUserName,
             email: userEmail,
-            password: userPassword,
+            password: userPassword
         });
         let myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         return fetch('/api/MCUser', {
             method: 'POST',
             headers: myHeaders,
-            body: userValue,
+            body: userValue
         })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((err) => this.errorService.handleError(err));
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(err => this.errorService.handleError(err));
     }
     userSignIn() {
         return new Promise((resolve, reject) => {
             let userValue = JSON.stringify({
-                usrResult: 'value posted',
+                usrResult: "value posted"
             });
             fetch('/api/MCUserByUsrNmPwd', {
                 method: 'POST',
@@ -5541,39 +5462,32 @@ class UserLoginService {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
                 },
-                body: userValue,
+                body: userValue
             })
-                .then((response) => {
-                return response.json();
-            })
-                .then((getdata) => {
-                console.log('getdata from Service ' + JSON.stringify(getdata));
+                .then(response => { return response.json(); })
+                .then(getdata => {
+                console.log("getdata from Service " + JSON.stringify(getdata));
                 let findAllMongoData = [];
                 let newUserMongoData = {};
                 newUserMongoData['clientUserName'] = getdata.username;
                 newUserMongoData['clientPassword'] = getdata.password;
                 newUserMongoData['clientId'] = getdata._id;
                 findAllMongoData.push(newUserMongoData);
-                console.log('elementEmail from Service ' + JSON.stringify(findAllMongoData));
+                console.log("elementEmail from Service " + JSON.stringify(findAllMongoData));
                 resolve(findAllMongoData);
             })
                 .catch((err) => this.errorService.handleError(err));
-        }).catch((err) => console.log(err));
+        });
     }
     logOutMnCustomer() {
         fetch('/api/LogOutMCUser', {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
             },
-            body: JSON.stringify({
-                msgPost: 'msgPosted',
-            }),
         })
-            .then((response) => {
-            return console.log(response);
-        })
+            .then((response) => { return console.log(response); })
             .catch((err) => this.errorService.handleError(err));
     }
     deleteCustomer() {
@@ -5585,9 +5499,7 @@ class UserLoginService {
                 'Access-Control-Allow-Origin': '*',
             },
         })
-            .then((response) => {
-            return console.log(response);
-        })
+            .then((response) => { return console.log(response); })
             .catch((err) => this.errorService.handleError(err));
     }
 }
@@ -5596,7 +5508,7 @@ UserLoginService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefine
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](UserLoginService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
-                providedIn: 'root',
+                providedIn: 'root'
             }]
     }], function () { return [{ type: _error_handelers_service__WEBPACK_IMPORTED_MODULE_1__["ErrorHandelersService"] }]; }, null); })();
 
