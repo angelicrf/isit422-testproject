@@ -65,7 +65,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
-  express.static(path.join(__dirname, 'routes/dist/angular-multiclouds')),
+  express.static(path.join(__dirname, '/app/routes/dist/angular-multiclouds')),
 );
 
 var corsOptions = {
@@ -74,7 +74,7 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));
 if (process.env.NODE_ENV === 'production') {
-  // Set static folder
+  console.log('app in production mode ....');
   app.use(express.static('dist/angular-multiclouds'));
   app.post('*/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
@@ -82,7 +82,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 app.post('*/*', function (req, res) {
   res.sendFile(
-    path.join(__dirname, '/routes/dist/angular-multiclouds/index.html'),
+    path.join(__dirname, '/app/routes/dist/angular-multiclouds/index.html'),
   );
 });
 
