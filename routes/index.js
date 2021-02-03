@@ -168,7 +168,7 @@ app.post('/app/MCUserByID', (req, res) => {
     throw error;
   }
 });
-app.post('*/api/MCUserInfo', (req, res) => {
+app.post('*/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
 
   try {
@@ -193,7 +193,7 @@ app.post('*/api/MCUserInfo', (req, res) => {
     throw error;
   }
 });
-app.post('*/api/MCUserByUsrNmPwd', (req, res) => {
+app.post('*/MCUserByUsrNmPwd', (req, res) => {
   console.log('MCUserByUsrNmPwd called');
   try {
     if (
