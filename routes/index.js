@@ -64,7 +64,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'dist/angular-multiclouds')));
+app.use(
+  express.static(path.join(__dirname, 'routes/dist/angular-multiclouds')),
+);
 
 var corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
@@ -79,7 +81,9 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 app.post('*/*', function (req, res) {
-  res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
+  res.sendFile(
+    path.join(__dirname, '/routes/dist/angular-multiclouds/index.html'),
+  );
 });
 
 const dbURI =
@@ -107,7 +111,7 @@ app.get('*/FindTd', (req, res) => {
   res.status(200).send('Server is called');
 });
 
-app.post('/app/AllMCUsers', (req, res) => {
+app.post('/api/AllMCUsers', (req, res) => {
   try {
     if (
       req.body.id !== undefined ||
@@ -137,7 +141,7 @@ app.post('/app/AllMCUsers', (req, res) => {
     throw error;
   }
 });
-app.post('/app/MCUserByID', (req, res) => {
+app.post('/api/MCUserByID', (req, res) => {
   try {
     if (
       req.body.id !== undefined ||
@@ -168,7 +172,7 @@ app.post('/app/MCUserByID', (req, res) => {
     throw error;
   }
 });
-app.post('*/MCUserInfo', (req, res) => {
+app.post('*/api/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
 
   try {
@@ -193,7 +197,7 @@ app.post('*/MCUserInfo', (req, res) => {
     throw error;
   }
 });
-app.post('*/MCUserByUsrNmPwd', (req, res) => {
+app.post('*/api/MCUserByUsrNmPwd', (req, res) => {
   console.log('MCUserByUsrNmPwd called');
   try {
     if (
