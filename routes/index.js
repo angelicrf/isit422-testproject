@@ -81,11 +81,9 @@ app.use(cors(corsOptions));
 
 if (process.env.NODE_ENV === 'production') {
   console.log('app in production mode ....');
-  app.use(express.static('../routes/dist/angular-multiclouds'));
-  app.get('*', function (req, res) {
-    res.sendFile(
-      path.join(__dirname, '../routes/dist/angular-multiclouds/index.html'),
-    );
+  app.use(express.static('/dist/angular-multiclouds'));
+  app.get('*/', function (req, res) {
+    res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
   });
 }
 const dbURI =
