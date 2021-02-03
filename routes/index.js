@@ -74,11 +74,11 @@ app.use(cors(corsOptions));
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
   app.use(express.static('dist/angular-multiclouds'));
-  app.post('*', function (req, res) {
+  app.post('*/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
   });
 }
-app.post('*', function (req, res) {
+app.post('*/*', function (req, res) {
   res.sendFile(path.join(__dirname, '/dist/angular-multiclouds/index.html'));
 });
 
@@ -102,11 +102,12 @@ mongoose.connect(dbURI, options).then(
     console.log('Error connecting Database instance due to: ', err);
   },
 );
-/* app.get('/', (req, res) => {
-  console.log('Home Page route called');
-  res.status(200).sendFile('index.html');
-}); */
-app.post('/AllMCUsers', (req, res) => {
+app.get('*/FindTd', (req, res) => {
+  console.log('route called');
+  res.status(200).send('Server is called');
+});
+
+app.post('/app/AllMCUsers', (req, res) => {
   try {
     if (
       req.body.id !== undefined ||
@@ -136,7 +137,7 @@ app.post('/AllMCUsers', (req, res) => {
     throw error;
   }
 });
-app.post('/MCUserByID', (req, res) => {
+app.post('/app/MCUserByID', (req, res) => {
   try {
     if (
       req.body.id !== undefined ||
@@ -167,7 +168,7 @@ app.post('/MCUserByID', (req, res) => {
     throw error;
   }
 });
-app.post('/api/MCUserInfo', (req, res) => {
+app.post('*/api/MCUserInfo', (req, res) => {
   console.log('MCUserInfo called');
 
   try {
@@ -192,7 +193,7 @@ app.post('/api/MCUserInfo', (req, res) => {
     throw error;
   }
 });
-app.post('/api/MCUserByUsrNmPwd', (req, res) => {
+app.post('*/api/MCUserByUsrNmPwd', (req, res) => {
   console.log('MCUserByUsrNmPwd called');
   try {
     if (
