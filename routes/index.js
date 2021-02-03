@@ -64,7 +64,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'dist/angular-multiclouds')));
+app.use(express.static(path.join(__dirname, '/dist/angular-multiclouds')));
 
 var corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
@@ -78,9 +78,6 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
   });
 }
-app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'dist/angular-multiclouds/index.html'));
-});
 
 const dbURI =
   'mongodb+srv://yelloteam:bcuser123456@cluster0.08j1d.mongodb.net/MultiCloudDB?retryWrites=true&w=majority';
