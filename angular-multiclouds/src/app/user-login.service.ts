@@ -2,87 +2,101 @@ import { Injectable } from '@angular/core';
 import { ErrorHandelersService } from './error-handelers.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserLoginService {
-  isSingedUp:boolean = false
-  isSingedIn:boolean = false
+  isSingedUp: boolean = false;
+  isSingedIn: boolean = false;
 
-  constructor(private errorService:ErrorHandelersService) { }
-  userSiginUp(userName:string,userlastName:string,userUserName:string,userEmail:string,userPassword:string){
-   
+  constructor(private errorService: ErrorHandelersService) {}
+  userSiginUp(
+    userName: string,
+    userlastName: string,
+    userUserName: string,
+    userEmail: string,
+    userPassword: string
+  ) {
     let userValue = JSON.stringify({
       name: userName,
       lastname: userlastName,
-      username: userUserName, 
+      username: userUserName,
       email: userEmail,
-      password: userPassword
-    })
+      password: userPassword,
+    });
 
     let myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-    return fetch('/api/MCUser',{
+    myHeaders.append('Content-Type', 'application/json');
+    return fetch('/api/MCUser', {
       method: 'POST',
       headers: myHeaders,
-      body: userValue
+      body: userValue,
     })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(err => this.errorService.handleError(err))
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((err) => this.errorService.handleError(err));
   }
-  userSignIn(){
+  userSignIn() {
     return new Promise((resolve, reject) => {
       let userValue = JSON.stringify({
-        usrResult: "value posted"
+        usrResult: 'value posted',
+      });
+      fetch('/api/MCUserByUsrNmPwd', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: userValue,
       })
-    fetch('/api/MCUserByUsrNmPwd', {
-      
+        .then((response) => {
+          return response.json();
+        })
+        .then((getdata) => {
+          console.log('getdata from Service ' + JSON.stringify(getdata));
+          let findAllMongoData = [];
+
+          let newUserMongoData = {};
+          newUserMongoData['clientUserName'] = getdata.username;
+          newUserMongoData['clientPassword'] = getdata.password;
+          newUserMongoData['clientId'] = getdata._id;
+          findAllMongoData.push(newUserMongoData);
+
+          console.log(
+            'elementEmail from Service ' + JSON.stringify(findAllMongoData)
+          );
+          resolve(findAllMongoData);
+        })
+        .catch((err) => this.errorService.handleError(err));
+    }).catch((err) => console.log(err));
+  }
+  logOutMnCustomer() {
+    fetch('/api/LogOutMCUser', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: userValue
+      body: JSON.stringify({
+        msgPost: 'msgPosted',
+      }),
     })
-      .then(response => {return response.json()})
-      .then(getdata => {
-        console.log("getdata from Service " + JSON.stringify(getdata))
-        let findAllMongoData = []
-      
-          let newUserMongoData = {}
-          newUserMongoData['clientUserName'] = getdata.username
-          newUserMongoData['clientPassword'] = getdata.password
-          newUserMongoData['clientId'] = getdata._id
-          findAllMongoData.push(newUserMongoData) 
- 
-        console.log("elementEmail from Service " + JSON.stringify(findAllMongoData))
-          resolve(findAllMongoData)
+      .then((response) => {
+        return console.log(response);
       })
-      .catch((err) => this.errorService.handleError(err))
-  })
-}
-logOutMnCustomer() {
-  fetch('/api/LogOutMCUser', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-  })
-    .then((response) => {return console.log(response)})
-    .catch((err) => this.errorService.handleError(err));
-}
-deleteCustomer(){
-  sessionStorage.clear();
-  fetch('/api/DeleteMCUser', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-  })
-    .then((response) => {return console.log(response)})
-    .catch((err) => this.errorService.handleError(err));
-}
-  
+      .catch((err) => this.errorService.handleError(err));
+  }
+  deleteCustomer() {
+    sessionStorage.clear();
+    fetch('/api/DeleteMCUser', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => {
+        return console.log(response);
+      })
+      .catch((err) => this.errorService.handleError(err));
+  }
 }

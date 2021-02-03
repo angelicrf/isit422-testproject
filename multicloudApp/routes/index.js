@@ -737,7 +737,6 @@ app.post('/DeleteFiles', (req, res) => {
     res.status(500).send(err);
     throw err;
   }
-
 });
 app.post('/MoveFile',(req, res) => {
   console.log('MoveFile called');
@@ -2075,7 +2074,6 @@ async function tpMoveFilestoAllFiles(filename){
     }
  } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
  }
 }
@@ -2106,7 +2104,6 @@ async function tpMoveFiletoLocalPath(filename,flPath){
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   } 
 }
@@ -2149,10 +2146,8 @@ async function tpMoveFilefromLocalPath(filename,flPath){
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
-  
 }
 async function findSpecialPath(arrayOne,arrayTwo){
   try {
@@ -2174,7 +2169,6 @@ async function findSpecialPath(arrayOne,arrayTwo){
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2202,7 +2196,6 @@ async function bytesToSize(fileName) {
       }          
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   } 
 }
@@ -2242,11 +2235,10 @@ async function dpUploadSessionStart(dpAccessToken,dpFile){
             
             resolve(mdDpHoldSessionId.toString());
           });
-    });
+    }).catch(err => console.log(err));
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2288,7 +2280,6 @@ async function dpUploadLargeFileAppend(dpAccessToken,sessionId,dpFile,actualSize
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2331,7 +2322,6 @@ async function dpUploadSessionFinish(dpAccessToken,sessionId,dpFile,actualSize){
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2377,7 +2367,6 @@ async function odUploadSessionStart(odAccToken,odFile){
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2414,7 +2403,6 @@ async function odUploadFirstResume(odAccToken,uploadUrl,actualSize,fileName){
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2455,7 +2443,6 @@ async function odUploadSecondResume(odAccToken,uploadUrl,actualSize,firstFrg,fil
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }
@@ -2493,7 +2480,6 @@ async function odUploadResumeCompleted(odAccToken,uploadUrl,actualSize,secondFrg
     }
   } catch (error) {
     console.log(error);
-    reject(error);
     throw error;
   }
 }

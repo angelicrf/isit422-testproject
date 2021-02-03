@@ -109,7 +109,7 @@ export class CloudmanagementComponent {
         this.removeUrlParams();
       }
       if(sessionStorage.getItem("odSelected") === "odSelected"){
-        this.removeSelectedCloud("odSelected");
+        //this.removeSelectedCloud("odSelected");
         this.odService.login();
         let saveOdCode:any = await this.odService.odCodeFromUri();
         let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);

@@ -57,7 +57,7 @@ export class GdCloudService {
          return reject(err);
         });
      });
-   }) 
+   }).catch(err => console.log(err)); 
   }
   async listGoogleDriveFiles() {
     console.log('listGoogleDriveFiles called')
@@ -85,16 +85,19 @@ export class GdCloudService {
           this.errorService.handleError(err);
           return reject(err);
         });
-     }); 
+     }).catch(err => console.log(err)); 
   }
   async gDUploadFromNode() {
     return await new Promise((resolve,reject) => {
       fetch('/api/UploadGd', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
+        body: JSON.stringify({
+          msgPost: 'msgPosted'
+          })
       })
         .then((response) => {
           console.log(response)
@@ -103,16 +106,19 @@ export class GdCloudService {
           this.errorService.handleError(err);
           return reject(err);
          });
-    })
+    }).catch(err => console.log(err));
   }
  async gDUpdateFileName() {
    return await new Promise((resolve,reject) => {
     fetch('/api/GDUpdateFile', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
+      body: JSON.stringify({
+        msgPost: 'msgPosted'
+        })
     })
       .then((response) => {
          console.log(response) 
@@ -121,7 +127,7 @@ export class GdCloudService {
         this.errorService.handleError(err);
         return reject(err);
        });
-   });
+   }).catch(err => console.log(err));
   
   }
   async gDUploadLocal(fileName) {
@@ -146,7 +152,7 @@ export class GdCloudService {
               this.errorService.handleError(err);
               return reject(err);
              });
-        });
+        }).catch(err => console.log(err));
       }
     } catch (error) {
        this.errorService.handleError(error);
@@ -156,11 +162,14 @@ export class GdCloudService {
   async gDUpdateLocalFileName() {
     return await new Promise((resolve,reject) => {
      fetch('/api/GDUpdateLocalFile', {
-       method: 'GET',
+       method: 'POST',
        headers: {
          'Content-Type': 'application/json',
          'Access-Control-Allow-Origin': '*',
        },
+       body: JSON.stringify({
+        msgPost: 'msgPosted'
+        })
      })
        .then((response) => {
           console.log(response) 
@@ -169,7 +178,7 @@ export class GdCloudService {
         this.errorService.handleError(err);
         return reject(err);
        });
-    });
+    }).catch(err => console.log(err));
    
    }
   async getGdId(fileId:string,fileGdName:string){
@@ -206,7 +215,7 @@ export class GdCloudService {
                   this.errorService.handleError(err);
                   return reject(err);
                 })
-        });
+        }).catch(err => console.log(err));
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -216,11 +225,14 @@ export class GdCloudService {
  async gDDownloadFromNode() {
     return await new Promise((resolve,reject) => {
       fetch('/api/DownloadGd', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
+        body: JSON.stringify({
+          msgPost: 'msgPosted'
+          })
       })
         .then((response) => {
           console.log(response)
@@ -229,16 +241,19 @@ export class GdCloudService {
           this.errorService.handleError(err);
           return reject(err);
         });
-    })  
+    }).catch(err => console.log(err)); 
   }
   async gDDownloadLocalFromNode() {
     return await new Promise((resolve,reject) => {
       fetch('/api/DownloadGdLocal', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
+        body: JSON.stringify({
+          msgPost: 'msgPosted'
+          })
       })
         .then((response) => {
           console.log(response)
@@ -247,7 +262,7 @@ export class GdCloudService {
           this.errorService.handleError(err);
           return reject(err);
         });
-    })  
+    }).catch(err => console.log(err));  
   }
 }
 
@@ -310,7 +325,7 @@ function  accessTokenGoogleDrive(saveDg:string){
             this.errorService.handleError(error);
             return reject(error);
           });
-      });
+      }).catch(err => console.log(err));
     }
   } catch (error) {
     this.errorService.handleError(error);

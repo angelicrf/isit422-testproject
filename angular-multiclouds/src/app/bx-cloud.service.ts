@@ -30,7 +30,7 @@ export class BxCloudService {
         this.errorService.handleError(error);
         return reject(error);
       }  
-    }); 
+    }).catch(err => console.log(err)); 
   }
   async getboxCodeOauth(boxIssuedCode:string){
     console.log("getboxCodeOauth called");
@@ -65,7 +65,7 @@ export class BxCloudService {
               this.errorService.handleError(err);
               return reject(err);
             });   
-      });
+      }).catch(err => console.log(err));
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -77,8 +77,11 @@ export class BxCloudService {
       myHeaders.append('Content-Type', 'application/json');
 
       let requestOptions = {
-        method: 'GET',
-        headers: myHeaders
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({
+          msgPost: 'msgPosted'
+          })
       };
       fetch('/api/BoxOauth', requestOptions)
         .then((response) => {
@@ -94,7 +97,7 @@ export class BxCloudService {
         this.errorService.handleError(err);
         return reject(err);
       });
-   });
+   }).catch(err => console.log(err));
   }
   async getBoxClientInfo(){
     return await  new Promise((resolve,reject) => {
@@ -102,8 +105,11 @@ export class BxCloudService {
       myHeaders.append('Content-Type', 'application/json');
 
       let requestOptions = {
-        method: 'GET',
-        headers: myHeaders
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({
+          msgPost: 'msgPosted'
+          })
       };
       fetch('/api/BoxClientEmail', requestOptions)
         .then((response) => {
@@ -122,7 +128,7 @@ export class BxCloudService {
         this.errorService.handleError(err);
         return reject(err);
       });   
-    });
+    }).catch(err => console.log(err));
   }
   async boxShowFile(){
     return await  new Promise((resolve,reject) => {
@@ -130,8 +136,11 @@ export class BxCloudService {
       myHeaders.append('Content-Type', 'application/json');
 
       let requestOptions = {
-        method: 'GET',
-        headers: myHeaders
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({
+          msgPost: 'msgPosted'
+          })
       };
       fetch('/api/BoxGetFile', requestOptions)
         .then((response) => {
@@ -146,7 +155,7 @@ export class BxCloudService {
         this.errorService.handleError(err);
         return reject(err);
       });   
-    });
+    }).catch(err => console.log(err));
   }
   async boxAllFoldersFiles(){
     return await  new Promise((resolve,reject) => {
@@ -154,8 +163,11 @@ export class BxCloudService {
       myHeaders.append('Content-Type', 'application/json');
 
       let requestOptions = {
-        method: 'GET',
-        headers: myHeaders
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({
+            msgPost: 'msgPosted'
+            })
       };
 
       fetch('/api/BoxGetFolders', requestOptions)
@@ -170,7 +182,7 @@ export class BxCloudService {
         this.errorService.handleError(err);
         return reject(err);
       });  
-    });
+    }).catch(err => console.log(err));
   }
   async boxDownload(bxId:string, bxName:string){
     try {
@@ -205,7 +217,7 @@ export class BxCloudService {
             this.errorService.handleError(err);
             return reject(err);
           });  
-        });
+        }).catch(err => console.log(err));
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -241,7 +253,7 @@ export class BxCloudService {
             this.errorService.handleError(err);
             return reject(err);
           });   
-        });
+        }).catch(err => console.log(err));
       }
     } catch (error) {
       this.errorService.handleError(error);
@@ -277,7 +289,7 @@ export class BxCloudService {
             this.errorService.handleError(err);
             return reject(err);
           });   
-        });
+        }).catch(err => console.log(err));
       }
     } catch (error) {
       this.errorService.handleError(error);

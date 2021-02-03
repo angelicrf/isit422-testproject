@@ -924,7 +924,7 @@ findMatch(firstArray:string[], itemToFound:string ){
         console.log("getFiles called two");
         let displayItems:any = await this.gdService.listGoogleDriveFiles();           
         return resolve(displayItems);
-    });
+    }).catch(err => console.log(err));
   }
   async gdProcessFiles(){
       holdClientFilesToDisplay = await this.getFiles();
@@ -1009,7 +1009,7 @@ findMatch(firstArray:string[], itemToFound:string ){
         console.log('Removed')
       })
       .catch(err => this.errorService.handleError(err));
-    }) 
+    }).catch(err => console.log(err)); 
   }
   removeUrlParams(){
     return window.history.replaceState(null, null, window.location.pathname);
@@ -1117,7 +1117,7 @@ findMatch(firstArray:string[], itemToFound:string ){
         }
       }  
         return resolve(this.files1);
-      })
+      }).catch(err => console.log(err));
   }
   async lfProcessFiles() {
     try {
