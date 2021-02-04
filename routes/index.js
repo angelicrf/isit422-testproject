@@ -3626,24 +3626,5 @@ async function dpSdkUpload(dpAccToken, fileName) {
     }, Promise.resolve());
   }).catch((err) => console.log(err));
 }
-function testOdResult() {
-  let htOd = {
-    '@odata.context':
-      'https://graph.microsoft.com/v1.0/$metadata#users/$entity',
-    displayName: '',
-    surname: '',
-    givenName: '',
-    id: 'ffcbc48920626bf2',
-    userPrincipalName: 'yellowteamisit422@gmail.com',
-    businessPhones: [],
-    jobTitle: null,
-    mail: null,
-    mobilePhone: null,
-    officeLocation: null,
-    preferredLanguage: null,
-  };
-  console.log(JSON.parse(JSON.stringify(htOd)).id);
-  console.log(JSON.parse(JSON.stringify(htOd)).userPrincipalName);
-}
-//testOdResult()
+
 module.exports = app;

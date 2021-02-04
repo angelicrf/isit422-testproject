@@ -148,7 +148,7 @@ export class CloudmanagementComponent {
       }
     }
     if(uriLink.includes('access_token')){
-
+      console.log("url contains access_token");
       let saveOdCode:any = await this.odService.odCodeFromUri();
       let saveOdAccessToken:any = await this.odService.odAccessToken(saveOdCode);
       sessionStorage.setItem("odAccessToken", saveOdAccessToken);
