@@ -9,6 +9,7 @@ const Dropbox = require('dropbox').Dropbox;
 const BoxSDK = require('box-node-sdk');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
+const fetch = require('node-fetch');
 const folder = './routes/AllFiles';
 let HoldUserData = [];
 let LoggedInUserID = '';
@@ -80,7 +81,7 @@ app.use(cors(corsOptions));
 
 if (process.env.NODE_ENV === 'production') {
   debug('app in production mode ....');
- 
+
   app.use(express.static(process.cwd() + '/routes/dist'));
   app.get('*', function (req, res) {
     res.sendFile(process.cwd() + '/routes/dist/index.html');
@@ -3623,5 +3624,34 @@ async function dpSdkUpload(dpAccToken, fileName) {
     }, Promise.resolve());
   }).catch((err) => console.log(err));
 }
-
+function findOdAccessToken() {
+  //?response_type=code&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=onedrive.readwrite
+  const odUri =
+    'https://login.live.com/oauth20_authorize.srf?response_type=token&code=M.R3_BAY.92309f89-5723-8f4b-f468-81cd3a2ea9d3&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=onedrive.readwrite';
+  let requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: JSON.stringify({
+      response_type: 'token',
+      client_id: '266792a9-b745-45e2-a76d-494d6720ebb8',
+      client_secret: '3bff973b-5401-479d-9c9f-b3006be16912',
+      code: 'M.R3_BAY.92309f89-5723-8f4b-f468-81cd3a2ea9d3',
+      redirect_uri:
+        'https://stormy-headland-33273.herokuapp.com/cloudmanagement/',
+      grant_type: 'authorization_code',
+    }),
+  };
+  fetch(odUri, requestOptions)
+    .then((response) => {
+      return response.json();
+    })
+    .then((result) => {
+      let holdOdAllFlsFils = result[Object.keys(result)[1]];
+      console.log(holdOdAllFlsFils);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+//findOdAccessToken();
 module.exports = app;
