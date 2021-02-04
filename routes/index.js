@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+process.env['DEBUG'] = 'angular-multiclouds:server';
+var debug = require('debug')('angular-multiclouds:server');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
@@ -58,6 +59,7 @@ const MCClient = require('../McCloud');
 const BoxClient = require('../BoxCloud');
 const DbClient = require('../DbCloud');
 const OdClient = require('../OdCloud');
+const { debuglog } = require('util');
 var app = express();
 
 app.use(logger('dev'));
@@ -77,13 +79,8 @@ let corsOptions = {
 app.use(cors(corsOptions));
 
 if (process.env.NODE_ENV === 'production') {
-  console.log('app in production mode ....');
-  /*  app.use(express.static(__dirname, 'dist/angular-multiclouds'));
-  app.get('*', function (req, res) {
-    res.sendFile(
-      path.join(__dirname, 'dist/angular-multiclouds', 'index.html'),
-    );
-  }); */
+  debug('app in production mode ....');
+ 
   app.use(express.static(process.cwd() + '/routes/dist'));
   app.get('*', function (req, res) {
     res.sendFile(process.cwd() + '/routes/dist/index.html');
@@ -99,14 +96,14 @@ const options = {
   poolSize: 10,
 };
 process.on('uncaughtException', function (err) {
-  console.log(err);
+  debug(err);
 });
 mongoose.connect(dbURI, options).then(
   () => {
-    console.log('Database connection established!');
+    debug('Database connection established!');
   },
   (err) => {
-    console.log('Error connecting Database instance due to: ', err);
+    debug('Error connecting Database instance due to: ', err);
   },
 );
 app.get('*/FindTd', (req, res) => {

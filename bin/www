@@ -3,9 +3,9 @@
 /**
  * Module dependencies.
  */
-
+process.env['DEBUG'] = 'angular-multiclouds:server';
+var debug = require('debug')('angular-multiclouds:server');
 var app = require('../routes/index.js');
-var debug = require('debug')('nodetodo:server');
 var http = require('http');
 
 /**
@@ -58,9 +58,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -83,8 +81,6 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+  debug('Listening on ', bind);
 }
