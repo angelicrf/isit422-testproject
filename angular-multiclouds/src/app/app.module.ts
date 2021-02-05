@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler} from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -20,7 +20,7 @@ import { HomeComponent } from './home/home.component';
 import { FiletransferComponent } from './filetransfer/filetransfer.component';
 import { ErrorHandelersService } from './error-handelers.service';
 import { Location } from '@angular/common';
-
+/* 
 const __stripTrailingSlash = (Location as any).stripTrailingSlash;
 (Location as any).stripTrailingSlash = function _stripTrailingSlash(url: string): string {
   const queryString$ = url.match(/([^?]*)?(.*)/);
@@ -28,7 +28,7 @@ const __stripTrailingSlash = (Location as any).stripTrailingSlash;
     return /[^\/]\/$/.test(queryString$[1]) ? queryString$[1] + '.' + queryString$[2] : __stripTrailingSlash(url);
   }
   return /[^\/]\/$/.test(url) ? url + '.' : __stripTrailingSlash(url);
-};
+}; */
 @NgModule({
   imports: [
     BrowserModule,
@@ -41,7 +41,7 @@ const __stripTrailingSlash = (Location as any).stripTrailingSlash;
     MatMenuModule,
     MatButtonModule,
     MatToolbarModule,
-    DragDropModule
+    DragDropModule,
   ],
   declarations: [
     AppComponent,
@@ -51,12 +51,14 @@ const __stripTrailingSlash = (Location as any).stripTrailingSlash;
     SignInComponent,
     SignUpComponent,
     HomeComponent,
-    FiletransferComponent
+    FiletransferComponent,
   ],
-  providers: [{
-    provide:ErrorHandler,
-    useClass: ErrorHandelersService
-  }],
-  bootstrap: [ AppComponent ]
+  providers: [
+    {
+      provide: ErrorHandler,
+      useClass: ErrorHandelersService,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

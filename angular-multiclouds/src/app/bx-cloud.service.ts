@@ -12,7 +12,7 @@ export class BxCloudService {
   boxCodeStored:string = '';
 
   boxRedirectCode(){
-    let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/";
+    let bxUrl = "https://account.box.com/api/oauth2/authorize?response_type=code&client_id=cizpnka9apgvmixa683wgv0lk63cbv7q&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement";
     let link = document.createElement('a');
     link.href = bxUrl;
     link.click();

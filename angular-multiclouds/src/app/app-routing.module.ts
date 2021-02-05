@@ -12,13 +12,13 @@ const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'users', component: FinalprojectComponent },
-  { path: 'cloudmanagement/.', component: CloudmanagementComponent },
+  { path: 'cloudmanagement', component: CloudmanagementComponent },
   { path: 'filetransfer', component: FiletransferComponent },
   { path: 'sign-in', component: SignInComponent },
   { path: 'sign-up', component: SignUpComponent },
-  { path: '**', redirectTo: '/cloudmanagement/.' },
+  { path: '**', redirectTo: '/home' },
 ];
-//FinalProjectComponent
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],

@@ -80,7 +80,7 @@ export class CloudmanagementComponent {
   localFilePath: string;
 
   async ngOnInit() {
-    const uriLink: string = location.href;
+    let uriLink = location.href;
     console.log('uriLink is ' + uriLink);
     try {
       if (uriLink.includes('code=MdDdy') && !uriLink.includes('error')) {
@@ -178,7 +178,7 @@ export class CloudmanagementComponent {
           'Authentication error, Try again with a registered username and password  ....'
         );
         location.replace(
-          'https://stormy-headland-33273.herokuapp.com/cloudmanagement/'
+          'https://stormy-headland-33273.herokuapp.com/cloudmanagement'
         );
       }
     } catch (error) {
@@ -344,6 +344,7 @@ export class CloudmanagementComponent {
         this.selected = true;
         sessionStorage.setItem('lfSelected', 'lfSelected');
         sessionStorage.setItem('apiSelected', JSON.stringify(this.selectedApi));
+        sessionStorage.setItem('odSelected', 'odSelected');
         this.boxClientLogin();
       }
       if (this.lfChecked && this.gdChecked) {

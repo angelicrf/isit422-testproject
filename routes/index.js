@@ -60,7 +60,7 @@ const MCClient = require('../McCloud');
 const BoxClient = require('../BoxCloud');
 const DbClient = require('../DbCloud');
 const OdClient = require('../OdCloud');
-const { debuglog } = require('util');
+
 var app = express();
 
 app.use(logger('dev'));
@@ -3624,21 +3624,25 @@ async function dpSdkUpload(dpAccToken, fileName) {
     }, Promise.resolve());
   }).catch((err) => console.log(err));
 }
-function findOdAccessToken() {
+function findOdAccessToken(username, password) {
   //?response_type=code&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=onedrive.readwrite
-  const odUri =
-    'https://login.live.com/oauth20_authorize.srf?response_type=token&code=M.R3_BAY.92309f89-5723-8f4b-f468-81cd3a2ea9d3&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=onedrive.readwrite';
+  const odUri = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+  // 'https://login.live.com/oauth20_authorize.srf?response_/vtype=token&client_id=266792a9-b745-45e2-a76d-494d6720ebb8&redirect_uri=https://stormy-headland-33273.herokuapp.com/cloudmanagement/&scope=onedrive.readwrite';
   let requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      //Authorization: 'Basic ' + Utilities.base64Encode(username + ':' + password),
+    },
     body: JSON.stringify({
-      response_type: 'token',
+      //response_type: 'token',
+      'grant_type': 'authorization_code',
       client_id: '266792a9-b745-45e2-a76d-494d6720ebb8',
       client_secret: '3bff973b-5401-479d-9c9f-b3006be16912',
-      code: 'M.R3_BAY.92309f89-5723-8f4b-f468-81cd3a2ea9d3',
-      redirect_uri:
-        'https://stormy-headland-33273.herokuapp.com/cloudmanagement/',
-      grant_type: 'authorization_code',
+      scope:
+        'https://graph.microsoft.com/Files.ReadWrite.All https://graph.microsoft.com/User.ReadWrite',
+      //redirect_uri:
+      //  'https://stormy-headland-33273.herokuapp.com/cloudmanagement/',
     }),
   };
   fetch(odUri, requestOptions)
@@ -3653,5 +3657,7 @@ function findOdAccessToken() {
       console.log(err);
     });
 }
+//'yellowteam422@gmail.com', 'bcuserisit422'
 //findOdAccessToken();
+
 module.exports = app;
