@@ -71,7 +71,7 @@ console.log(process.cwd() + '/routes/dist');
 /* app.use(express.static(process.cwd() + '/routes/dist'));
 app.get('*', function (req, res) {
   res.sendFile(process.cwd() + '/routes/dist/index.html');
-}); */
+});  */
 
 let corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
@@ -80,7 +80,7 @@ let corsOptions = {
 app.use(cors(corsOptions));
 
 if (process.env.NODE_ENV === 'production') {
-  debug('app in production mode ....');
+  console.log('app in production mode ....');
 
   app.use(express.static(process.cwd() + '/routes/dist'));
   app.get('*', function (req, res) {
