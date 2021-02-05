@@ -2367,21 +2367,14 @@ app.post('/api/OdUpload', (req, res) => {
           console.log('inside large file odUpload');
           await odUploadSessionStart(odAccessToken, odConcatFile);
           let saveActualSize = await getFileSize(odConcatFile);
-          await odUploadFirstResume(
-            odAccessToken,
-            odUploadUrl,
-            saveActualSize,
-            odConcatFile,
-          );
+          await odUploadFirstResume(odUploadUrl, saveActualSize, odConcatFile);
           await odUploadSecondResume(
-            odAccessToken,
             odUploadUrl,
             saveActualSize,
-            firstFragmentLength,
+            capacityOne,
             odConcatFile,
           );
           let getOdLargeFileResult = await odUploadResumeCompleted(
-            odAccessToken,
             odUploadUrl,
             saveActualSize,
             secondFragmentLength,
@@ -2454,31 +2447,24 @@ app.post('/api/OdLocalUpload', (req, res) => {
           console.log('inside large file odUpload');
           await odUploadSessionStart(odAccessToken, odConcatFile);
           let saveActualSize = await getFileSize(odConcatFile);
-          await odUploadFirstResume(
-            odAccessToken,
-            odUploadUrl,
-            saveActualSize,
-            odConcatFile,
-          );
+          await odUploadFirstResume(odUploadUrl, saveActualSize, odConcatFile);
           await odUploadSecondResume(
-            odAccessToken,
             odUploadUrl,
             saveActualSize,
-            firstFragmentLength,
+            capacityOne,
             odConcatFile,
           );
           await odUploadResumeCompleted(
-            odAccessToken,
             odUploadUrl,
             saveActualSize,
             secondFragmentLength,
             odConcatFile,
           );
+          //toDeleteAllFiles();
           res.status(200).json({
             odLocalUploadMSG: 'odFile_LocalUploaded',
             OdLocalUpload: 'OdLocalUploadLargeFileComleted',
           });
-          toDeleteAllFiles();
         }
       }, 35000);
     }
@@ -2852,7 +2838,7 @@ async function odUploadSessionStart(odAccToken, odFile) {
     if (
       odAccToken !== undefined ||
       odAccToken !== null ||
-      dpAccessToken !== '' ||
+      odAccToken !== '' ||
       odFile !== undefined ||
       odFile !== null ||
       odFile !== ''
@@ -2884,7 +2870,6 @@ async function odUploadSessionStart(odAccToken, odFile) {
             odUploadUrl =
               'https:' +
               mdGetOdResponse[8].substr(0, mdGetOdResponse[8].length - 2);
-            console.log('odUploadUrl ' + odUploadUrl);
 
             resolve(odUploadUrl);
             return odUploadUrl;
@@ -2897,36 +2882,33 @@ async function odUploadSessionStart(odAccToken, odFile) {
     throw error;
   }
 }
-async function odUploadFirstResume(
-  odAccToken,
-  uploadUrl,
-  actualSize,
-  fileName,
-) {
+async function odUploadFirstResume(uploadUrl, actualSize, fileName) {
   console.log('odUploadFirstResume called ');
 
   try {
     if (
-      odAccToken !== undefined ||
-      odAccToken !== null ||
-      dpAccessToken !== '' ||
       uploadUrl !== undefined ||
       uploadUrl !== null ||
       uploadUrl !== '' ||
       actualSize !== undefined ||
       actualSize !== null ||
       actualSize !== 0 ||
-      actualSize !== NaN
+      actualSize !== NaN ||
+      fileName !== undefined ||
+      fileName !== null ||
+      fileName !== ''
     ) {
       return await new Promise((resolve, reject) => {
-        let firstFragmentLength = Math.round(actualSize / 3);
+        let mdActualSize = paseInt(actualSize);
+        let firstFragmentLength = Math.round(mdActualSize / 3);
         console.log('firstFragmentLength ' + firstFragmentLength);
+        console.log('odUploadUrl ' + uploadUrl);
         capacityOne = firstFragmentLength + 1;
         child.exec(
-          `curl -i -X PUT ${uploadUrl} \
+          `curl --location --request PUT ${uploadUrl} \
           -H 'Content-Length: ${capacityOne}' \
           --data-binary @./routes/AllFiles/${fileName} \
-          -H 'Content-Range: bytes 0-${firstFragmentLength}/${actualSize}'`,
+          -H 'Content-Range: bytes 0-${firstFragmentLength}/${mdActualSize}'`,
           (err, stdout, stderr) => {
             if (err) {
               console.log('err from odUploadFirstResume ' + err);
@@ -2947,27 +2929,21 @@ async function odUploadFirstResume(
     throw error;
   }
 }
-async function odUploadSecondResume(
-  odAccToken,
-  uploadUrl,
-  actualSize,
-  firstFrg,
-  fileName,
-) {
+async function odUploadSecondResume(uploadUrl, actualSize, firstFrg, fileName) {
   console.log('odUploadSecondResume called ');
 
   try {
     if (
-      odAccToken !== undefined ||
-      odAccToken !== null ||
-      dpAccessToken !== '' ||
       uploadUrl !== undefined ||
       uploadUrl !== null ||
       uploadUrl !== '' ||
       actualSize !== undefined ||
       actualSize !== null ||
       actualSize !== 0 ||
-      actualSize !== NaN
+      actualSize !== NaN ||
+      fileName !== undefined ||
+      fileName !== null ||
+      fileName !== ''
     ) {
       return await new Promise((resolve, reject) => {
         secondFragmentLength = firstFrg * 2 - 1;
@@ -2983,7 +2959,7 @@ async function odUploadSecondResume(
         );
 
         child.exec(
-          `curl -i -X PUT ${uploadUrl} \
+          `curl --location --request PUT ${uploadUrl} \
           -H 'Content-Length: ${firstFrg}' \
           --data-binary @./routes/AllFiles/${fileName} \
           -H 'Content-Range: bytes ${firstFrg}-${secondFragmentLength}/${actualSize}'`,
@@ -2996,7 +2972,7 @@ async function odUploadSecondResume(
             }
             console.log('the odUploadSecondResume stdout is ' + stdout);
             console.log('the odUploadSecondResume stderr is ' + stderr);
-            resolve(stderr);
+            resolve(secondFragmentLength);
             return secondFragmentLength;
           },
         );
@@ -3008,7 +2984,6 @@ async function odUploadSecondResume(
   }
 }
 async function odUploadResumeCompleted(
-  odAccToken,
   uploadUrl,
   actualSize,
   secondFrg,
@@ -3017,16 +2992,16 @@ async function odUploadResumeCompleted(
   console.log('odUploadResumeCompleted called ');
   try {
     if (
-      odAccToken !== undefined ||
-      odAccToken !== null ||
-      dpAccessToken !== '' ||
       uploadUrl !== undefined ||
       uploadUrl !== null ||
       uploadUrl !== '' ||
       actualSize !== undefined ||
       actualSize !== null ||
       actualSize !== 0 ||
-      actualSize !== NaN
+      actualSize !== NaN ||
+      fileName !== undefined ||
+      fileName !== null ||
+      fileName !== ''
     ) {
       return await new Promise((resolve, reject) => {
         let compDiff = actualSize - 1;
@@ -3043,7 +3018,7 @@ async function odUploadResumeCompleted(
         );
 
         child.exec(
-          `curl -i -X PUT ${uploadUrl} \
+          `curl --location --request PUT ${uploadUrl} \
           -H 'Content-Length: ${rmFragmentLength}' \
           --data-binary @./routes/AllFiles/${fileName} \
           -H 'Content-Range: bytes ${compStr}-${compDiff}/${actualSize}'`,
