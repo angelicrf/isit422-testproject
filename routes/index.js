@@ -1,6 +1,6 @@
 const express = require('express');
-process.env['DEBUG'] = 'angular-multiclouds:server';
-var debug = require('debug')('angular-multiclouds:server');
+//process.env['DEBUG'] = 'angular-multiclouds:server';
+//var debug = require('debug')('angular-multiclouds:server');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
@@ -35,7 +35,7 @@ let holdDpSessionId = '';
 let odUploadUrl = '';
 let fileSizeInBytes = 0;
 let secondFragmentLength = 0;
-let firstFragmentLength = 0;
+let capacityOne = 0;
 let bxParts = [];
 let firstBxPart = 0;
 let secondBxPart = 0;
@@ -97,14 +97,14 @@ const options = {
   poolSize: 10,
 };
 process.on('uncaughtException', function (err) {
-  debug(err);
+  console.log(err);
 });
 mongoose.connect(dbURI, options).then(
   () => {
-    debug('Database connection established!');
+    console.log('Database connection established!');
   },
   (err) => {
-    debug('Error connecting Database instance due to: ', err);
+    console.log('Error connecting Database instance due to: ', err);
   },
 );
 app.get('*/FindTd', (req, res) => {
@@ -2919,11 +2919,12 @@ async function odUploadFirstResume(
       actualSize !== NaN
     ) {
       return await new Promise((resolve, reject) => {
-        firstFragmentLength = Math.round(actualSize / 3);
+        let firstFragmentLength = Math.round(actualSize / 3);
         console.log('firstFragmentLength ' + firstFragmentLength);
+        capacityOne = firstFragmentLength + 1;
         child.exec(
           `curl -i -X PUT ${uploadUrl} \
-          -H 'Content-Length: ${firstFragmentLength + 1}' \
+          -H 'Content-Length: ${capacityOne}' \
           --data-binary @./routes/AllFiles/${fileName} \
           -H 'Content-Range: bytes 0-${firstFragmentLength}/${actualSize}'`,
           (err, stdout, stderr) => {
@@ -2935,8 +2936,8 @@ async function odUploadFirstResume(
             }
             console.log('the odUploadFirstResume stdout is ' + stdout);
             console.log('the odUploadFirstResume stderr is ' + stderr);
-            resolve(firstFragmentLength.toString());
-            return firstFragmentLength;
+            resolve(capacityOne.toString());
+            return capacityOne;
           },
         );
       }).catch((err) => console.log(err));
@@ -2969,26 +2970,23 @@ async function odUploadSecondResume(
       actualSize !== NaN
     ) {
       return await new Promise((resolve, reject) => {
-        secondFragmentLength = firstFrg * 2;
-        let secStr = firstFrg + 1;
-        let secConLg = secondFragmentLength - secStr + 1;
+        secondFragmentLength = firstFrg * 2 - 1;
+        //let secStr = firstFrg + 1;
+        //let secConLg = secondFragmentLength - secStr + 1;
 
         console.log(
-          'firstFrg ' +
-            firstFrg +
-            'secondFragmentLength ' +
+          'firstFrg ' + firstFrg,
+          /*           'secondFragmentLength ' +
             secondFragmentLength +
-            'secConLg ' +
-            secConLg +
             'secStr ' +
-            secStr,
+            secStr, */
         );
 
         child.exec(
           `curl -i -X PUT ${uploadUrl} \
-          -H 'Content-Length: ${secConLg}' \
+          -H 'Content-Length: ${firstFrg}' \
           --data-binary @./routes/AllFiles/${fileName} \
-          -H 'Content-Range: bytes ${secStr}-${secondFragmentLength}/${actualSize}'`,
+          -H 'Content-Range: bytes ${firstFrg}-${secondFragmentLength}/${actualSize}'`,
           (err, stdout, stderr) => {
             if (err) {
               console.log('err from odUploadSecondResume ' + err);
@@ -3636,7 +3634,7 @@ function findOdAccessToken(username, password) {
     },
     body: JSON.stringify({
       //response_type: 'token',
-      'grant_type': 'authorization_code',
+      grant_type: 'authorization_code',
       client_id: '266792a9-b745-45e2-a76d-494d6720ebb8',
       client_secret: '3bff973b-5401-479d-9c9f-b3006be16912',
       scope:
@@ -3657,6 +3655,5 @@ function findOdAccessToken(username, password) {
       console.log(err);
     });
 }
-
 
 module.exports = app;
