@@ -1,6 +1,4 @@
 const express = require('express');
-//process.env['DEBUG'] = 'angular-multiclouds:server';
-//var debug = require('debug')('angular-multiclouds:server');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
@@ -61,17 +59,13 @@ const BoxClient = require('../BoxCloud');
 const DbClient = require('../DbCloud');
 const OdClient = require('../OdCloud');
 
-var app = express();
+let app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 console.log(process.cwd() + '/routes/dist');
-/* app.use(express.static(process.cwd() + '/routes/dist'));
-app.get('*', function (req, res) {
-  res.sendFile(process.cwd() + '/routes/dist/index.html');
-});  */
 
 let corsOptions = {
   origin: 'https://stormy-headland-33273.herokuapp.com',
@@ -2947,17 +2941,7 @@ async function odUploadSecondResume(uploadUrl, actualSize, firstFrg, fileName) {
     ) {
       return await new Promise((resolve, reject) => {
         secondFragmentLength = firstFrg * 2 - 1;
-        //let secStr = firstFrg + 1;
-        //let secConLg = secondFragmentLength - secStr + 1;
-
-        console.log(
-          'firstFrg ' + firstFrg,
-          /*           'secondFragmentLength ' +
-            secondFragmentLength +
-            'secStr ' +
-            secStr, */
-        );
-
+        console.log('firstFrg ' + firstFrg);
         child.exec(
           `curl --location --request PUT ${uploadUrl} \
           -H 'Content-Length: ${firstFrg}' \

@@ -4,16 +4,28 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span id="team_name">Multicloud</span>
-    <nav>
-      <a routerLink="/home" id="a_three">Home</a>
-      <a *ngIf="signedConfirmed" routerLink="/cloudmanagement" id="a_one"
+    <nav class="navbar navbar-expand-lg ml-auto mt-4">
+      <a routerLink="/home" class="px-5" >Home</a>
+      <a
+        *ngIf="signedConfirmed"
+        routerLink="/cloudmanagement" class="px-5"
         >Cloud Management</a
-      ><a *ngIf="!signedConfirmed" id="a_one">Cloud Management</a>
-      <a *ngIf="signedConfirmed" routerLink="/filetransfer" id="a_two"
+      ><a *ngIf="!signedConfirmed" class="px-5"
+        >Cloud Management</a
+      >
+      <a
+        *ngIf="signedConfirmed"
+        routerLink="/filetransfer" class="px-5"
         >File Transfer</a
-      ><a *ngIf="!signedConfirmed" id="a_two">File Transfer</a>
-      <a routerLink="/sign-up" id="a_three">{{ appSpName }}</a>
-      <a routerLink="/sign-in" id="a_four">{{ appSiName }}</a>
+      ><a *ngIf="!signedConfirmed" class="px-5"
+        >File Transfer</a
+      >
+      <a routerLink="/sign-up" class="px-5">{{
+        appSpName
+      }}</a>
+      <a routerLink="/sign-in" class="px-5">{{
+        appSiName
+      }}</a>
     </nav>
   </mat-toolbar>
   <mat-menu #menu="matMenu">
