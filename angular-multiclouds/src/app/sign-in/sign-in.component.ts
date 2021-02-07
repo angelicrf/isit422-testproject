@@ -101,17 +101,8 @@ export class SignInComponent implements OnInit {
             if (sessionStorage.getItem('userSignedUp') == 'SignedUpUser') {
               sessionStorage.removeItem('userSignedUp');
             }
-            alert('user name and password found user is signed in');
             sessionStorage.setItem('userSignedIn', 'SignedUser');
             sessionStorage.setItem('userMnId', clientIdValue[0]);
-            setTimeout(
-              () =>
-                window.location.replace(
-                  'https://stormy-headland-33273.herokuapp.com/home'
-                ),
-              8000
-            );
-
             return (this.usrLogin.isSingedIn = true);
           }
           if (userNameFound && passwordFound == false) {
