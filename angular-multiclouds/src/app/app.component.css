@@ -79,7 +79,7 @@ h3 {
     10px + (12 - 10) * ((100vw - 360px) / (1600 - 360))
   ) !important;
 }
-.fa-twitter-square {
+.fa-twitter {
   background: #55acee;
 }
 .fa-facebook-square {
@@ -88,6 +88,6 @@ h3 {
 .fa-linkedin-square {
   background: #007bb5;
 }
-fa-instagram-square {
+fa-instagram {
   background: #f40083;
 }

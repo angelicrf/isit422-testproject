@@ -103,6 +103,7 @@ export class SignInComponent implements OnInit {
             }
             sessionStorage.setItem('userSignedIn', 'SignedUser');
             sessionStorage.setItem('userMnId', clientIdValue[0]);
+            window.location.reload();
             return (this.usrLogin.isSingedIn = true);
           }
           if (userNameFound && passwordFound == false) {
