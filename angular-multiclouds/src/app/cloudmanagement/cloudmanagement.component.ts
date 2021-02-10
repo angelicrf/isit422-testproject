@@ -92,7 +92,7 @@ export class CloudmanagementComponent {
           stDpCode
         );
         sessionStorage.setItem('dpAccessToken', saveDpAccessToken);
-        this.removeUrlParams();
+        //this.removeUrlParams();
 
         if (sessionStorage.getItem('gdSelected') === 'gdSelected') {
           this.removeSelectedCloud('gdSelected');

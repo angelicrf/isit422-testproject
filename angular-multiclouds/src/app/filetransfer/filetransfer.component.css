@@ -1,96 +1,177 @@
-.services, .services-button {
-    margin: 10px 20px;
-    text-align: left;
-    vertical-align: middle;
+.services,
+.services-button {
+  margin: 10px 20px;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .services-button {
-    background: none;
-    border: none;
-    outline: 0;
+  background: none;
+  border: none;
+  outline: 0;
 }
 
 .services-button:hover {
-    background: rgb(220, 235, 255);
+  background: rgb(220, 235, 255);
 }
-.frImg{
+.frImg {
   border-radius: 10px;
 }
-.boxes {
-    margin-top: 10px;
-    width: 400px;
-    background:white;
-    border-radius:40px;
-    border:2px solid rgb(207, 207, 207);
-}
+
 .folder {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 .folder-text {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 .file {
-    margin-left: 40px;
+  margin-left: 40px;
 }
 .file-text {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
-li{
-    margin-top: 20px;
-    margin-left: 20px;
+li {
+  margin-top: 20px;
+  margin-left: 20px;
 }
 
 .filesandfolderstext {
-    margin: 0 20px;
+  margin: 0 20px;
 }
 
 /* drag and drop */
 .example-list {
-    border: solid 1px #ccc;
-    min-height: 60px;
-    background: white;
-    border-radius: 40px;
+  border: solid 1px #ccc;
+  min-height: 60px;
+  background: white;
+  border-radius: 40px;
+  overflow: hidden;
+  display: block;
+}
+
+.example-box {
+  padding: 20px 10px;
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 40px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@media only screen and (min-width: 320px) {
+  .trHome {
+    height: 1500px;
+  }
+  .textArrow {
+    margin-left: 10px;
+    font-size: 9px;
+    font-weight: bold;
+  }
+  .arrowIcon {
+    width: 80px;
+    height: 30px;
+  }
+  .leftColumn {
+    margin-top: 40px;
+    margin-left: 30px;
+    width: 100%;
     overflow: hidden;
-    display: block;
+    align-content: center;
   }
-  
-  .example-box {
-    padding: 20px 10px;
-    border-bottom: solid 1px #ccc;
-    color: rgba(0, 0, 0, 0.87);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-    box-sizing: border-box;
-    cursor: move;
+  .leftBox {
+    width: 150px;
+    float: left;
+  }
+  .rightBox {
+    width: 150px;
+    margin-top: -10px;
+    margin-left: 180px;
+  }
+  .boxes {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 150px;
     background: white;
-  }
-  
-  .cdk-drag-preview {
-    box-sizing: border-box;
     border-radius: 40px;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-                0 8px 10px 1px rgba(0, 0, 0, 0.14),
-                0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    border: 2px solid rgb(207, 207, 207);
   }
-  
-  .cdk-drag-placeholder {
-    opacity: 0;
+  .arrowDrag {
+    position: absolute;
+    margin-left: 160px;
+    margin-top: 230px;
+    float: left;
+    margin-bottom: 150px;
   }
-  
-  .cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+@media only screen and (min-width: 600px) {
+}
+@media only screen and (min-width: 768px) {
+  .arrowDrag {
+    position: absolute;
+    margin-left: 515px;
+    margin-top: 200px;
+    float: left;
+    margin-bottom: 150px;
   }
-  
-  .example-box:last-child {
-    border: none;
-  }
-  
-  .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
-  .trBar{
+  .trBar {
     margin-top: 100px;
   }
+  .leftBox {
+    width: 600px;
+    float: left;
+  }
+  .rightBox {
+    margin-top: -20px;
+    margin-left: 620px;
+  }
+  .textArrow {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .arrowIcon {
+    width: 130px;
+    height: 50px;
+  }
+  .boxes {
+    margin-top: 10px;
+    width: 400px;
+    background: white;
+    border-radius: 40px;
+    border: 2px solid rgb(207, 207, 207);
+  }
+  .leftColumn {
+    margin-top: 40px;
+    margin-left: 100px;
+    width: 100%;
+    overflow: hidden;
+    align-content: center;
+  }
+}

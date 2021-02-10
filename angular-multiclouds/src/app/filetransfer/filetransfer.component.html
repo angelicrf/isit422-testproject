@@ -1,10 +1,11 @@
+<div class="trHome">
 <div class="trBar">
-<div style="position: absolute; margin-left: 515px; margin-top: 200px; float: left; margin-bottom:150px;">
-  <p style="font-size: 12px;font-weight: bold;">Drag and Drop Files</p>
-  <img src="https://www.freeiconspng.com/uploads/arrow-icon-jpg-arrow-58-icon-free-orange-arrow-icons-arrow-right-icon--9.png" width="130" height="50" alt="icon-arrow" />
+<div class="arrowDrag">
+  <p class="textArrow">Drag&Drop Files</p>
+  <img src="https://www.freeiconspng.com/uploads/arrow-icon-jpg-arrow-58-icon-free-orange-arrow-icons-arrow-right-icon--9.png" class="arrowIcon" alt="icon-arrow" />
 </div>
-<div style="margin-top: 40px; margin-left: 100px; width: 100%; overflow: hidden; align-content: center;">
-    <div style="width: 600px; float: left;">
+<div class="leftColumn">
+    <div class="leftBox">
         <img class="frImg" *ngIf="!leftServiceForm" src="{{serviceIcons[5]}}" width="64" height="62">
         <button *ngIf="!leftServiceForm" class="services-button" (click)="leftServiceForm = true; apiMatch();">Api to Drag</button>
         <div *ngIf="leftServiceForm">
@@ -48,7 +49,7 @@
           </div>
         </div>
     </div>
-    <div style="margin-left: 620px;">
+    <div class="rightBox">
       <img class="frImg" *ngIf="!rightServiceForm" src="{{serviceIcons[6]}}" width="66" height="69">
         <button *ngIf="!rightServiceForm" class="services-button" (click)="rightServiceForm = true">Api to Drop</button>
         <div *ngIf="rightServiceForm">
@@ -84,5 +85,6 @@
           </div>
       </div>
     </div>
+</div>
 </div>
 </div>

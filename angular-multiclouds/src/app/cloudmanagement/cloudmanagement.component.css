@@ -1,65 +1,83 @@
-
 .new-filter {
-    border-radius: 5;
-    width: 210px;
-    margin-bottom: 5px;
+  border-radius: 5;
+  width: 210px;
+  margin-bottom: 5px;
 }
 
 .example-margin {
-    margin: 0 10px;
-  }
+  margin: 0 10px;
+}
 
 .filters {
-    list-style-type: none; /* Remove bullets */
-    padding: 0;
-    margin: 0; 
+  list-style-type: none; /* Remove bullets */
+  padding: 0;
+  margin: 0;
 }
 
 li {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
-.services, .services-button {
-    margin: 20px 20px;
-    text-align: left;
-    vertical-align: middle;
-    
+.services,
+.services-button {
+  margin: 20px 20px;
+  text-align: left;
+  vertical-align: middle;
 }
 
-.services-button, .delete-button {
-    background: none;
-    border: none; 
-    outline: 0;
-    
+.services-button,
+.delete-button {
+  background: none;
+  border: none;
+  outline: 0;
 }
-.submit-button{
-    margin: 20px 20px;
-    text-align: left;
-    vertical-align: middle;
-    outline: 0;
-    border: rgb(36, 53, 207);
-    border-radius: 5px;
-    border-width: thick;
-    border-style: solid;
-    width: 60px;
+.submit-button {
+  margin: 20px 20px;
+  text-align: left;
+  vertical-align: middle;
+  outline: 0;
+  border: rgb(36, 53, 207);
+  border-radius: 5px;
+  border-width: thick;
+  border-style: solid;
+  width: 60px;
 }
 
 .delete-button {
-    color: rgb(155, 164, 177);
+  color: rgb(155, 164, 177);
 }
 
 .services-button:hover {
-    background: rgb(220, 235, 255);
+  background: rgb(220, 235, 255);
 }
 
 .service-input {
-    margin-top: 20px;
-    margin-right: 5px;
+  margin-top: 20px;
+  margin-right: 5px;
 }
 
-input[type=checkbox] {
-    transform: scale(1.5);
+input[type="checkbox"] {
+  transform: scale(1.5);
 }
-.cmBar{
-    margin-top: 100px;
+.cmBar {
+  margin-top: 100px;
+}
+
+@media only screen and (min-width: 320px) {
+  .rightColumn {
+    margin-left: 190px;
   }
+  .cmPhone {
+    height: 1800px;
+  }
+}
+@media only screen and (min-width: 600px) {
+  .rightColumn {
+    margin-left: 420px;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .rightColumn {
+    margin-left: 620px;
+  }
+}
