@@ -132,6 +132,46 @@ li {
   }
 }
 @media only screen and (min-width: 600px) {
+  .arrowDrag {
+    position: absolute;
+    margin-left: 230px;
+    margin-top: 200px;
+    float: left;
+    margin-bottom: 150px;
+  }
+  .trBar {
+    margin-top: 100px;
+  }
+  .leftBox {
+    width: 180px;
+    float: left;
+  }
+  .rightBox {
+    width: 180px;
+    margin-left: 320px;
+  }
+  .textArrow {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .arrowIcon {
+    width: 100px;
+    height: 30px;
+  }
+  .boxes {
+    margin-top: 10px;
+    width: 180px;
+    background: white;
+    border-radius: 40px;
+    border: 2px solid rgb(207, 207, 207);
+  }
+  .leftColumn {
+    margin-top: 40px;
+    margin-left: 30px;
+    width: 100%;
+    overflow: hidden;
+    align-content: center;
+  }
 }
 @media only screen and (min-width: 768px) {
   .arrowDrag {
