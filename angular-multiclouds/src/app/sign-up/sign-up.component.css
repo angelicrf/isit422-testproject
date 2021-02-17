@@ -24,6 +24,9 @@
   overflow: hidden;
   margin-right: 0;
   margin-left: 0;
+  margin-top: 100px;
+  margin-bottom: 50px;
+  border-radius: 15px;
   padding-right: 0;
   padding-left: 0;
 }
@@ -36,10 +39,7 @@
 h3 {
   margin-left: 40px;
 }
-.spBar {
-  margin-top: 100px;
-  margin-bottom: 50px;
-}
+
 .sbSubmit {
   margin-bottom: 50px;
 }
@@ -60,7 +60,7 @@ h4 {
   .container-fluid {
     background-color: hsla(219, 69%, 35%, 0.884);
     width: 530px;
-    height: 1300px;
+    height: 800px;
     z-index: 2;
     bottom: 0;
     left: 0;
@@ -68,11 +68,45 @@ h4 {
     overflow: hidden;
     margin-right: 0;
     margin-left: 0;
+    margin-top: 100px;
+    margin-bottom: 50px;
     padding-right: 0;
     padding-left: 0;
+    border-radius: 15px;
   }
   .column {
     margin-left: 20px;
     flex: 10%;
+  }
+  .mainSignUp{
+    height: 1800px;
+    width: 540px;
+  }
+  .column{
+   flex: 20%; 
+    margin-left: -10px;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .container-fluid {
+    background-color: hsla(219, 69%, 35%, 0.884);
+    width: 730px;
+    height: 800px;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    margin-right: 0;
+    margin-left: 0;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    padding-right: 0;
+    padding-left: 0;
+    border-radius: 15px;
+  }
+  .mainSignUp{
+    height: 1400px;
+    width: 1500px;
   }
 }
