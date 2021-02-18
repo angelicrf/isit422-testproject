@@ -72,13 +72,15 @@ let corsOptions = {
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-app.use(express.static(process.cwd() + '/routes/dist'));
-app.get('*', function (req, res) {
-  res.sendFile(process.cwd() + '/routes/dist/index.html');
-});
+if (process.env.NODE_ENV !== 'production') {
+  console.log("app in development mode ...");
+  app.use(express.static(process.cwd()  + '/public'));
+  app.get("/", function (req, res) {
+    res.sendFile(process.cwd() + '/public/index.html');
+  });
+}
 if (process.env.NODE_ENV === 'production') {
   console.log('app in production mode ....');
-
   app.use(express.static(process.cwd() + '/routes/dist'));
   app.get('*', function (req, res) {
     res.sendFile(process.cwd() + '/routes/dist/index.html');
@@ -104,7 +106,7 @@ mongoose.connect(dbURI, options).then(
     console.log('Error connecting Database instance due to: ', err);
   },
 );
-app.get('*/FindTd', (req, res) => {
+app.get('/FindTd', (req, res) => {
   console.log('route called');
   res.status(200).send('Server is called');
 });

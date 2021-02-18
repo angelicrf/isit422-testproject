@@ -220,11 +220,7 @@ fa-instagram {
   .col-9 {
     width: 75%;
   }
-  .container {
-    width: 100%;
-    bottom: 0;
-    margin-bottom: 0%;
-  }
+  
   .fixed-header {
     background-color: rgba(8, 22, 83, 0.952);
     width: 100%;
@@ -239,8 +235,8 @@ fa-instagram {
     margin-bottom: 0%;
   }
   .mdPadding {
-    padding-left: 35px;
-    padding-right: 35px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
   .footer-div {
     position: fixed;
@@ -256,7 +252,6 @@ fa-instagram {
     overflow: hidden;
     margin-right: 0;
     margin-left: 0;
-  
     margin-bottom: 0;
     padding-right: 0;
     padding-left: 0;
